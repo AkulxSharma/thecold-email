@@ -259,15 +259,71 @@ function JeminiPanel({ onClose, open }) {
 // ================================================================
 
 // ---------------- VIEW: OVERVIEW (Inbox / Hero) ----------------
+const LH_TRACKS = [
+  { n: '01', icon: <I.M name="gps_fixed" size={22} />, name: 'The Unreachable', desc: 'A reply from someone who almost never replies.' },
+  { n: '02', icon: <I.SparkPen size={22} />,           name: 'Best Subject Line', desc: 'A reply earned by the subject line alone.' },
+  { n: '03', icon: <I.M name="short_text" size={22} />, name: 'The Two-Liner',   desc: 'A reply from two sentences or fewer.' },
+  { n: '04', icon: <I.M name="front_hand" size={22} />, name: 'The Ask',         desc: 'A major “yes” from a stranger.' },
+]
+
 function ViewOverview({ onEnter }) {
   return (
     <div className="view-panel">
-      <div className="lp-hero">
-        <div className="lp-eyebrow">★ THECOLD.EMAIL · GET THE REPLY</div>
-        <h1 className="lp-tagline">The world replies to those who know how to write.</h1>
-        <p className="lp-sub">A cold email competition to find the best cold emails on the planet — proven by who actually replied.</p>
-        <button className="lp-cta" onClick={onEnter}>Enter the competition</button>
-        <div className="lp-meta">Launch Jun 24 · Submit by Jul 7 · Winners Jul 10 · $3,000 in prizes</div>
+      <div className="view-body lh">
+        {/* HERO */}
+        <section className="lh-hero">
+          <div className="lh-hero-copy">
+            <div className="lh-kicker">A cold email competition</div>
+            <h1 className="lh-title">Email a stranger.<br />Get a reply.<br />Win $3,000.</h1>
+            <p className="lh-sub">thecold.email crowns the best cold emails on the planet — judged on the one thing that can’t be faked: a real stranger wrote back.</p>
+            <div className="lh-cta-row">
+              <button className="lh-btn lh-btn-primary" onClick={onEnter}>Enter the competition</button>
+              <a className="lh-btn lh-btn-ghost" href="#lh-how">See how it works</a>
+            </div>
+            <div className="lh-meta">Launches Jun 24 · Deadline Jul 7 · Winners Jul 10</div>
+          </div>
+          <div className="lh-proof">
+            <div className="lh-mail">
+              <div className="lh-mail-head"><span className="lh-mail-from">you</span><span className="lh-mail-to">→ a total stranger</span></div>
+              <div className="lh-mail-subj">Quick question about your essay</div>
+              <div className="lh-mail-body">Your piece on focus changed how I work. I’m building something in that space — could I ask you one thing?</div>
+            </div>
+            <div className="lh-mail lh-mail-reply">
+              <div className="lh-mail-head"><span className="lh-reply-badge">✓ Replied</span><span className="lh-mail-to">2 hours later</span></div>
+              <div className="lh-mail-subj">Re: Quick question about your essay</div>
+              <div className="lh-mail-body">Ha — sure. Thursday 2pm? Send a calendar invite.</div>
+            </div>
+          </div>
+        </section>
+
+        {/* TRACKS */}
+        <section className="lh-section" id="lh-how">
+          <h2 className="lh-h2">Four tracks. Four ways to win $500.</h2>
+          <div className="lh-tracks">
+            {LH_TRACKS.map(t => (
+              <div className="lh-track" key={t.n}>
+                <div className="lh-track-num">{t.n}</div>
+                <div className="lh-track-ic">{t.icon}</div>
+                <div className="lh-track-name">{t.name}</div>
+                <div className="lh-track-desc">{t.desc}</div>
+                <div className="lh-track-prize">$500</div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* RULE */}
+        <section className="lh-rule">
+          <div className="lh-rule-tag">The one rule</div>
+          <p className="lh-rule-text">Real replies only. No impersonation, no lying, no pre-existing relationship, no mass-blasting. Un-fakeable proof is the whole point.</p>
+        </section>
+
+        {/* CLOSER */}
+        <section className="lh-closer">
+          <h2 className="lh-closer-h">One email can change a life.</h2>
+          <p className="lh-closer-sub">$3,000 in prizes — a grand prize for the best cold email overall, plus $500 for each track.</p>
+          <button className="lh-btn lh-btn-primary" onClick={onEnter}>Enter the competition</button>
+        </section>
       </div>
     </div>
   )
