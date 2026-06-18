@@ -75,9 +75,11 @@ const TRACK_OPTIONS = ['The Best Cold Email (overall)', 'The Unreachable', 'Best
 function ComposeWindow({ onClose, onSend }) {
   const [track, setTrack] = useState(TRACK_OPTIONS[0])
   const [email, setEmail] = useState('')
-  const [proof, setProof] = useState('')
   const [subject, setSubject] = useState('')
   const [body, setBody] = useState('')
+  const [files, setFiles] = useState([])
+  const fileRef = useRef()
+  const addFiles = (list) => setFiles(f => [...f, ...Array.from(list)])
   return (
     <div className="compose-win">
       <div className="cw-head">
@@ -107,14 +109,22 @@ function ComposeWindow({ onClose, onSend }) {
       <div className="cw-field cw-field-plain">
         <input className="cw-subject" value={subject} onChange={e => setSubject(e.target.value)} placeholder="Subject" />
       </div>
-      <div className="cw-field">
-        <span className="cw-label">Proof</span>
-        <input value={proof} onChange={e => setProof(e.target.value)} placeholder="Link to a screenshot of the reply you got" />
-      </div>
-
       <div className="cw-body">
         <textarea value={body} onChange={e => setBody(e.target.value)} placeholder="Paste the cold email you sent (and the reply, if you like)..." />
       </div>
+
+      {files.length > 0 && (
+        <div className="cw-attachments">
+          {files.map((f, i) => (
+            <div className="cw-chip" key={i}>
+              <I.M name="description" size={18} />
+              <span className="cw-chip-name">{f.name}</span>
+              <span className="cw-chip-x" title="Remove" onClick={() => setFiles(fs => fs.filter((_, j) => j !== i))}><I.M name="close" size={16} /></span>
+            </div>
+          ))}
+        </div>
+      )}
+      <input ref={fileRef} type="file" multiple accept="image/*,.pdf" style={{ display: 'none' }} onChange={e => { addFiles(e.target.files); e.target.value = '' }} />
 
       {/* Formatting toolbar (decorative — matches Gmail) */}
       <div className="cw-toolbar">
@@ -138,12 +148,12 @@ function ComposeWindow({ onClose, onSend }) {
 
       {/* Send row */}
       <div className="cw-actions">
-        <button className="cw-send" onClick={() => onSend({ track, email, proof, subject, body })}>
+        <button className="cw-send" onClick={() => onSend({ track, email, subject, body, files })}>
           Send<span className="cw-send-caret"><I.M name="arrow_drop_down" size={20} /></span>
         </button>
         <div className="cw-act-icons">
           <span className="cw-act-ic"><I.M name="format_color_text" size={20} /></span>
-          <span className="cw-act-ic"><I.M name="attach_file" size={20} /></span>
+          <span className="cw-act-ic" title="Attach files" onClick={() => fileRef.current && fileRef.current.click()}><I.M name="attach_file" size={20} /></span>
           <span className="cw-act-ic"><I.M name="link" size={20} /></span>
           <span className="cw-act-ic"><I.M name="mood" size={20} /></span>
           <span className="cw-act-ic"><I.M name="add_to_drive" size={20} /></span>
@@ -917,8 +927,9 @@ export default function App() {
     toastTimer.current = setTimeout(() => setToast(''), 2600)
   }
 
-  const submitEntry = ({ email, proof }) => {
-    if (!email || !proof) { showToast('Add your email and a link to the reply.'); return }
+  const submitEntry = ({ email, files }) => {
+    if (!email) { showToast('Add your email first.'); return }
+    if (!files || !files.length) { showToast('Attach a screenshot of the reply (paperclip).'); return }
     setComposeOpen(false)
     showToast('Entry submitted. Good luck — go get the reply.')
   }
