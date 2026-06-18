@@ -162,6 +162,8 @@ html, body, #root { font-family:'Roboto',Arial,sans-serif; color:var(--text); ba
 .cw-attachments { display:flex; flex-wrap:wrap; gap:8px; padding:0 16px 10px; }
 .cw-chip { display:flex; align-items:center; gap:6px; max-width:220px; background:#f1f3f4; border:1px solid #dadce0; border-radius:8px; padding:5px 8px; font-size:13px; color:#202124; }
 .cw-chip .msym { color:#5f6368; }
+/* Sidebar icons: filled to match the solid pen + plane (uniform set) */
+.nav-item .msym { font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20; }
 .cw-chip-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .cw-chip-x { display:flex; align-items:center; cursor:pointer; color:#5f6368; border-radius:50%; }
 .cw-chip-x:hover { background:rgba(0,0,0,.1); color:#202124; }
