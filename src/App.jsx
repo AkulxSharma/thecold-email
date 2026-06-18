@@ -609,9 +609,6 @@ function ViewBest() {
   // -------- Inbox list --------
   return (
     <div className="view-panel">
-      <div className="view-header">
-        <h2 className="view-title">Best Email Ever</h2>
-      </div>
       <div className="view-body view-body-best">
         <div className="ai-overview">
           <div className="ai-ov-head">
@@ -631,8 +628,6 @@ function ViewBest() {
           {BEST_EMAILS.map((em, i) => (
             <div className="bx-row" key={i} onClick={() => setOpen(i)}>
               <span className="bx-check" onClick={e => e.stopPropagation()}><I.M name="check_box_outline_blank" size={18} /></span>
-              <span className="bx-stat bx-stat-star"><I.M name="star" size={18} />{em.stars}</span>
-              <span className="bx-stat bx-stat-views">{em.views != null ? <><I.M name="visibility" size={18} />{em.views}</> : null}</span>
               <span className="bx-sender">{em.from}</span>
               <span className="bx-snippet">
                 {em.tag && <span className="bx-tag">{em.tag}</span>}

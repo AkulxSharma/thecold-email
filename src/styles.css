@@ -7,8 +7,8 @@ html, body, #root { font-family:'Roboto',Arial,sans-serif; color:var(--text); ba
 .icon-btn:hover { background:rgba(60,64,67,.08); }
 .icon-btn svg { width:24px; height:24px; }
 .logo { display:flex; align-items:center; gap:0; margin-right:24px; margin-left:4px; cursor:pointer; }
-.logo img { height:40px; }
-.logo .wordmark { font-size:22px; color:#5f6368; font-family:'Product Sans',Arial,sans-serif; letter-spacing:-.5px; margin-left:-3px; }
+.logo img { height:52px; }
+.logo .wordmark { font-size:24px; color:#5f6368; font-family:'Product Sans',Arial,sans-serif; letter-spacing:-.5px; margin-left:-8px; }
 
 .search { flex:1; max-width:720px; display:flex; align-items:center; background:#eaf1fb; height:48px; border-radius:24px; padding:0 8px 0 4px; transition:background .15s,box-shadow .15s; }
 .search:focus-within { background:#fff; box-shadow:0 1px 3px 1px rgba(60,64,67,.15); }
