@@ -55,7 +55,7 @@ export const Target = () => <S d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48
 export const SubjectIcon = () => <S d="M14 17H4v2h10v-2zm6-8H4v2h16V9zM4 15h16v-2H4v2zM4 5v2h16V5H4z" />
 // Best Subject Line — auto_awesome sparkle + Ink Pen combined into one glyph.
 export const SparkPen = ({ size = 22 }) => (
-  <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor">
+  <svg className="spark-pen" viewBox="0 0 24 24" width={size} height={size} fill="currentColor">
     {/* sparkle (top-left, larger, nearer pen) */}
     <path d="M7 2.5c.6 2.9 1.5 3.8 4.5 4.5-3 .7-3.9 1.6-4.5 4.5-.6-2.9-1.5-3.8-4.5-4.5 3-.7 3.9-1.6 4.5-4.5z" />
     {/* ink pen (diagonal, nib lower-left) — cap edges aligned to body edge lines, thin gap */}
