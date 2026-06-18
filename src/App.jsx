@@ -259,71 +259,66 @@ function JeminiPanel({ onClose, open }) {
 // ================================================================
 
 // ---------------- VIEW: OVERVIEW (Inbox / Hero) ----------------
-const LH_TRACKS = [
-  { n: '01', icon: <I.M name="gps_fixed" size={22} />, name: 'The Unreachable', desc: 'A reply from someone who almost never replies.' },
-  { n: '02', icon: <I.SparkPen size={22} />,           name: 'Best Subject Line', desc: 'A reply earned by the subject line alone.' },
-  { n: '03', icon: <I.M name="short_text" size={22} />, name: 'The Two-Liner',   desc: 'A reply from two sentences or fewer.' },
-  { n: '04', icon: <I.M name="front_hand" size={22} />, name: 'The Ask',         desc: 'A major “yes” from a stranger.' },
+const TERM_TRACKS = [
+  { k: '[1]', name: 'the unreachable',   cash: '$500' },
+  { k: '[2]', name: 'best subject line', cash: '$500' },
+  { k: '[3]', name: 'the two-liner',     cash: '$500' },
+  { k: '[4]', name: 'the ask',           cash: '$500' },
 ]
 
 function ViewOverview({ onEnter }) {
   return (
     <div className="view-panel">
-      <div className="view-body lh">
-        {/* HERO */}
-        <section className="lh-hero">
-          <div className="lh-hero-copy">
-            <div className="lh-kicker">A cold email competition</div>
-            <h1 className="lh-title">Email a stranger.<br />Get a reply.<br />Win $3,000.</h1>
-            <p className="lh-sub">thecold.email crowns the best cold emails on the planet — judged on the one thing that can’t be faked: a real stranger wrote back.</p>
-            <div className="lh-cta-row">
-              <button className="lh-btn lh-btn-primary" onClick={onEnter}>Enter the competition</button>
-              <a className="lh-btn lh-btn-ghost" href="#lh-how">See how it works</a>
-            </div>
-            <div className="lh-meta">Launches Jun 24 · Deadline Jul 7 · Winners Jul 10</div>
+      <div className="view-body term-view">
+        <div className="term">
+          <div className="term-bar">
+            <span className="term-dot term-dot-r" />
+            <span className="term-dot term-dot-y" />
+            <span className="term-dot term-dot-g" />
+            <span className="term-bar-title">thecold.email — zsh — 80×24</span>
           </div>
-          <div className="lh-proof">
-            <div className="lh-mail">
-              <div className="lh-mail-head"><span className="lh-mail-from">you</span><span className="lh-mail-to">→ a total stranger</span></div>
-              <div className="lh-mail-subj">Quick question about your essay</div>
-              <div className="lh-mail-body">Your piece on focus changed how I work. I’m building something in that space — could I ask you one thing?</div>
-            </div>
-            <div className="lh-mail lh-mail-reply">
-              <div className="lh-mail-head"><span className="lh-reply-badge">✓ Replied</span><span className="lh-mail-to">2 hours later</span></div>
-              <div className="lh-mail-subj">Re: Quick question about your essay</div>
-              <div className="lh-mail-body">Ha — sure. Thursday 2pm? Send a calendar invite.</div>
-            </div>
-          </div>
-        </section>
+          <div className="term-body">
+            <div className="t-dim">Last login: Wed Jun 24 09:00:00 on ttys001</div>
+            <div className="t-gap" />
 
-        {/* TRACKS */}
-        <section className="lh-section" id="lh-how">
-          <h2 className="lh-h2">Four tracks. Four ways to win $500.</h2>
-          <div className="lh-tracks">
-            {LH_TRACKS.map(t => (
-              <div className="lh-track" key={t.n}>
-                <div className="lh-track-num">{t.n}</div>
-                <div className="lh-track-ic">{t.icon}</div>
-                <div className="lh-track-name">{t.name}</div>
-                <div className="lh-track-desc">{t.desc}</div>
-                <div className="lh-track-prize">$500</div>
+            <div className="t-line"><span className="t-pmt">$</span> thecold.email <span className="t-flag">--about</span></div>
+            <div className="t-out">a cold email competition.</div>
+            <div className="t-out">win <span className="t-cash">$3,000</span> for the best cold email on earth —</div>
+            <div className="t-out">proven by the one thing that can’t be faked: a real stranger wrote back.</div>
+            <div className="t-gap" />
+
+            <div className="t-line"><span className="t-pmt">$</span> thecold.email <span className="t-flag">--tracks</span></div>
+            {TERM_TRACKS.map(t => (
+              <div className="t-track" key={t.k}>
+                <span className="t-key">{t.k}</span>
+                <span className="t-name">{t.name}</span>
+                <span className="t-dots" />
+                <span className="t-cash">{t.cash}</span>
               </div>
             ))}
+            <div className="t-track t-grand">
+              <span className="t-key t-star">[★]</span>
+              <span className="t-name">the best cold email</span>
+              <span className="t-dots" />
+              <span className="t-cash t-cash-grand">$1,000</span>
+            </div>
+            <div className="t-note"># every entry is automatically in the running for the grand prize</div>
+            <div className="t-gap" />
+
+            <div className="t-line"><span className="t-pmt">$</span> thecold.email <span className="t-flag">--rule</span></div>
+            <div className="t-out">real replies only. no impersonation, no lying,</div>
+            <div className="t-out">no pre-existing relationship, no mass-blasting.</div>
+            <div className="t-gap" />
+
+            <div className="t-line"><span className="t-pmt">$</span> thecold.email <span className="t-flag">--dates</span></div>
+            <div className="t-out">launch jun 24 · deadline jul 7 · winners jul 10</div>
+            <div className="t-gap" />
+
+            <div className="t-line"><span className="t-pmt">$</span> thecold.email <span className="t-flag">--enter</span></div>
+            <button className="t-enter" onClick={onEnter}>enter the competition →</button>
+            <div className="t-line t-prompt-last"><span className="t-pmt">$</span> <span className="t-cursor" /></div>
           </div>
-        </section>
-
-        {/* RULE */}
-        <section className="lh-rule">
-          <div className="lh-rule-tag">The one rule</div>
-          <p className="lh-rule-text">Real replies only. No impersonation, no lying, no pre-existing relationship, no mass-blasting. Un-fakeable proof is the whole point.</p>
-        </section>
-
-        {/* CLOSER */}
-        <section className="lh-closer">
-          <h2 className="lh-closer-h">One email can change a life.</h2>
-          <p className="lh-closer-sub">$3,000 in prizes — a grand prize for the best cold email overall, plus $500 for each track.</p>
-          <button className="lh-btn lh-btn-primary" onClick={onEnter}>Enter the competition</button>
-        </section>
+        </div>
       </div>
     </div>
   )
