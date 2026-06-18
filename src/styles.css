@@ -3,10 +3,12 @@
 html, body, #root { font-family:'Roboto',Arial,sans-serif; color:var(--text); background:#f6f8fc; height:100%; overflow:hidden; -webkit-font-smoothing:antialiased; }
 
 .topbar { display:flex; align-items:center; height:64px; padding:0 16px; gap:8px; }
-.icon-btn { width:48px; height:48px; display:flex; align-items:center; justify-content:center; border-radius:50%; cursor:pointer; color:#444746; }
+.icon-btn { width:48px; height:48px; display:flex; align-items:center; justify-content:center; border-radius:50%; cursor:pointer; color:#444746; user-select:none; transition:background .15s ease, transform .1s ease; }
 .icon-btn:hover { background:rgba(60,64,67,.08); }
+.icon-btn:active { transform:scale(.9); }
 .icon-btn svg { width:24px; height:24px; }
-.logo { display:flex; align-items:center; gap:0; margin-right:24px; margin-left:4px; cursor:pointer; }
+.logo { display:flex; align-items:center; gap:0; margin-right:24px; margin-left:4px; cursor:pointer; user-select:none; transition:transform .1s ease; }
+.logo:active { transform:scale(.97); }
 .logo img { height:52px; margin-left:-14px; }
 .logo .wordmark { font-size:24px; color:#5f6368; font-family:'Product Sans',Arial,sans-serif; letter-spacing:-.5px; margin-left:-10px; }
 
@@ -21,19 +23,22 @@ html, body, #root { font-family:'Roboto',Arial,sans-serif; color:var(--text); ba
 .clear-x:hover { background:rgba(60,64,67,.08); }
 
 .top-right { display:flex; align-items:center; gap:4px; margin-left:auto; }
-.jemini { display:flex; align-items:center; gap:8px; border:1px solid transparent; border-radius:20px; height:40px; padding:0 18px 0 14px; cursor:pointer; font-size:15px; color:#5e5e7e; font-weight:500; background:#e8eefb; }
+.jemini { display:flex; align-items:center; gap:8px; border:1px solid transparent; border-radius:20px; height:40px; padding:0 18px 0 14px; cursor:pointer; font-size:15px; color:#5e5e7e; font-weight:500; background:#e8eefb; user-select:none; transition:background .15s ease, box-shadow .15s ease, transform .1s ease; }
 .jemini:hover { background:#dde6f9; box-shadow:0 1px 3px rgba(60,64,67,.18); }
+.jemini:active { transform:scale(.95); }
 .jemini .spark { width:20px; height:20px; }
 .avatar { width:34px; height:34px; border-radius:50%; margin-left:6px; cursor:pointer; background-image:linear-gradient(135deg,#e8a88f,#b97a5d); }
 
 .app { display:flex; height:calc(100vh - 64px); }
 
-.sidebar { width:256px; padding:8px; overflow-y:auto; flex-shrink:0; }
+.sidebar { width:256px; padding:8px; overflow-y:auto; flex-shrink:0; transition:width .24s cubic-bezier(.2,.8,.2,1), padding .24s cubic-bezier(.2,.8,.2,1), opacity .18s ease, transform .24s cubic-bezier(.2,.8,.2,1); white-space:nowrap; }
+.sidebar-collapsed { width:0; padding-left:0; padding-right:0; opacity:0; transform:translateX(-18px); overflow:hidden; pointer-events:none; }
 .compose { display:flex; align-items:center; gap:14px; background:#c2e7ff; border-radius:16px; height:56px; padding:0 24px 0 16px; margin:8px 8px 16px 8px; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,.08); color:#001d35; font-size:14px; font-weight:500; width:138px; transition:box-shadow .15s; }
 .compose:hover { box-shadow:0 1px 3px 1px rgba(60,64,67,.25); }
 .compose svg { width:22px; height:22px; }
-.nav-item { display:flex; align-items:center; height:32px; padding:0 12px 0 26px; border-radius:0 16px 16px 0; margin:1px 0; cursor:pointer; font-size:14px; color:var(--text-soft); gap:18px; }
+.nav-item { display:flex; align-items:center; height:32px; padding:0 12px 0 26px; border-radius:0 16px 16px 0; margin:1px 0; cursor:pointer; font-size:14px; color:var(--text-soft); gap:18px; user-select:none; transition:background .13s ease, transform .1s ease; }
 .nav-item:hover { background:#eaecef; }
+.nav-item:active { transform:scale(.98); }
 .nav-item.active { background:var(--sidebar-active); color:#001d35; font-weight:700; }
 .nav-item.active .ni-icon { color:#001d35; }
 .ni-icon { width:20px; height:20px; flex-shrink:0; color:#444746; display:flex; align-items:center; justify-content:center; }
@@ -166,7 +171,8 @@ html, body, #root { font-family:'Roboto',Arial,sans-serif; color:var(--text); ba
 
 .toast { position:fixed; bottom:24px; left:24px; background:#323232; color:#fff; padding:14px 20px; border-radius:8px; font-size:14px; z-index:200; }
 
-.jemini-panel { position:fixed; top:64px; right:16px; bottom:16px; width:400px; background:#fff; border-radius:24px; box-shadow:0 2px 16px rgba(0,0,0,.22); padding:8px 16px 14px; z-index:150; display:flex; flex-direction:column; }
+.jemini-panel { position:fixed; top:64px; right:16px; bottom:16px; width:400px; background:#fff; border-radius:24px; box-shadow:0 2px 16px rgba(0,0,0,.22); padding:8px 16px 14px; z-index:150; display:flex; flex-direction:column; transform:translateX(0); opacity:1; transition:transform .26s cubic-bezier(.2,.8,.2,1), opacity .2s ease; transform-origin:bottom right; }
+.jemini-closed { transform:translateX(calc(100% + 24px)) scale(.98); opacity:0; pointer-events:none; }
 .jp-bar { display:flex; align-items:center; justify-content:space-between; height:48px; }
 .jp-bar-title { font-size:16px; color:#1f1f1f; font-weight:500; }
 .jp-bar-icons { display:flex; align-items:center; gap:2px; }

@@ -45,9 +45,9 @@ function NavItem({ icon, label, count, active, onClick, cls = '' }) {
   )
 }
 
-function Sidebar({ onCompose, view, setView }) {
+function Sidebar({ onCompose, view, setView, open }) {
   return (
-    <div className="sidebar">
+    <div className={`sidebar${open ? '' : ' sidebar-collapsed'}`}>
       <div className="compose" onClick={onCompose}><I.Pencil /> Enter</div>
 
       <NavItem icon={<I.M name="inbox" />}         label="Inbox"          count="7,493" active={view === 'overview'} onClick={() => setView('overview')} />
@@ -181,7 +181,7 @@ function jeminiAnswer(qRaw) {
 
 const JEMINI_CHIPS = ['What are the tracks?', 'How do I enter?', "What's the rule?", 'Prizes?', 'Deadlines?']
 
-function JeminiPanel({ onClose }) {
+function JeminiPanel({ onClose, open }) {
   const [msgs, setMsgs] = useState([])
   const [input, setInput] = useState('')
   const scrollRef = useRef()
@@ -197,7 +197,7 @@ function JeminiPanel({ onClose }) {
   }
 
   return (
-    <div className="jemini-panel" onClick={e => e.stopPropagation()}>
+    <div className={`jemini-panel${open ? '' : ' jemini-closed'}`} onClick={e => e.stopPropagation()}>
       {/* toolbar */}
       <div className="jp-bar">
         <span className="jp-bar-title">Jemini</span>
@@ -933,13 +933,12 @@ export default function App() {
         onJemini={() => setJeminiOpen(o => !o)}
       />
       <div className="app">
-        {sidebarOpen && (
-          <Sidebar
-            onCompose={() => setComposeOpen(true)}
-            view={view}
-            setView={setView}
-          />
-        )}
+        <Sidebar
+          onCompose={() => setComposeOpen(true)}
+          view={view}
+          setView={setView}
+          open={sidebarOpen}
+        />
         <div className="main">
           <MainPanel view={view} onEnter={() => setComposeOpen(true)} />
         </div>
@@ -952,7 +951,7 @@ export default function App() {
         />
       )}
 
-      {jeminiOpen && <JeminiPanel onClose={() => setJeminiOpen(false)} />}
+      <JeminiPanel open={jeminiOpen} onClose={() => setJeminiOpen(false)} />
 
       {toast && <div className="toast">{toast}</div>}
     </div>
