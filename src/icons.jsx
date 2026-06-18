@@ -53,6 +53,15 @@ export const Gavel = () => <S d="M1 21h12v2H1zm5.5-4h1c.28 0 .5-.22.5-.5v-1c0-.2
 export const Balance = () => <S d="M17 19H7c-.55 0-1 .45-1 1s.45 1 1 1h10c.55 0 1-.45 1-1s-.45-1-1-1zm-5-2c.55 0 1-.45 1-1V7.82l4.45 8.18H6.55L11 7.82V16c0 .55.45 1 1 1zm-7.5-2c0 1.38 1.12 2.5 2.5 2.5S9.5 16.38 9.5 15H4.5zm15 0H14.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5zM12 2L6.5 13h11z" />
 export const Target = () => <S d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm0-12c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
 export const SubjectIcon = () => <S d="M14 17H4v2h10v-2zm6-8H4v2h16V9zM4 15h16v-2H4v2zM4 5v2h16V5H4z" />
+// Best Subject Line — Mode Heat (flame) + Ink Pen combined into one glyph: a flaming pen nib.
+export const FlamePen = ({ size = 22 }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" fillRule="evenodd">
+    {/* flame (Mode Heat) */}
+    <path d="M12 1.5c-1.4 3.1-4.6 4.3-4.6 7.9 0 1.6.9 2.9 2.2 3.6-.2-.5-.3-1-.3-1.5 0-1.5 1-2.4 1.6-3.6.7 1 2.1 1.7 2.1 3.2 0 .7-.2 1.3-.5 1.9 1.3-.7 2.1-2 2.1-3.6C14.6 6 13.4 4.5 12 1.5z" />
+    {/* pen nib (Ink Pen): triangle with breather hole + slit */}
+    <path d="M9.4 13.2h5.2l.5 4.4L12 22.5l-3.1-4.9zM12 15.1a.95.95 0 100 1.9.95.95 0 000-1.9zM11.55 17.4h.9l-.25 3.2-.2.3-.2-.3z" />
+  </svg>
+)
 export const ShortText = () => <S d="M4 9h16v2H4zm0 4h10v2H4z" />
 export const HandAsk = () => <S d="M23 5.5V20c0 2.2-1.8 4-4 4h-7.3c-1.08 0-2.1-.43-2.85-1.19L1 14.83s1.26-1.23 1.3-1.25c.22-.19.49-.29.79-.29.22 0 .42.06.6.16L8 16V4c0-.83.67-1.5 1.5-1.5S11 3.17 11 4v7h1v-8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5V11h1V4c0-.83.67-1.5 1.5-1.5S19 3.17 19 4v7h1V5.5c0-.83.67-1.5 1.5-1.5S23 4.67 23 5.5z" />
 export const Award = () => <S d="M12 1L9.58 8.38 2 8.38l6.18 4.49L5.76 20 12 15.51 18.24 20l-2.42-7.13L22 8.38l-7.58-.01z" />

@@ -51,14 +51,14 @@ function Sidebar({ onCompose, view, setView, open }) {
       <div className="compose" onClick={onCompose}><I.Pencil /> Enter</div>
 
       <NavItem icon={<I.M name="inbox" />}         label="Home"           count="7,493" active={view === 'overview'} onClick={() => setView('overview')} />
-      <NavItem icon={<I.M name="star" />}          label="Winners"                            active={view === 'winners'}  onClick={() => setView('winners')} />
-      <NavItem icon={<I.M name="send" />}          label="How to Enter"                       active={view === 'enter'}    onClick={() => setView('enter')} />
-      <NavItem icon={<I.M name="calendar_month" />} label="Daily Activity"                    active={view === 'calendar'} onClick={() => setView('calendar')} />
-      <NavItem icon={<I.M name="auto_awesome" />}  label="Best Email Ever"                    active={view === 'best'}     onClick={() => setView('best')} />
+      <NavItem icon={<I.M name="star" />}          label="How to Enter"                       active={view === 'enter'}    onClick={() => setView('enter')} />
+      <NavItem icon={<I.M name="report" />}        label="TBD"                                active={view === 'spam'}     onClick={() => setView('spam')} />
+      <NavItem icon={<I.M name="calendar_month" />} label="Event Calendar"                    active={view === 'calendar'} onClick={() => setView('calendar')} />
+      <NavItem icon={<I.M name="auto_awesome" />}  label="Best Emails"                    active={view === 'best'}     onClick={() => setView('best')} />
 
       <div className="section-head"><I.CaretDown /> TRACKS</div>
       <NavItem icon={<I.M name="gps_fixed" />}  label="The Unreachable"    active={view === 'track-unreachable'} onClick={() => setView('track-unreachable')} />
-      <NavItem icon={<I.M name="subject" />}    label="Best Subject Line"  active={view === 'track-subject'}     onClick={() => setView('track-subject')} />
+      <NavItem icon={<I.FlamePen size={20} />} label="Best Subject Line"  active={view === 'track-subject'}     onClick={() => setView('track-subject')} />
       <NavItem icon={<I.M name="short_text" />} label="The Two-Liner"      active={view === 'track-twoliner'}    onClick={() => setView('track-twoliner')} />
       <NavItem icon={<I.M name="front_hand" />} label="The Ask"            active={view === 'track-ask'}         onClick={() => setView('track-ask')} />
 
@@ -311,13 +311,19 @@ function ViewWinners() {
   )
 }
 
+// ---------------- VIEW: TBD (blank) ----------------
+function ViewSpam() {
+  return (
+    <div className="view-panel">
+      <div className="view-body"></div>
+    </div>
+  )
+}
+
 // ---------------- VIEW: ENTER (Sent / How to Enter) ----------------
 function ViewEnter({ onEnter }) {
   return (
     <div className="view-panel">
-      <div className="view-header">
-        <h2 className="view-title">How to Enter</h2>
-      </div>
       <div className="view-body">
         <div className="lp-steps">
           <div className="lp-step">Send your cold email — real stranger, real ask.</div>
@@ -720,7 +726,7 @@ function ViewBest() {
 // Renders a single track's full detail from the EMAILS data
 const TRACK_ICONS = {
   unreachable: <I.M name="gps_fixed" size={24} />,
-  subject:     <I.M name="subject" size={24} />,
+  subject:     <I.FlamePen size={24} />,
   twoliner:    <I.M name="short_text" size={24} />,
   ask:         <I.M name="front_hand" size={24} />,
 }
@@ -898,6 +904,7 @@ function MainPanel({ view, onEnter }) {
   switch (view) {
     case 'overview':          return <ViewOverview onEnter={onEnter} />
     case 'winners':           return <ViewWinners />
+    case 'spam':              return <ViewSpam />
     case 'enter':             return <ViewEnter onEnter={onEnter} />
     case 'calendar':          return <ViewCalendar />
     case 'best':              return <ViewBest />
