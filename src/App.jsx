@@ -50,7 +50,6 @@ function Sidebar({ onCompose, view, setView, open }) {
 
       <NavItem icon={<I.M name="inbox" />}         label="Home"           count="7,493" active={view === 'overview'} onClick={() => setView('overview')} />
       <NavItem icon={<I.M name="star" />}          label="How to Enter"                       active={view === 'enter'}    onClick={() => setView('enter')} />
-      <NavItem icon={<I.M name="report" />}        label="TBD"                                active={view === 'spam'}     onClick={() => setView('spam')} />
       <NavItem icon={<I.M name="calendar_month" />} label="Event Calendar"                    active={view === 'calendar'} onClick={() => setView('calendar')} />
       <NavItem icon={<I.M name="auto_awesome" />}  label="Best Emails"                    active={view === 'best'}     onClick={() => setView('best')} />
 
