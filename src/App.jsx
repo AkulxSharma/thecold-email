@@ -58,7 +58,7 @@ function Sidebar({ onCompose, view, setView, open }) {
       <NavItem icon={<I.Plane size={20} />}  label="The Unreachable"    active={view === 'track-unreachable'} onClick={() => setView('track-unreachable')} />
       <NavItem icon={<I.SparkPen size={20} />} label="Best Subject Line"  active={view === 'track-subject'}     onClick={() => setView('track-subject')} />
       <NavItem icon={<I.M name="short_text" />} label="The Two-Liner"      active={view === 'track-twoliner'}    onClick={() => setView('track-twoliner')} />
-      <NavItem icon={<I.M name="front_hand" />} label="The Ask"            active={view === 'track-ask'}         onClick={() => setView('track-ask')} />
+      <NavItem icon={<I.M name="help" />} label="The Ask"            active={view === 'track-ask'}         onClick={() => setView('track-ask')} />
 
       <div className="section-head"><I.CaretDown /> THE EVENT</div>
       <NavItem icon={<I.M name="gavel" />}        label="The Rule"   active={view === 'rule'}    onClick={() => setView('rule')} />
@@ -726,7 +726,7 @@ const TRACK_ICONS = {
   unreachable: <I.Plane size={24} />,
   subject:     <I.SparkPen size={24} />,
   twoliner:    <I.M name="short_text" size={24} />,
-  ask:         <I.M name="front_hand" size={24} />,
+  ask:         <I.M name="help" size={24} />,
 }
 
 function ViewTrack({ topic }) {
