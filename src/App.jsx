@@ -23,9 +23,9 @@ function TopBar({ onMenu, onLogo, onJemini }) {
         </div>
       </div>
       <div className="top-right">
-        <div className="status-pill"><span className="status-dot" /> Active <I.CaretDown /></div>
-        <div className="icon-btn" title="Feedback"><I.Feedback /></div>
         <div className="jemini" onClick={e => { e.stopPropagation(); onJemini() }}><I.Spark /> Jemini</div>
+        <div className="icon-btn" title="Support"><I.Help /></div>
+        <div className="status-pill"><span className="status-dot" /> Active <I.CaretDown /></div>
         <div className="avatar-ring"><div className="avatar" /></div>
       </div>
     </div>
