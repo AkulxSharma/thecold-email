@@ -55,7 +55,7 @@ function Sidebar({ onCompose, view, setView, open }) {
       <NavItem icon={<I.M name="auto_awesome" />}  label="Best Emails"                    active={view === 'best'}     onClick={() => setView('best')} />
 
       <div className="section-head"><I.CaretDown /> TRACKS</div>
-      <NavItem icon={<I.M name="gps_fixed" />}  label="The Unreachable"    active={view === 'track-unreachable'} onClick={() => setView('track-unreachable')} />
+      <NavItem icon={<I.M name="airplanemode_inactive" />}  label="The Unreachable"    active={view === 'track-unreachable'} onClick={() => setView('track-unreachable')} />
       <NavItem icon={<I.SparkPen size={20} />} label="Best Subject Line"  active={view === 'track-subject'}     onClick={() => setView('track-subject')} />
       <NavItem icon={<I.M name="short_text" />} label="The Two-Liner"      active={view === 'track-twoliner'}    onClick={() => setView('track-twoliner')} />
       <NavItem icon={<I.M name="front_hand" />} label="The Ask"            active={view === 'track-ask'}         onClick={() => setView('track-ask')} />
@@ -259,66 +259,15 @@ function JeminiPanel({ onClose, open }) {
 // ================================================================
 
 // ---------------- VIEW: OVERVIEW (Inbox / Hero) ----------------
-const TERM_TRACKS = [
-  { k: '[1]', name: 'the unreachable',   cash: '$500' },
-  { k: '[2]', name: 'best subject line', cash: '$500' },
-  { k: '[3]', name: 'the two-liner',     cash: '$500' },
-  { k: '[4]', name: 'the ask',           cash: '$500' },
-]
-
 function ViewOverview({ onEnter }) {
   return (
     <div className="view-panel">
-      <div className="view-body term-view">
-        <div className="term">
-          <div className="term-bar">
-            <span className="term-dot term-dot-r" />
-            <span className="term-dot term-dot-y" />
-            <span className="term-dot term-dot-g" />
-            <span className="term-bar-title">thecold.email — zsh — 80×24</span>
-          </div>
-          <div className="term-body">
-            <div className="t-dim">Last login: Wed Jun 24 09:00:00 on ttys001</div>
-            <div className="t-gap" />
-
-            <div className="t-line"><span className="t-pmt">$</span> thecold.email <span className="t-flag">--about</span></div>
-            <div className="t-out">a cold email competition.</div>
-            <div className="t-out">win <span className="t-cash">$3,000</span> for the best cold email on earth —</div>
-            <div className="t-out">proven by the one thing that can’t be faked: a real stranger wrote back.</div>
-            <div className="t-gap" />
-
-            <div className="t-line"><span className="t-pmt">$</span> thecold.email <span className="t-flag">--tracks</span></div>
-            {TERM_TRACKS.map(t => (
-              <div className="t-track" key={t.k}>
-                <span className="t-key">{t.k}</span>
-                <span className="t-name">{t.name}</span>
-                <span className="t-dots" />
-                <span className="t-cash">{t.cash}</span>
-              </div>
-            ))}
-            <div className="t-track t-grand">
-              <span className="t-key t-star">[★]</span>
-              <span className="t-name">the best cold email</span>
-              <span className="t-dots" />
-              <span className="t-cash t-cash-grand">$1,000</span>
-            </div>
-            <div className="t-note"># every entry is automatically in the running for the grand prize</div>
-            <div className="t-gap" />
-
-            <div className="t-line"><span className="t-pmt">$</span> thecold.email <span className="t-flag">--rule</span></div>
-            <div className="t-out">real replies only. no impersonation, no lying,</div>
-            <div className="t-out">no pre-existing relationship, no mass-blasting.</div>
-            <div className="t-gap" />
-
-            <div className="t-line"><span className="t-pmt">$</span> thecold.email <span className="t-flag">--dates</span></div>
-            <div className="t-out">launch jun 24 · deadline jul 7 · winners jul 10</div>
-            <div className="t-gap" />
-
-            <div className="t-line"><span className="t-pmt">$</span> thecold.email <span className="t-flag">--enter</span></div>
-            <button className="t-enter" onClick={onEnter}>enter the competition →</button>
-            <div className="t-line t-prompt-last"><span className="t-pmt">$</span> <span className="t-cursor" /></div>
-          </div>
-        </div>
+      <div className="lp-hero">
+        <div className="lp-eyebrow">★ THECOLD.EMAIL · GET THE REPLY</div>
+        <h1 className="lp-tagline">The world replies to those who know how to write.</h1>
+        <p className="lp-sub">A cold email competition to find the best cold emails on the planet — proven by who actually replied.</p>
+        <button className="lp-cta" onClick={onEnter}>Enter the competition</button>
+        <div className="lp-meta">Launch Jun 24 · Submit by Jul 7 · Winners Jul 10 · $3,000 in prizes</div>
       </div>
     </div>
   )
@@ -774,7 +723,7 @@ function ViewBest() {
 // ---------------- VIEW: TRACK DETAIL ----------------
 // Renders a single track's full detail from the EMAILS data
 const TRACK_ICONS = {
-  unreachable: <I.M name="gps_fixed" size={24} />,
+  unreachable: <I.M name="airplanemode_inactive" size={24} />,
   subject:     <I.SparkPen size={24} />,
   twoliner:    <I.M name="short_text" size={24} />,
   ask:         <I.M name="front_hand" size={24} />,

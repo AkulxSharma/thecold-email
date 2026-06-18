@@ -741,52 +741,6 @@ html, body, #root {
   text-align: right;
 }
 
-/* ============ Home — terminal (.term-*) ============ */
-.view-body.term-view { max-width: none; padding: 44px 40px 80px; display: flex; justify-content: center; }
-.term {
-  width: 100%; max-width: 820px;
-  background: #0d1117; border: 1px solid #30363d; border-radius: 12px;
-  box-shadow: 0 24px 70px rgba(13,17,23,.28);
-  overflow: hidden;
-  font-family: 'SF Mono', ui-monospace, Menlo, Monaco, 'Roboto Mono', monospace;
-}
-.term-bar { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: #161b22; border-bottom: 1px solid #21262d; }
-.term-dot { width: 12px; height: 12px; border-radius: 50%; }
-.term-dot-r { background: #ff5f56; }
-.term-dot-y { background: #ffbd2e; }
-.term-dot-g { background: #27c93f; }
-.term-bar-title { flex: 1; text-align: center; font-size: 12.5px; color: #8b949e; margin-right: 44px; }
-.term-body { padding: 22px 24px 26px; font-size: 14.5px; line-height: 1.95; color: #c9d1d9; }
-.t-dim { color: #6e7681; }
-.t-gap { height: 14px; }
-.t-line { color: #e6edf3; }
-.t-pmt { color: #3fb950; font-weight: 700; margin-right: 8px; }
-.t-flag { color: #58a6ff; }
-.t-out { color: #8b949e; }
-.t-cash { color: #3fb950; font-weight: 700; }
-.t-cash-grand { color: #d29922; }
-.t-note { color: #6e7681; font-style: italic; }
-.t-track { display: flex; align-items: baseline; gap: 10px; }
-.t-key { color: #58a6ff; flex-shrink: 0; }
-.t-star { color: #d29922; }
-.t-name { color: #c9d1d9; flex-shrink: 0; }
-.t-grand .t-name { color: #e6edf3; font-weight: 700; }
-.t-dots { flex: 1; border-bottom: 1px dotted #30363d; transform: translateY(-5px); min-width: 24px; }
-.t-enter {
-  font-family: inherit; font-size: 14.5px;
-  background: transparent; color: #3fb950; border: 1px solid #3fb950;
-  border-radius: 6px; padding: 8px 18px; margin: 6px 0 10px; cursor: pointer;
-  transition: background .15s ease, box-shadow .15s ease;
-}
-.t-enter:hover { background: rgba(63,185,80,.14); box-shadow: 0 0 0 3px rgba(63,185,80,.12); }
-.t-prompt-last { display: flex; align-items: center; }
-.t-cursor { display: inline-block; width: 9px; height: 17px; background: #3fb950; animation: term-blink 1.05s steps(1) infinite; }
-@keyframes term-blink { 50% { opacity: 0; } }
-
-@media (max-width: 640px) {
-  .view-body.term-view { padding: 20px 12px 60px; }
-  .term-body { font-size: 13px; padding: 18px 16px 22px; }
-}
 .bx-thread-head { display: flex; align-items: center; gap: 8px; }
 .bx-back {
   display: flex;
