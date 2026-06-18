@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { EMAILS, TOPIC_NAMES, DEADLINES, SEND_WINDOW, BEST_EMAILS, EVENTS } from './data.js'
+import { EMAILS, TOPIC_NAMES, DEADLINES, SEND_WINDOW, BEST_EMAILS, EVENTS, MEMES } from './data.js'
 import * as I from './icons.jsx'
 
 const GMAIL_LOGO = '/logo.png'
@@ -9,6 +9,7 @@ const TRACKS = ['unreachable', 'subject', 'twoliner', 'ask'].map(t => EMAILS.fin
 // ---------------- TOP BAR ----------------
 function TopBar({ onMenu, onLogo, onJemini }) {
   const [q, setQ] = useState('')
+  const [meme] = useState(() => MEMES[Math.floor(Math.random() * MEMES.length)])
   return (
     <div className="topbar">
       <div className="icon-btn" title="Main menu" onClick={onMenu}><I.Menu /></div>
@@ -26,7 +27,9 @@ function TopBar({ onMenu, onLogo, onJemini }) {
         <div className="jemini" onClick={e => { e.stopPropagation(); onJemini() }}><I.Spark /> Jemini</div>
         <div className="icon-btn" title="Support"><I.Help /></div>
         <div className="status-pill"><span className="status-dot" /> Active <I.CaretDown /></div>
-        <div className="avatar-ring"><div className="avatar" /></div>
+        <div className="avatar-ring" title={meme.name}>
+          <img className="avatar-img" src={meme.img} alt={meme.name} onError={e => { e.currentTarget.style.display = 'none' }} />
+        </div>
       </div>
     </div>
   )

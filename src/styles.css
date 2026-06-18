@@ -34,6 +34,7 @@ html, body, #root { font-family:'Roboto',Arial,sans-serif; color:var(--text); ba
 .status-dot { width:9px; height:9px; border-radius:50%; background:#1e8e3e; flex:0 0 auto; }
 .avatar-ring { width:42px; height:42px; border-radius:50%; margin-left:6px; padding:2px; box-sizing:border-box; cursor:pointer; background:conic-gradient(from 90deg,#4285f4,#9b72cb,#d96570,#f9ab00,#4285f4); }
 .avatar-ring .avatar { width:100%; height:100%; margin:0; border:2px solid #fff; box-sizing:border-box; }
+.avatar-ring .avatar-img { width:100%; height:100%; border-radius:50%; object-fit:cover; border:2px solid #fff; box-sizing:border-box; display:block; }
 
 .app { display:flex; height:calc(100vh - 64px); }
 

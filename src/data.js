@@ -219,6 +219,17 @@ Get the reply. → thecold.email`,
   },
 ]
 
+// Profile-pic meme pool — random one shows in the avatar ring each refresh.
+// Drop matching images into public/memes/ (filenames below); click avatar to enlarge.
+export const MEMES = [
+  { name: 'Elon smoking on Rogan',  img: '/memes/elon-weed.png' },
+  { name: 'Distracted Boyfriend',   img: '/memes/distracted-boyfriend.png' },
+  { name: 'Drake Hotline Bling',    img: '/memes/drake.png' },
+  { name: 'Side-Eyeing Chloe',      img: '/memes/chloe.png' },
+  { name: 'Gigachad',               img: '/memes/gigachad.png' },
+  { name: 'Hide the Pain Harold',   img: '/memes/harold.png' },
+]
+
 export const TOPIC_NAMES = {
   rule: 'The Rule',
   unreachable: 'The Unreachable',
