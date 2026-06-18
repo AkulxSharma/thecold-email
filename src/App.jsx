@@ -61,7 +61,7 @@ function Sidebar({ onCompose, view, setView, open }) {
       <NavItem icon={<I.M name="help" />} label="The Ask"            active={view === 'track-ask'}         onClick={() => setView('track-ask')} />
 
       <div className="section-head"><I.CaretDown /> THE EVENT</div>
-      <NavItem icon={<I.M name="gavel" />}        label="The Rule"   active={view === 'rule'}    onClick={() => setView('rule')} />
+      <NavItem icon={<I.M name="rule" />}        label="The Rule"   active={view === 'rule'}    onClick={() => setView('rule')} />
       <NavItem icon={<I.M name="emoji_events" />} label="Prizes"     active={view === 'prizes'}  onClick={() => setView('prizes')} />
       <NavItem icon={<I.M name="balance" />}      label="Judging"    active={view === 'judging'} onClick={() => setView('judging')} />
     </div>
