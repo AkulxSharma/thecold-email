@@ -556,46 +556,92 @@ function ViewCalendar() {
 // ---------------- VIEW: BEST EMAIL EVER ----------------
 const AVATAR_COLORS = ['#1a73e8', '#34a853', '#ea4335', '#fbbc04', '#9c27b0']
 
+// First line of a body, used as the inbox-row snippet
+function snippet(text) {
+  return text.split('\n').map(l => l.trim()).filter(Boolean).slice(1).join(' ').slice(0, 90)
+}
+
 function ViewBest() {
+  const [open, setOpen] = useState(null) // null = inbox list; index = open thread
+  const [aiOpen, setAiOpen] = useState(true)
+
+  // -------- Open thread (reading pane) --------
+  if (open != null) {
+    const em = BEST_EMAILS[open]
+    const initials = em.from.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
+    const color = AVATAR_COLORS[open % AVATAR_COLORS.length]
+    return (
+      <div className="view-panel">
+        <div className="view-header bx-thread-head">
+          <span className="bx-back" title="Back to inbox" onClick={() => setOpen(null)}><I.M name="arrow_back" size={20} /></span>
+          <h2 className="view-title">{em.subject}</h2>
+        </div>
+        <div className="view-body">
+          <div className="best-thread">
+            <div className="msg best-msg">
+              <div className="msg-avatar" style={{ background: color }}>{initials}</div>
+              <div className="msg-main">
+                <div className="msg-head">
+                  <span className="msg-from">{em.from}</span>
+                  <span className="msg-email">&lt;{em.fromEmail}&gt;</span>
+                  <span className="msg-date">Example entry</span>
+                </div>
+                <div className="msg-to">To: judges@thecold.email</div>
+                <div className="msg-body">{em.body}</div>
+              </div>
+            </div>
+            <div className="msg best-msg best-reply">
+              <div className="msg-avatar" style={{ background: '#5f6368' }}>R</div>
+              <div className="msg-main">
+                <div className="msg-head">
+                  <span className="msg-from">Recipient</span>
+                  <span className="msg-date best-reply-tag">✓ Real reply</span>
+                </div>
+                <div className="msg-body">{em.reply}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // -------- Inbox list --------
   return (
     <div className="view-panel">
       <div className="view-header">
         <h2 className="view-title">Best Email Ever</h2>
       </div>
-      <div className="view-body">
-        <p className="lp-meta-note">Example cold emails — Akul will replace with real winning entries.</p>
-        <div className="best-list">
-          {BEST_EMAILS.map((em, i) => {
-            const initials = em.from.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
-            const color = AVATAR_COLORS[i % AVATAR_COLORS.length]
-            return (
-              <div className="best-thread" key={i}>
-                <div className="best-subject-bar">{em.subject}</div>
-                <div className="msg best-msg">
-                  <div className="msg-avatar" style={{ background: color }}>{initials}</div>
-                  <div className="msg-main">
-                    <div className="msg-head">
-                      <span className="msg-from">{em.from}</span>
-                      <span className="msg-email">&lt;{em.fromEmail}&gt;</span>
-                      <span className="msg-date">Example entry</span>
-                    </div>
-                    <div className="msg-to">To: judges@thecold.email</div>
-                    <div className="msg-body">{em.body}</div>
-                  </div>
-                </div>
-                <div className="msg best-msg best-reply">
-                  <div className="msg-avatar" style={{ background: '#5f6368' }}>R</div>
-                  <div className="msg-main">
-                    <div className="msg-head">
-                      <span className="msg-from">Recipient</span>
-                      <span className="msg-date best-reply-tag">✓ Real reply</span>
-                    </div>
-                    <div className="msg-body">{em.reply}</div>
-                  </div>
-                </div>
-              </div>
-            )
-          })}
+      <div className="view-body view-body-best">
+        <div className="ai-overview">
+          <div className="ai-ov-head">
+            <span className="ai-ov-spark"><I.Spark size={20} /></span>
+            <span className="ai-ov-title">AI Overview</span>
+            <span className="ai-ov-chevron" onClick={() => setAiOpen(o => !o)} title={aiOpen ? 'Collapse' : 'Expand'}>
+              <I.M name={aiOpen ? 'expand_less' : 'expand_more'} size={22} />
+            </span>
+          </div>
+          {aiOpen && (
+            <p className="ai-ov-body">
+              These are example cold emails — the best of thecold.email, proven by who actually replied. Akul will replace them with the real winning entries.
+            </p>
+          )}
+        </div>
+        <div className="bx-list">
+          {BEST_EMAILS.map((em, i) => (
+            <div className="bx-row" key={i} onClick={() => setOpen(i)}>
+              <span className="bx-check" onClick={e => e.stopPropagation()}><I.M name="check_box_outline_blank" size={18} /></span>
+              <span className="bx-stat bx-stat-star"><I.M name="star" size={18} />{em.stars}</span>
+              <span className="bx-stat bx-stat-views">{em.views != null ? <><I.M name="visibility" size={18} />{em.views}</> : null}</span>
+              <span className="bx-sender">{em.from}</span>
+              <span className="bx-snippet">
+                {em.tag && <span className="bx-tag">{em.tag}</span>}
+                <span className="bx-subj">{em.subject.replace(/^\[PLACEHOLDER\]\s*/, '')}</span>
+                <span className="bx-dash"> - {snippet(em.body)}</span>
+              </span>
+              <span className="bx-date">{em.date}</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>

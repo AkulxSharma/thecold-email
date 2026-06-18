@@ -274,6 +274,7 @@ export const BEST_EMAILS = [
   {
     from: 'Alex Chen',
     fromEmail: 'alex@example.com',
+    stars: 612, views: 2840, tag: 'The Unreachable', date: 'Jul 7, 2026',
     subject: '[PLACEHOLDER] Re: Quick question about your research',
     body: `Hi Professor Williams,
 
@@ -291,6 +292,7 @@ Good catch. I've been meaning to revisit that section. Yes, let's talk — does 
   {
     from: 'Jordan Rivera',
     fromEmail: 'jordan@example.com',
+    stars: 548, views: 2510, tag: 'The Ask', date: 'Jul 6, 2026',
     subject: '[PLACEHOLDER] Re: The talk you gave at SaaStr',
     body: `Hi Sarah,
 
@@ -306,6 +308,7 @@ Sarah`,
   {
     from: 'Morgan Liu',
     fromEmail: 'morgan@example.com',
+    stars: 503, tag: 'The Two-Liner', date: 'Jul 5, 2026',
     subject: '[PLACEHOLDER] Two sentences',
     body: `Hi Marcus,
 
