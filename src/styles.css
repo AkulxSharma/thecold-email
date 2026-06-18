@@ -165,8 +165,8 @@ html, body, #root { font-family:'Roboto',Arial,sans-serif; color:var(--text); ba
 /* Sidebar icons: outlined by default, filled only when the item is active */
 .nav-item .msym { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20; }
 .nav-item.active .msym { font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20; }
-.nav-item .spark-pen { fill:none; stroke:currentColor; stroke-width:1.7; stroke-linejoin:round; stroke-linecap:round; }
-.nav-item.active .spark-pen { fill:currentColor; stroke:none; }
+.nav-item .stroke-ico { fill:none; stroke:currentColor; stroke-width:1.7; stroke-linejoin:round; stroke-linecap:round; }
+.nav-item.active .stroke-ico { fill:currentColor; stroke:none; }
 .cw-chip-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .cw-chip-x { display:flex; align-items:center; cursor:pointer; color:#5f6368; border-radius:50%; }
 .cw-chip-x:hover { background:rgba(0,0,0,.1); color:#202124; }

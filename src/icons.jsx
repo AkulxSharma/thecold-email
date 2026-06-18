@@ -53,9 +53,15 @@ export const Gavel = () => <S d="M1 21h12v2H1zm5.5-4h1c.28 0 .5-.22.5-.5v-1c0-.2
 export const Balance = () => <S d="M17 19H7c-.55 0-1 .45-1 1s.45 1 1 1h10c.55 0 1-.45 1-1s-.45-1-1-1zm-5-2c.55 0 1-.45 1-1V7.82l4.45 8.18H6.55L11 7.82V16c0 .55.45 1 1 1zm-7.5-2c0 1.38 1.12 2.5 2.5 2.5S9.5 16.38 9.5 15H4.5zm15 0H14.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5zM12 2L6.5 13h11z" />
 export const Target = () => <S d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm0-12c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
 export const SubjectIcon = () => <S d="M14 17H4v2h10v-2zm6-8H4v2h16V9zM4 15h16v-2H4v2zM4 5v2h16V5H4z" />
+// The Unreachable — plane silhouette; stroked when idle, filled when active (.stroke-ico).
+export const Plane = ({ size = 22 }) => (
+  <svg className="stroke-ico" viewBox="0 0 24 24" width={size} height={size} fill="currentColor">
+    <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" />
+  </svg>
+)
 // Best Subject Line — auto_awesome sparkle + Ink Pen combined into one glyph.
 export const SparkPen = ({ size = 22 }) => (
-  <svg className="spark-pen" viewBox="0 0 24 24" width={size} height={size} fill="currentColor">
+  <svg className="stroke-ico" viewBox="0 0 24 24" width={size} height={size} fill="currentColor">
     {/* sparkle (top-left, larger, nearer pen) */}
     <path d="M7 2.5c.6 2.9 1.5 3.8 4.5 4.5-3 .7-3.9 1.6-4.5 4.5-.6-2.9-1.5-3.8-4.5-4.5 3-.7 3.9-1.6 4.5-4.5z" />
     {/* ink pen (diagonal, nib lower-left) — cap edges aligned to body edge lines, thin gap */}
