@@ -132,18 +132,37 @@ html, body, #root { font-family:'Roboto',Arial,sans-serif; color:var(--text); ba
 .reply-box .send-btn { background:var(--blue); color:#fff; border:none; border-radius:18px; height:36px; padding:0 24px; font-size:14px; font-weight:500; cursor:pointer; margin-top:6px; }
 .reply-box .send-btn:hover { background:#0b4ec0; }
 
-.compose-win { position:fixed; bottom:0; right:60px; width:500px; background:#fff; border-radius:12px 12px 0 0; box-shadow:0 0 8px 2px rgba(0,0,0,.25); display:flex; flex-direction:column; z-index:100; }
-.cw-head { background:#f2f6fc; border-radius:12px 12px 0 0; padding:10px 16px; font-size:14px; color:#202124; display:flex; align-items:center; }
-.cw-head .cw-close { margin-left:auto; cursor:pointer; color:#444746; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%; }
-.cw-head .cw-close:hover { background:rgba(0,0,0,.08); }
-.cw-field { border-bottom:1px solid #f1f1f1; padding:8px 16px; display:flex; align-items:center; gap:8px; font-size:14px; }
-.cw-field span { color:#5e5e5e; }
-.cw-field input { flex:1; border:none; outline:none; font-size:14px; }
-.cw-body { padding:12px 16px; }
-.cw-body textarea { width:100%; border:none; outline:none; resize:none; min-height:200px; font-family:inherit; font-size:14px; }
-.cw-foot { padding:10px 16px 16px; }
-.cw-send { background:var(--blue); color:#fff; border:none; border-radius:18px; height:36px; padding:0 28px; font-size:14px; font-weight:500; cursor:pointer; }
-.cw-send:hover { background:#0b4ec0; }
+.compose-win { position:fixed; bottom:0; right:60px; width:560px; background:#fff; border-radius:12px 12px 0 0; box-shadow:0 8px 24px rgba(0,0,0,.28); display:flex; flex-direction:column; z-index:100; max-height:92vh; }
+.cw-head { background:#f2f6fc; border-radius:12px 12px 0 0; padding:10px 16px; display:flex; align-items:center; }
+.cw-title { font-size:14px; font-weight:500; color:#202124; }
+.cw-head-icons { margin-left:auto; display:flex; align-items:center; gap:4px; }
+.cw-hi { cursor:pointer; color:#202124; width:28px; height:28px; display:flex; align-items:center; justify-content:center; border-radius:50%; }
+.cw-hi:hover { background:rgba(0,0,0,.08); }
+.cw-field { border-bottom:1px solid #f1f1f1; padding:9px 16px; display:flex; align-items:center; gap:10px; font-size:14px; }
+.cw-label { color:#5e5e5e; min-width:36px; }
+.cw-field input { flex:1; border:none; outline:none; font-size:14px; background:transparent; }
+.cw-field-plain { padding-left:16px; }
+.cw-subject { font-weight:400; }
+.cw-ccbcc { color:#5e5e5e; cursor:pointer; flex-shrink:0; }
+.cw-select { flex:1; border:none; outline:none; font-size:14px; background:transparent; cursor:pointer; }
+.cw-body { padding:12px 16px; flex:1; overflow-y:auto; }
+.cw-body textarea { width:100%; border:none; outline:none; resize:none; min-height:160px; font-family:inherit; font-size:14px; }
+/* Formatting toolbar */
+.cw-toolbar { display:flex; align-items:center; gap:2px; padding:6px 14px; margin:0 8px; background:#f8fafd; border-radius:18px; color:#444746; overflow-x:auto; }
+.cw-tb-font { display:flex; align-items:center; font-size:13px; color:#444746; padding:4px 6px; border-radius:4px; cursor:pointer; white-space:nowrap; }
+.cw-tb-font:hover, .cw-tb-ic:hover { background:rgba(0,0,0,.06); }
+.cw-tb-ic { display:flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:4px; cursor:pointer; flex-shrink:0; }
+.cw-tb-div { width:1px; height:18px; background:#dadce0; margin:0 4px; flex-shrink:0; }
+/* Send row */
+.cw-actions { display:flex; align-items:center; gap:6px; padding:8px 16px 14px; }
+.cw-send { display:flex; align-items:center; background:var(--blue); color:#fff; border:none; border-radius:18px; height:36px; padding:0 14px 0 24px; font-size:15px; font-weight:500; cursor:pointer; }
+.cw-send:hover { background:#0b4ec0; box-shadow:0 1px 3px rgba(0,0,0,.3); }
+.cw-send-caret { display:flex; align-items:center; margin-left:6px; border-left:1px solid rgba(255,255,255,.4); padding-left:6px; }
+.cw-act-icons { display:flex; align-items:center; gap:2px; margin-left:8px; color:#444746; }
+.cw-act-ic { display:flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; cursor:pointer; }
+.cw-act-ic:hover { background:rgba(0,0,0,.06); }
+.cw-trash { margin-left:auto; display:flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; cursor:pointer; color:#444746; }
+.cw-trash:hover { background:rgba(0,0,0,.06); }
 
 .toast { position:fixed; bottom:24px; left:24px; background:#323232; color:#fff; padding:14px 20px; border-radius:8px; font-size:14px; z-index:200; }
 

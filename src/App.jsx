@@ -76,20 +76,82 @@ function ComposeWindow({ onClose, onSend }) {
   const [track, setTrack] = useState(TRACK_OPTIONS[0])
   const [email, setEmail] = useState('')
   const [proof, setProof] = useState('')
+  const [subject, setSubject] = useState('')
   const [body, setBody] = useState('')
   return (
     <div className="compose-win">
-      <div className="cw-head">Enter the competition<div className="cw-close" onClick={onClose}><I.Close w={18} /></div></div>
-      <div className="cw-field"><span>To</span><input value="judges@thecold.email" readOnly tabIndex={-1} style={{ color: '#5e5e5e' }} /></div>
-      <div className="cw-field"><span>Track</span>
-        <select value={track} onChange={e => setTrack(e.target.value)} style={{ flex: 1, border: 'none', outline: 'none', fontSize: 14, background: 'transparent', cursor: 'pointer' }}>
+      <div className="cw-head">
+        <span className="cw-title">New Message</span>
+        <div className="cw-head-icons">
+          <span className="cw-hi" title="Minimize"><I.M name="remove" size={18} /></span>
+          <span className="cw-hi" title="Full screen"><I.M name="open_in_full" size={15} /></span>
+          <span className="cw-hi" title="Close" onClick={onClose}><I.M name="close" size={18} /></span>
+        </div>
+      </div>
+
+      <div className="cw-field">
+        <span className="cw-label">From</span>
+        <input value={email} onChange={e => setEmail(e.target.value)} placeholder="your email" />
+      </div>
+      <div className="cw-field">
+        <span className="cw-label">To</span>
+        <input value="judges@thecold.email" readOnly tabIndex={-1} style={{ color: '#5e5e5e' }} />
+        <span className="cw-ccbcc">Cc&nbsp;&nbsp;Bcc</span>
+      </div>
+      <div className="cw-field">
+        <span className="cw-label">Track</span>
+        <select value={track} onChange={e => setTrack(e.target.value)} className="cw-select">
           {TRACK_OPTIONS.map(t => <option key={t}>{t}</option>)}
         </select>
       </div>
-      <div className="cw-field"><span>Your&nbsp;email</span><input value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" /></div>
-      <div className="cw-field"><span>Reply&nbsp;proof</span><input value={proof} onChange={e => setProof(e.target.value)} placeholder="Link to a screenshot of the reply you got" /></div>
-      <div className="cw-body"><textarea value={body} onChange={e => setBody(e.target.value)} placeholder="Paste the cold email you sent (and the reply, if you like)..." /></div>
-      <div className="cw-foot"><button className="cw-send" onClick={() => onSend({ track, email, proof })}>Submit entry</button></div>
+      <div className="cw-field cw-field-plain">
+        <input className="cw-subject" value={subject} onChange={e => setSubject(e.target.value)} placeholder="Subject" />
+      </div>
+      <div className="cw-field">
+        <span className="cw-label">Proof</span>
+        <input value={proof} onChange={e => setProof(e.target.value)} placeholder="Link to a screenshot of the reply you got" />
+      </div>
+
+      <div className="cw-body">
+        <textarea value={body} onChange={e => setBody(e.target.value)} placeholder="Paste the cold email you sent (and the reply, if you like)..." />
+      </div>
+
+      {/* Formatting toolbar (decorative — matches Gmail) */}
+      <div className="cw-toolbar">
+        <span className="cw-tb-font">Sans Serif <I.M name="arrow_drop_down" size={18} /></span>
+        <span className="cw-tb-div" />
+        <span className="cw-tb-ic"><I.M name="format_size" size={18} /></span>
+        <span className="cw-tb-div" />
+        <span className="cw-tb-ic"><I.M name="format_bold" size={18} /></span>
+        <span className="cw-tb-ic"><I.M name="format_italic" size={18} /></span>
+        <span className="cw-tb-ic"><I.M name="format_underlined" size={18} /></span>
+        <span className="cw-tb-ic"><I.M name="format_color_text" size={18} /></span>
+        <span className="cw-tb-div" />
+        <span className="cw-tb-ic"><I.M name="format_align_left" size={18} /></span>
+        <span className="cw-tb-ic"><I.M name="format_list_numbered" size={18} /></span>
+        <span className="cw-tb-ic"><I.M name="format_list_bulleted" size={18} /></span>
+        <span className="cw-tb-ic"><I.M name="format_indent_decrease" size={18} /></span>
+        <span className="cw-tb-ic"><I.M name="format_indent_increase" size={18} /></span>
+        <span className="cw-tb-ic"><I.M name="format_quote" size={18} /></span>
+        <span className="cw-tb-ic"><I.M name="more_vert" size={18} /></span>
+      </div>
+
+      {/* Send row */}
+      <div className="cw-actions">
+        <button className="cw-send" onClick={() => onSend({ track, email, proof, subject, body })}>
+          Send<span className="cw-send-caret"><I.M name="arrow_drop_down" size={20} /></span>
+        </button>
+        <div className="cw-act-icons">
+          <span className="cw-act-ic"><I.M name="format_color_text" size={20} /></span>
+          <span className="cw-act-ic"><I.M name="attach_file" size={20} /></span>
+          <span className="cw-act-ic"><I.M name="link" size={20} /></span>
+          <span className="cw-act-ic"><I.M name="mood" size={20} /></span>
+          <span className="cw-act-ic"><I.M name="add_to_drive" size={20} /></span>
+          <span className="cw-act-ic"><I.M name="image" size={20} /></span>
+          <span className="cw-act-ic"><I.M name="schedule_send" size={20} /></span>
+        </div>
+        <span className="cw-trash" title="Discard" onClick={onClose}><I.M name="delete" size={20} /></span>
+      </div>
     </div>
   )
 }
