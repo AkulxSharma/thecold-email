@@ -1,0 +1,856 @@
+import { useState, useRef } from 'react'
+import { EMAILS, TOPIC_NAMES, DEADLINES, SEND_WINDOW, BEST_EMAILS, EVENTS } from './data.js'
+import * as I from './icons.jsx'
+
+const GMAIL_LOGO = '/logo.png'
+// Track content pulled from the single source of truth (data.js)
+const TRACKS = ['unreachable', 'subject', 'twoliner', 'ask'].map(t => EMAILS.find(e => e.topic === t))
+
+// ---------------- TOP BAR ----------------
+function TopBar({ onMenu, onLogo, onJemini }) {
+  const [q, setQ] = useState('')
+  return (
+    <div className="topbar">
+      <div className="icon-btn" title="Main menu" onClick={onMenu}><I.Menu /></div>
+      <div className="logo" onClick={onLogo}><img src={GMAIL_LOGO} alt="" /><span className="wordmark">thecold.email</span></div>
+      <div className="search">
+        <div className="icon-btn" style={{ width: 40, height: 40 }}><I.Search /></div>
+        <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search mail" />
+        {q && <div className="clear-x" onClick={() => setQ('')}><I.Close w={20} /></div>}
+        <div className="search-right">
+          <div className="chip"><I.PersonOutline /> From</div>
+          <div className="chip"><I.People /> To <span className="kbd">⌘K</span></div>
+        </div>
+      </div>
+      <div className="top-right">
+        <div className="icon-btn" title="Feedback"><I.Feedback /></div>
+        <div className="icon-btn" title="Support"><I.Help /></div>
+        <div className="icon-btn" title="Settings"><I.Settings /></div>
+        <div className="jemini" onClick={e => { e.stopPropagation(); onJemini() }}><I.Spark /> Jemini</div>
+        <div className="icon-btn" title="Apps"><I.Apps /></div>
+        <div className="avatar" />
+      </div>
+    </div>
+  )
+}
+
+// ---------------- SIDEBAR ----------------
+function NavItem({ icon, label, count, active, onClick, cls = '' }) {
+  return (
+    <div className={`nav-item ${cls} ${active ? 'active' : ''}`} onClick={onClick}>
+      {icon && <span className="ni-icon">{icon}</span>}
+      <span className="label">{label}</span>
+      {count != null && <span className="count">{count}</span>}
+    </div>
+  )
+}
+
+function Sidebar({ onCompose, view, setView }) {
+  return (
+    <div className="sidebar">
+      <div className="compose" onClick={onCompose}><I.Pencil /> Enter</div>
+
+      <NavItem icon={<I.M name="inbox" />}         label="Inbox"          count="7,493" active={view === 'overview'} onClick={() => setView('overview')} />
+      <NavItem icon={<I.M name="star" />}          label="Starred"                            active={view === 'winners'}  onClick={() => setView('winners')} />
+      <NavItem icon={<I.M name="send" />}          label="Sent"                               active={view === 'enter'}    onClick={() => setView('enter')} />
+      <NavItem icon={<I.M name="calendar_month" />} label="Daily Activity"                    active={view === 'calendar'} onClick={() => setView('calendar')} />
+      <NavItem icon={<I.M name="auto_awesome" />}  label="Best Email Ever"                    active={view === 'best'}     onClick={() => setView('best')} />
+
+      <div className="section-head"><I.CaretDown /> TRACKS</div>
+      <NavItem icon={<I.M name="gps_fixed" />}  label="The Unreachable"    active={view === 'track-unreachable'} onClick={() => setView('track-unreachable')} />
+      <NavItem icon={<I.M name="subject" />}    label="Best Subject Line"  active={view === 'track-subject'}     onClick={() => setView('track-subject')} />
+      <NavItem icon={<I.M name="short_text" />} label="The Two-Liner"      active={view === 'track-twoliner'}    onClick={() => setView('track-twoliner')} />
+      <NavItem icon={<I.M name="front_hand" />} label="The Ask"            active={view === 'track-ask'}         onClick={() => setView('track-ask')} />
+
+      <div className="section-head"><I.CaretDown /> THE EVENT</div>
+      <NavItem icon={<I.M name="gavel" />}        label="The Rule"   active={view === 'rule'}    onClick={() => setView('rule')} />
+      <NavItem icon={<I.M name="emoji_events" />} label="Prizes"     active={view === 'prizes'}  onClick={() => setView('prizes')} />
+      <NavItem icon={<I.M name="balance" />}      label="Judging"    active={view === 'judging'} onClick={() => setView('judging')} />
+    </div>
+  )
+}
+
+// ---------------- ENTRY FORM (Compose) ----------------
+const TRACK_OPTIONS = ['The Best Cold Email (overall)', 'The Unreachable', 'Best Subject Line', 'The Two-Liner', 'The Ask']
+function ComposeWindow({ onClose, onSend }) {
+  const [track, setTrack] = useState(TRACK_OPTIONS[0])
+  const [email, setEmail] = useState('')
+  const [proof, setProof] = useState('')
+  const [body, setBody] = useState('')
+  return (
+    <div className="compose-win">
+      <div className="cw-head">Enter the competition<div className="cw-close" onClick={onClose}><I.Close w={18} /></div></div>
+      <div className="cw-field"><span>To</span><input value="judges@thecold.email" readOnly tabIndex={-1} style={{ color: '#5e5e5e' }} /></div>
+      <div className="cw-field"><span>Track</span>
+        <select value={track} onChange={e => setTrack(e.target.value)} style={{ flex: 1, border: 'none', outline: 'none', fontSize: 14, background: 'transparent', cursor: 'pointer' }}>
+          {TRACK_OPTIONS.map(t => <option key={t}>{t}</option>)}
+        </select>
+      </div>
+      <div className="cw-field"><span>Your&nbsp;email</span><input value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" /></div>
+      <div className="cw-field"><span>Reply&nbsp;proof</span><input value={proof} onChange={e => setProof(e.target.value)} placeholder="Link to a screenshot of the reply you got" /></div>
+      <div className="cw-body"><textarea value={body} onChange={e => setBody(e.target.value)} placeholder="Paste the cold email you sent (and the reply, if you like)..." /></div>
+      <div className="cw-foot"><button className="cw-send" onClick={() => onSend({ track, email, proof })}>Submit entry</button></div>
+    </div>
+  )
+}
+
+// ---------------- JEMINI (assistant) ----------------
+// Deterministic, on-brand responder. No backend / no API key — keyword routes
+// to answers built from the event facts. Same shape as a real chat panel.
+function jeminiAnswer(qRaw) {
+  const q = qRaw.toLowerCase()
+  const has = (...words) => words.some(w => q.includes(w))
+
+  if (has('hi', 'hey', 'hello', 'yo ')) return "Hey. Ask me about the tracks, prizes, the rule, deadlines, or how to enter."
+  if (has('unreachable')) return "The Unreachable: get a reply from someone who never replies — a founder, a celeb, an investor. Scored on how unreachable they are + the reply. $500."
+  if (has('subject')) return "Best Subject Line: the reply was earned by the subject line alone. Scored on the line itself + that it landed a reply. $500."
+  if (has('two-liner', 'two liner', 'twoliner', '2 line', 'short')) return "The Two-Liner: land a reply in 2 sentences or fewer. Scored on brevity + the reply. $500."
+  if (has('the ask', 'big ask', 'huge', 'land')) return "The Ask: land a huge yes — money, a meeting, a job, a partnership. Scored on the size of the yes. $500."
+  if (has('track')) return "4 tracks, $500 each:\n• The Unreachable\n• Best Subject Line\n• The Two-Liner\n• The Ask\nEvery entry also competes for The Best Cold Email — the $1,000 grand prize."
+  if (has('prize', 'money', 'win', 'cash', '$', 'pay')) return "$3,000 total:\n• The Best Cold Email (grand) — $1,000\n• Each of the 4 tracks — $500"
+  if (has('grand', 'best cold email', 'overall')) return "The Best Cold Email is the $1,000 grand prize — the single best email of the event. Every entry, any track, is in the running."
+  if (has('rule', 'cheat', 'allowed', 'disqualif', 'fake')) return "One rule: real replies only. A real stranger has to write back. No impersonation, no lying, no pre-existing relationship, no mass-blasting. Break any → disqualified."
+  if (has('judg', 'score', 'rubric', 'how do you decide')) return "Two steps: (1) a pass/fail gate — real reply, no rule broken; (2) a 100-point rubric per track. Highest per track wins; strongest overall takes the grand prize."
+  if (has('enter', 'how do i', 'submit', 'join', 'sign up', 'apply')) return "Send a cold email → get a real reply → submit the form with a screenshot of the reply before Jul 7. Hit Enter (top-left) to start."
+  if (has('deadline', 'date', 'when', 'timeline', 'launch', 'close', 'over')) return "Timeline:\n• Jun 24 — launch\n• Jun 30 — registration closes\n• Jul 7 — submissions close\n• Jul 10 — winners announced"
+  if (has('what', 'about', 'this', 'explain')) return "thecold.email is a competition to find the best cold emails on the planet — proven by who actually replied. Get the reply."
+  return "Not sure on that one. Try: tracks, prizes, the rule, judging, deadlines, or how to enter."
+}
+
+const JEMINI_CHIPS = ['What are the tracks?', 'How do I enter?', "What's the rule?", 'Prizes?', 'Deadlines?']
+
+function JeminiPanel({ onClose }) {
+  const [msgs, setMsgs] = useState([])
+  const [input, setInput] = useState('')
+  const scrollRef = useRef()
+  const started = msgs.length > 0
+
+  const send = (text) => {
+    const t = (text ?? input).trim()
+    if (!t) return
+    const reply = jeminiAnswer(t)
+    setMsgs(m => [...m, { role: 'you', text: t }, { role: 'bot', text: reply }])
+    setInput('')
+    setTimeout(() => { if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight }, 0)
+  }
+
+  return (
+    <div className="jemini-panel" onClick={e => e.stopPropagation()}>
+      {/* toolbar */}
+      <div className="jp-bar">
+        <span className="jp-bar-title">Jemini</span>
+        <div className="jp-bar-icons">
+          <span className="jp-bar-ic" title="New chat" onClick={() => setMsgs([])}><I.M name="add" size={20} /></span>
+          <span className="jp-bar-ic" title="Expand"><I.M name="open_in_full" size={18} /></span>
+          <span className="jp-bar-ic" title="Reset" onClick={() => setMsgs([])}><I.M name="refresh" size={20} /></span>
+          <span className="jp-bar-ic" title="Close" onClick={onClose}><I.M name="close" size={20} /></span>
+        </div>
+      </div>
+
+      {/* body */}
+      <div className="jp-scroll" ref={scrollRef}>
+        {!started ? (
+          <div className="jp-empty">
+            <h2 className="jp-greet">What's on your mind?</h2>
+            <div className="jp-help"><I.M name="subdirectory_arrow_right" size={20} /> Ask me anything about thecold.email.</div>
+            <div className="jp-chips">
+              {JEMINI_CHIPS.map(c => <span key={c} className="jp-chip" onClick={() => send(c)}>{c}</span>)}
+            </div>
+          </div>
+        ) : (
+          <div className="jp-msgs">
+            {msgs.map((m, i) => <div key={i} className={`jp-msg jp-${m.role}`}>{m.text}</div>)}
+          </div>
+        )}
+      </div>
+
+      {/* compose */}
+      <div className="jp-compose">
+        <textarea
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() } }}
+          placeholder="Ask Jemini about the event"
+          rows={1}
+        />
+        <div className="jp-compose-row">
+          <span className="jp-compose-ic"><I.M name="science" size={20} /></span>
+          <span className="jp-compose-ic"><I.M name="tune" size={20} /></span>
+          <button className="jp-up" onClick={() => send()} title="Send"><I.M name="arrow_upward" size={20} /></button>
+        </div>
+      </div>
+      <div className="jp-foot">Jemini only knows this event — double-check anything important.</div>
+    </div>
+  )
+}
+
+// ================================================================
+// VIEW COMPONENTS
+// ================================================================
+
+// ---------------- VIEW: OVERVIEW (Inbox / Hero) ----------------
+function ViewOverview({ onEnter }) {
+  return (
+    <div className="view-panel">
+      <div className="lp-hero">
+        <div className="lp-eyebrow">★ THECOLD.EMAIL · GET THE REPLY</div>
+        <h1 className="lp-tagline">The world replies to those who know how to write.</h1>
+        <p className="lp-sub">A cold email competition to find the best cold emails on the planet — proven by who actually replied.</p>
+        <button className="lp-cta" onClick={onEnter}>Enter the competition</button>
+        <div className="lp-meta">Launch Jun 24 · Submit by Jul 7 · Winners Jul 10 · $3,000 in prizes</div>
+      </div>
+    </div>
+  )
+}
+
+// ---------------- VIEW: WINNERS (Starred) ----------------
+function ViewWinners() {
+  const prizes = [
+    { label: '★ The Best Cold Email', amount: '$1,000', grand: true },
+    { label: 'The Unreachable', amount: '$500' },
+    { label: 'Best Subject Line', amount: '$500' },
+    { label: 'The Two-Liner', amount: '$500' },
+    { label: 'The Ask', amount: '$500' },
+  ]
+  return (
+    <div className="view-panel">
+      <div className="view-header">
+        <h2 className="view-title">Winners</h2>
+      </div>
+      <div className="view-body">
+        <div className="winners-card">
+          <div className="winners-lock-badge">
+            <I.Trophy />
+            <span>Winners announced July 10, 2026</span>
+          </div>
+          <div className="winners-prizes">
+            {prizes.map((p, i) => (
+              <div key={i} className={`winners-row${p.grand ? ' winners-grand' : ''}`}>
+                <span className="winners-label winners-blurred">{p.label}</span>
+                <span className="winners-amount winners-blurred">{p.amount}</span>
+                <span className="winners-lock-icon"><I.EyeOff /></span>
+              </div>
+            ))}
+          </div>
+          <p className="winners-note">Results locked until the announcement. Check back July 10.</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ---------------- VIEW: ENTER (Sent / How to Enter) ----------------
+function ViewEnter({ onEnter }) {
+  return (
+    <div className="view-panel">
+      <div className="view-header">
+        <h2 className="view-title">How to Enter</h2>
+      </div>
+      <div className="view-body">
+        <div className="lp-steps">
+          <div className="lp-step">Send your cold email — real stranger, real ask.</div>
+          <div className="lp-step">Get a real reply.</div>
+          <div className="lp-step">Submit the form with a screenshot of the reply before July 7.</div>
+        </div>
+        <button className="lp-cta" style={{ marginTop: 8 }} onClick={onEnter}>Enter the competition</button>
+      </div>
+    </div>
+  )
+}
+
+// ================================================================
+// VIEW: CALENDAR — Google Calendar WEEK View
+// ================================================================
+const WEEKDAYS_SHORT = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December']
+const MONTH_ABBR  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+
+// Hours displayed in the timed grid (6 AM → 7 PM inclusive)
+const HOUR_START = 6
+const HOUR_END   = 19  // last hour label shown; grid goes to 20 (end of 7pm slot)
+const GRID_TOP_HOUR    = 6   // earliest hour in the grid
+const GRID_BOTTOM_HOUR = 20  // grid ends at 20:00 (exclusive)
+const GRID_HOURS       = GRID_BOTTOM_HOUR - GRID_TOP_HOUR // 14 hours
+const HOUR_PX          = 56  // px per hour
+
+// GCal color palette
+const COLOR_MAP = {
+  blue:       '#1a73e8',
+  'faint-blue': 'rgba(26,115,232,0.15)',
+  green:      '#0b8043',
+  purple:     '#8e24aa',
+  amber:      '#f09300',
+  orange:     '#e8710a',
+  red:        '#d50000',
+  teal:       '#009688',
+  graphite:   '#616161',
+}
+const COLOR_TEXT = {
+  'faint-blue': '#1a73e8',
+}
+
+function parseDate(str) {
+  const [y, m, d] = str.split('-').map(Number)
+  return new Date(y, m - 1, d)
+}
+function fmtYMD(date) {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+// Return Monday of the week that contains `date`
+function weekStart(date) {
+  const d = new Date(date)
+  const dow = d.getDay() // 0=Sun
+  const diff = dow === 0 ? -6 : 1 - dow // shift so Mon=0
+  d.setDate(d.getDate() + diff)
+  d.setHours(0, 0, 0, 0)
+  return d
+}
+function addDays(date, n) {
+  const d = new Date(date)
+  d.setDate(d.getDate() + n)
+  return d
+}
+function timeToMinutes(t) {
+  const [h, m] = t.split(':').map(Number)
+  return h * 60 + m
+}
+
+// Default week: Mon Jun 22 2026
+const DEFAULT_WEEK = new Date(2026, 5, 22)
+const TODAY_YMD = '2026-06-18'
+
+function ViewCalendar() {
+  const [monDate, setMonDate] = useState(weekStart(DEFAULT_WEEK))
+
+  // The 7 days Mon→Sun
+  const days = Array.from({ length: 7 }, (_, i) => addDays(monDate, i))
+  const dayYMDs = days.map(fmtYMD)
+
+  // Title: month name + year, e.g. "June 2026" (or "Jun – Jul 2026" if the week spans two months)
+  const sunDate = days[6]
+  const weekTitle = monDate.getMonth() === sunDate.getMonth()
+    ? `${monDate.toLocaleString('en-US', { month: 'long' })} ${sunDate.getFullYear()}`
+    : `${MONTH_ABBR[monDate.getMonth()]} – ${MONTH_ABBR[sunDate.getMonth()]} ${sunDate.getFullYear()}`
+
+  // Nav
+  const goPrev  = () => setMonDate(d => addDays(d, -7))
+  const goNext  = () => setMonDate(d => addDays(d,  7))
+  const goToday = () => setMonDate(weekStart(new Date(2026, 5, 18)))
+
+  // Partition events into all-day and timed, filtered to visible week
+  const monTs  = monDate.getTime()
+  const sunTs  = addDays(monDate, 7).getTime() - 1
+
+  const allDayEvents = []
+  const timedByDay   = {}  // ymd → [event, ...]
+  dayYMDs.forEach(ymd => { timedByDay[ymd] = [] })
+
+  EVENTS.forEach(ev => {
+    if (ev.allDay) {
+      const evStart = parseDate(ev.date).getTime()
+      const evEnd   = ev.dateEnd ? parseDate(ev.dateEnd).getTime() : evStart
+      // Overlaps the visible week?
+      if (evEnd >= monTs && evStart <= sunTs) {
+        allDayEvents.push(ev)
+      }
+    } else {
+      if (dayYMDs.includes(ev.date)) {
+        timedByDay[ev.date].push(ev)
+      }
+    }
+  })
+
+  // Count events in visible week
+  const totalEvents = allDayEvents.length + Object.values(timedByDay).flat().length
+
+  // For each day column, group all-day events
+  // Build per-day all-day event list (for the all-day row)
+  const allDayByDay = {}
+  dayYMDs.forEach(ymd => { allDayByDay[ymd] = [] })
+  const dayObjs = days.map(fmtYMD)
+
+  allDayEvents.forEach(ev => {
+    const evStartYMD = ev.date
+    const evEndYMD   = ev.dateEnd || ev.date
+    dayObjs.forEach((ymd, i) => {
+      const d = days[i]
+      const ts = d.getTime()
+      const s  = parseDate(evStartYMD).getTime()
+      const e  = parseDate(evEndYMD).getTime()
+      if (ts >= s && ts <= e) {
+        allDayByDay[ymd].push(ev)
+      }
+    })
+  })
+
+  const MAX_ALLDAY_VISIBLE = 3
+
+  // Hour labels 6 AM → 7 PM
+  const hourLabels = []
+  for (let h = HOUR_START; h <= HOUR_END; h++) {
+    hourLabels.push(h)
+  }
+
+  // Position helpers
+  function topPct(startMin) {
+    const offsetMin = startMin - GRID_TOP_HOUR * 60
+    return (offsetMin / (GRID_HOURS * 60)) * 100
+  }
+  function heightPct(startMin, endMin) {
+    return ((endMin - startMin) / (GRID_HOURS * 60)) * 100
+  }
+
+  // Overlap grouping: for a day's timed events, assign column slots
+  function groupOverlapping(events) {
+    // Sort by start
+    const sorted = [...events].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start))
+    const cols = []   // cols[i] = array of events in column i
+    const assigned = sorted.map(ev => {
+      const startM = timeToMinutes(ev.start)
+      const endM   = timeToMinutes(ev.end)
+      // Find first column where last event ends <= startM
+      let col = cols.findIndex(c => {
+        const last = c[c.length - 1]
+        return timeToMinutes(last.end) <= startM
+      })
+      if (col === -1) { col = cols.length; cols.push([]) }
+      cols[col].push(ev)
+      return { ev, col }
+    })
+    return { assigned, totalCols: cols.length }
+  }
+
+  return (
+    <div className="view-panel view-panel-calendar">
+      {/* ---- Header bar ---- */}
+      <div className="gcalw-topbar">
+        <div className="gcalw-nav-left">
+          <button className="gcalw-nav-round" title="Previous week" onClick={goPrev}>‹</button>
+          <button className="gcalw-nav-round" title="Next week"     onClick={goNext}>›</button>
+          <button className="gcalw-today-btn" onClick={goToday}>Today</button>
+          <span className="gcalw-title">{weekTitle}</span>
+        </div>
+        <div className="gcalw-nav-right">
+          <span className="gcalw-event-count">{totalEvents} events</span>
+          <span className="gcalw-view-pill">Week ▾</span>
+        </div>
+      </div>
+
+      {/* ---- Day column headers ---- */}
+      <div className="gcalw-header-row">
+        {/* Gutter placeholder */}
+        <div className="gcalw-gutter-label" />
+        {days.map((day, i) => {
+          const ymd     = dayYMDs[i]
+          const isToday = ymd === TODAY_YMD
+          const dow     = WEEKDAYS_SHORT[i]
+          return (
+            <div key={ymd} className="gcalw-day-head">
+              <span className="gcalw-dow">{dow}</span>
+              <span className={`gcalw-day-num${isToday ? ' gcalw-today' : ''}`}>
+                {day.getDate()}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* ---- All-day row ---- */}
+      <div className="gcalw-allday-row">
+        <div className="gcalw-gutter-label gcalw-allday-gutter">no time</div>
+        {days.map((day, i) => {
+          const ymd   = dayYMDs[i]
+          const evs   = allDayByDay[ymd] || []
+          const shown = evs.slice(0, MAX_ALLDAY_VISIBLE)
+          const more  = evs.length - shown.length
+          return (
+            <div key={ymd} className="gcalw-allday-cell">
+              {shown.map((ev, j) => {
+                const bg   = COLOR_MAP[ev.color] || '#1a73e8'
+                const isFaint = ev.color === 'faint-blue'
+                return (
+                  <div
+                    key={j}
+                    className="gcalw-allday-pill"
+                    style={{
+                      background: bg,
+                      color: isFaint ? COLOR_TEXT['faint-blue'] : '#fff',
+                      border: isFaint ? '1px solid rgba(26,115,232,0.4)' : 'none',
+                    }}
+                    title={ev.title}
+                  >
+                    {ev.title}
+                  </div>
+                )
+              })}
+              {more > 0 && (
+                <div className="gcalw-allday-more">+{more} more</div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+
+      {/* ---- Timed grid (scrolls) ---- */}
+      <div className="gcalw-grid-scroll">
+        <div className="gcalw-grid-inner" style={{ height: GRID_HOURS * HOUR_PX }}>
+          {/* Hour lines + gutter labels */}
+          {hourLabels.map(h => {
+            const top = (h - GRID_TOP_HOUR) * HOUR_PX
+            const label = h === 0 ? '12 AM' : h < 12 ? `${h} AM` : h === 12 ? '12 PM' : `${h - 12} PM`
+            return (
+              <div key={h} className="gcalw-hour-row" style={{ top, height: HOUR_PX }}>
+                <div className="gcalw-hour-label">{label}</div>
+                <div className="gcalw-hour-line" />
+              </div>
+            )
+          })}
+
+          {/* Day columns (7) */}
+          <div className="gcalw-day-cols">
+            {days.map((day, i) => {
+              const ymd    = dayYMDs[i]
+              const events = timedByDay[ymd] || []
+              const { assigned, totalCols } = groupOverlapping(events)
+
+              return (
+                <div key={ymd} className="gcalw-day-col">
+                  {assigned.map(({ ev, col }) => {
+                    const startM = timeToMinutes(ev.start)
+                    const endM   = timeToMinutes(ev.end)
+                    const topPx  = (startM - GRID_TOP_HOUR * 60) * (HOUR_PX / 60)
+                    const heightPx = Math.max((endM - startM) * (HOUR_PX / 60), 18)
+                    const widthPct = 100 / totalCols
+                    const bg     = COLOR_MAP[ev.color] || '#1a73e8'
+                    return (
+                      <div
+                        key={ev.title + ev.start}
+                        className="gcalw-event-block"
+                        style={{
+                          top:    topPx,
+                          height: heightPx,
+                          left:   `${col * widthPct + 1}%`,
+                          width:  `${widthPct - 2}%`,
+                          background: bg,
+                        }}
+                        title={`${ev.start}–${ev.end} ${ev.title}`}
+                      >
+                        <div className="gcalw-event-title">{ev.title}</div>
+                        <div className="gcalw-event-time">{ev.start}–{ev.end}</div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ---------------- VIEW: BEST EMAIL EVER ----------------
+const AVATAR_COLORS = ['#1a73e8', '#34a853', '#ea4335', '#fbbc04', '#9c27b0']
+
+function ViewBest() {
+  return (
+    <div className="view-panel">
+      <div className="view-header">
+        <h2 className="view-title">Best Email Ever</h2>
+      </div>
+      <div className="view-body">
+        <p className="lp-meta-note">Example cold emails — Akul will replace with real winning entries.</p>
+        <div className="best-list">
+          {BEST_EMAILS.map((em, i) => {
+            const initials = em.from.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
+            const color = AVATAR_COLORS[i % AVATAR_COLORS.length]
+            return (
+              <div className="best-thread" key={i}>
+                <div className="best-subject-bar">{em.subject}</div>
+                <div className="msg best-msg">
+                  <div className="msg-avatar" style={{ background: color }}>{initials}</div>
+                  <div className="msg-main">
+                    <div className="msg-head">
+                      <span className="msg-from">{em.from}</span>
+                      <span className="msg-email">&lt;{em.fromEmail}&gt;</span>
+                      <span className="msg-date">Example entry</span>
+                    </div>
+                    <div className="msg-to">To: judges@thecold.email</div>
+                    <div className="msg-body">{em.body}</div>
+                  </div>
+                </div>
+                <div className="msg best-msg best-reply">
+                  <div className="msg-avatar" style={{ background: '#5f6368' }}>R</div>
+                  <div className="msg-main">
+                    <div className="msg-head">
+                      <span className="msg-from">Recipient</span>
+                      <span className="msg-date best-reply-tag">✓ Real reply</span>
+                    </div>
+                    <div className="msg-body">{em.reply}</div>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ---------------- VIEW: TRACK DETAIL ----------------
+// Renders a single track's full detail from the EMAILS data
+const TRACK_ICONS = {
+  unreachable: <I.M name="gps_fixed" size={24} />,
+  subject:     <I.M name="subject" size={24} />,
+  twoliner:    <I.M name="short_text" size={24} />,
+  ask:         <I.M name="front_hand" size={24} />,
+}
+
+function ViewTrack({ topic }) {
+  const email = EMAILS.find(e => e.topic === topic)
+  if (!email) return <div className="view-panel"><div className="view-body"><p>Track not found.</p></div></div>
+
+  // Parse the body into sections
+  // Body structure: TITLE\n\nGoal line\n\nHow it's won\n\nScoring\n\nPrize
+  const lines = email.body.split('\n')
+  const title = lines[0]
+  const rest  = lines.slice(2).join('\n') // skip blank line after title
+
+  // Split on "Scoring" header
+  const scoringIdx = rest.indexOf('Scoring')
+  const prizeIdx   = rest.lastIndexOf('Prize:')
+
+  const goalBlock    = scoringIdx > -1 ? rest.slice(0, scoringIdx).trim() : rest
+  const scoringBlock = scoringIdx > -1 ? rest.slice(scoringIdx, prizeIdx > -1 ? prizeIdx : undefined).trim() : ''
+  const prizeBlock   = prizeIdx  > -1 ? rest.slice(prizeIdx).trim() : ''
+
+  // Parse scoring bullets
+  const scoringLines = scoringBlock.split('\n').filter(l => l.trim())
+  const scoringTitle = scoringLines[0] || ''
+  const scoringBullets = scoringLines.slice(1).filter(l => l.startsWith('•'))
+
+  // Parse goal/how paragraphs
+  const goalLines = goalBlock.split('\n').filter(l => l.trim())
+
+  return (
+    <div className="view-panel">
+      <div className="view-header">
+        <span className="view-header-icon">{TRACK_ICONS[topic]}</span>
+        <h2 className="view-title">{TOPIC_NAMES[topic] || title}</h2>
+        <span className="track-prize-badge">$500</span>
+      </div>
+      <div className="view-body">
+        {/* Goal + How it's won */}
+        {goalLines.map((line, i) => (
+          <p key={i} className="track-para">{line}</p>
+        ))}
+
+        {/* Scoring rubric */}
+        {scoringBullets.length > 0 && (
+          <div className="track-rubric">
+            <div className="track-rubric-title">{scoringTitle}</div>
+            {scoringBullets.map((b, i) => {
+              // Parse "• Label (pts)" style
+              const match = b.match(/^•\s*(.+?)\s*\((\d+)\)$/)
+              const label = match ? match[1] : b.replace(/^•\s*/, '')
+              const pts   = match ? parseInt(match[2]) : null
+              return (
+                <div className="track-rubric-row" key={i}>
+                  <span className="track-rubric-label">{label}</span>
+                  {pts != null && (
+                    <span className="track-rubric-bar-wrap">
+                      <span className="track-rubric-bar" style={{ width: `${pts}%` }} />
+                      <span className="track-rubric-pts">{pts} pts</span>
+                    </span>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        )}
+
+        {/* Prize line */}
+        {prizeBlock && (
+          <div className="track-prize-line">{prizeBlock.replace('Prize:', 'Prize:')}</div>
+        )}
+
+        {/* Grand prize note */}
+        <div className="track-grand-note">
+          Every entry is also automatically in the running for the <strong>★ Best Cold Email ($1,000 grand prize)</strong>.
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ---------------- VIEW: THE RULE ----------------
+function ViewRule() {
+  const rules = ['No impersonation', 'No lying', 'No pre-existing relationship', 'No mass-blasting']
+  return (
+    <div className="view-panel">
+      <div className="view-header">
+        <h2 className="view-title">The Rule</h2>
+      </div>
+      <div className="view-body">
+        <p className="lp-lead">A cold email counts only if a real stranger actually wrote back.</p>
+        <ul className="lp-list" style={{ marginBottom: 20 }}>
+          {rules.map(r => <li key={r}>{r}</li>)}
+        </ul>
+        <p className="lp-fine">Break any of these and you're disqualified. Verified by us — a screenshot of the reply.</p>
+      </div>
+    </div>
+  )
+}
+
+// ---------------- VIEW: PRIZES ----------------
+function ViewPrizes() {
+  const rows = [
+    { label: '★ The Best Cold Email', note: 'grand prize', amount: '$1,000', grand: true },
+    { label: 'The Unreachable',       note: 'Track 1',     amount: '$500' },
+    { label: 'Best Subject Line',     note: 'Track 2',     amount: '$500' },
+    { label: 'The Two-Liner',         note: 'Track 3',     amount: '$500' },
+    { label: 'The Ask',               note: 'Track 4',     amount: '$500' },
+  ]
+  return (
+    <div className="view-panel">
+      <div className="view-header">
+        <h2 className="view-title">$3,000 in prizes</h2>
+      </div>
+      <div className="view-body">
+        <div className="lp-rows">
+          {rows.map((r, i) => (
+            <div key={i} className={`lp-row${r.grand ? ' lp-row-grand' : ''}`}>
+              <span>{r.label} <em>{r.note}</em></span>
+              <span className="amt">{r.amount}</span>
+            </div>
+          ))}
+        </div>
+        <p style={{ marginTop: 20, fontSize: 13, color: '#5f6368', lineHeight: 1.6 }}>
+          A cash prize for each track, plus a bigger grand prize for the best cold email overall.
+          Every entry — regardless of track — is automatically in the running for the grand prize.
+        </p>
+      </div>
+    </div>
+  )
+}
+
+// ---------------- VIEW: JUDGING ----------------
+function ViewJudging() {
+  return (
+    <div className="view-panel">
+      <div className="view-header">
+        <h2 className="view-title">Judging</h2>
+      </div>
+      <div className="view-body">
+        <div className="judging-step">
+          <div className="judging-step-num">1</div>
+          <div className="judging-step-body">
+            <div className="judging-step-title">The Gate <span className="judging-badge judging-passfail">Pass / Fail</span></div>
+            <p className="judging-step-desc">Every entry must clear this before it's scored:</p>
+            <ul className="judging-list">
+              <li>A real reply from a real stranger</li>
+              <li>No impersonation</li>
+              <li>No lying</li>
+              <li>No pre-existing relationship</li>
+              <li>No mass-blasting</li>
+            </ul>
+            <p className="judging-step-fine">Fail any → disqualified.</p>
+          </div>
+        </div>
+        <div className="judging-step">
+          <div className="judging-step-num">2</div>
+          <div className="judging-step-body">
+            <div className="judging-step-title">Scoring <span className="judging-badge judging-score">out of 100</span></div>
+            <p className="judging-step-desc">
+              A panel of organizers + guest judges scores each qualifying entry on a rubric weighted per track.
+              Highest score per track wins that track. The strongest entry overall takes <strong>The Best Cold Email</strong>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ================================================================
+// MAIN PANEL — renders the active view
+// ================================================================
+function MainPanel({ view, onEnter }) {
+  switch (view) {
+    case 'overview':          return <ViewOverview onEnter={onEnter} />
+    case 'winners':           return <ViewWinners />
+    case 'enter':             return <ViewEnter onEnter={onEnter} />
+    case 'calendar':          return <ViewCalendar />
+    case 'best':              return <ViewBest />
+    case 'track-unreachable': return <ViewTrack topic="unreachable" />
+    case 'track-subject':     return <ViewTrack topic="subject" />
+    case 'track-twoliner':    return <ViewTrack topic="twoliner" />
+    case 'track-ask':         return <ViewTrack topic="ask" />
+    case 'rule':              return <ViewRule />
+    case 'prizes':            return <ViewPrizes />
+    case 'judging':           return <ViewJudging />
+    default:                  return <ViewOverview onEnter={onEnter} />
+  }
+}
+
+// ---------------- APP ----------------
+export default function App() {
+  const [view, setView] = useState('overview')
+  const [composeOpen, setComposeOpen] = useState(false)
+  const [jeminiOpen, setJeminiOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [toast, setToast] = useState('')
+  const toastTimer = useRef()
+
+  const showToast = (m) => {
+    setToast(m)
+    clearTimeout(toastTimer.current)
+    toastTimer.current = setTimeout(() => setToast(''), 2600)
+  }
+
+  const submitEntry = ({ email, proof }) => {
+    if (!email || !proof) { showToast('Add your email and a link to the reply.'); return }
+    setComposeOpen(false)
+    showToast('Entry submitted. Good luck — go get the reply.')
+  }
+
+  const goHome = () => setView('overview')
+
+  return (
+    <div onClick={() => jeminiOpen && setJeminiOpen(false)}>
+      <TopBar
+        onMenu={() => setSidebarOpen(s => !s)}
+        onLogo={goHome}
+        onJemini={() => setJeminiOpen(o => !o)}
+      />
+      <div className="app">
+        {sidebarOpen && (
+          <Sidebar
+            onCompose={() => setComposeOpen(true)}
+            view={view}
+            setView={setView}
+          />
+        )}
+        <div className="main">
+          <MainPanel view={view} onEnter={() => setComposeOpen(true)} />
+        </div>
+      </div>
+
+      {composeOpen && (
+        <ComposeWindow
+          onClose={() => setComposeOpen(false)}
+          onSend={submitEntry}
+        />
+      )}
+
+      {jeminiOpen && <JeminiPanel onClose={() => setJeminiOpen(false)} />}
+
+      {toast && <div className="toast">{toast}</div>}
+    </div>
+  )
+}
