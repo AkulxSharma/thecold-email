@@ -28,6 +28,12 @@ html, body, #root { font-family:'Roboto',Arial,sans-serif; color:var(--text); ba
 .jemini:active { transform:scale(.95); }
 .jemini .spark { width:20px; height:20px; }
 .avatar { width:34px; height:34px; border-radius:50%; margin-left:6px; cursor:pointer; background-image:linear-gradient(135deg,#e8a88f,#b97a5d); }
+.status-pill { display:flex; align-items:center; gap:8px; height:40px; padding:0 10px 0 14px; border-radius:20px; background:#f1f3f4; color:#3c4043; font-size:14px; font-weight:500; cursor:pointer; user-select:none; transition:background .15s ease; }
+.status-pill:hover { background:#e8eaed; }
+.status-pill svg { width:20px; height:20px; fill:#5f6368; }
+.status-dot { width:9px; height:9px; border-radius:50%; background:#1e8e3e; flex:0 0 auto; }
+.avatar-ring { width:42px; height:42px; border-radius:50%; margin-left:6px; padding:2px; box-sizing:border-box; cursor:pointer; background:conic-gradient(from 90deg,#4285f4,#9b72cb,#d96570,#f9ab00,#4285f4); }
+.avatar-ring .avatar { width:100%; height:100%; margin:0; border:2px solid #fff; box-sizing:border-box; }
 
 .app { display:flex; height:calc(100vh - 64px); }
 
