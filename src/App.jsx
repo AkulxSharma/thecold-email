@@ -50,9 +50,9 @@ function Sidebar({ onCompose, view, setView, open }) {
     <div className={`sidebar${open ? '' : ' sidebar-collapsed'}`}>
       <div className="compose" onClick={onCompose}><I.Pencil /> Enter</div>
 
-      <NavItem icon={<I.M name="inbox" />}         label="Inbox"          count="7,493" active={view === 'overview'} onClick={() => setView('overview')} />
-      <NavItem icon={<I.M name="star" />}          label="Starred"                            active={view === 'winners'}  onClick={() => setView('winners')} />
-      <NavItem icon={<I.M name="send" />}          label="Sent"                               active={view === 'enter'}    onClick={() => setView('enter')} />
+      <NavItem icon={<I.M name="inbox" />}         label="Home"           count="7,493" active={view === 'overview'} onClick={() => setView('overview')} />
+      <NavItem icon={<I.M name="star" />}          label="Winners"                            active={view === 'winners'}  onClick={() => setView('winners')} />
+      <NavItem icon={<I.M name="send" />}          label="How to Enter"                       active={view === 'enter'}    onClick={() => setView('enter')} />
       <NavItem icon={<I.M name="calendar_month" />} label="Daily Activity"                    active={view === 'calendar'} onClick={() => setView('calendar')} />
       <NavItem icon={<I.M name="auto_awesome" />}  label="Best Email Ever"                    active={view === 'best'}     onClick={() => setView('best')} />
 
