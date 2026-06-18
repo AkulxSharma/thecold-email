@@ -649,6 +649,8 @@ html, body, #root {
   z-index: 1;
 }
 .bx-check { color: #5f6368; display: flex; align-items: center; flex-shrink: 0; }
+.bx-star-btn { color: #bdc1c6; display: flex; align-items: center; flex-shrink: 0; cursor: pointer; }
+.bx-star-btn:hover { color: #5f6368; }
 .bx-stat {
   display: flex;
   align-items: center;

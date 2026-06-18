@@ -628,6 +628,7 @@ function ViewBest() {
           {BEST_EMAILS.map((em, i) => (
             <div className="bx-row" key={i} onClick={() => setOpen(i)}>
               <span className="bx-check" onClick={e => e.stopPropagation()}><I.M name="check_box_outline_blank" size={18} /></span>
+              <span className="bx-star-btn" onClick={e => e.stopPropagation()} title="Star"><I.M name="star" size={18} /></span>
               <span className="bx-sender">{em.from}</span>
               <span className="bx-snippet">
                 {em.tag && <span className="bx-tag">{em.tag}</span>}
