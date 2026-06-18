@@ -58,8 +58,8 @@ export const SparkPen = ({ size = 22 }) => (
   <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor">
     {/* sparkle (top-left, larger, nearer pen) */}
     <path d="M7 2.5c.6 2.9 1.5 3.8 4.5 4.5-3 .7-3.9 1.6-4.5 4.5-.6-2.9-1.5-3.8-4.5-4.5 3-.7 3.9-1.6 4.5-4.5z" />
-    {/* ink pen (diagonal, nib lower-left) — cap nudged along axis for a thin even gap */}
-    <path d="M20.7 9.66c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83zM5 18.25V22h3.75l10.06-10.06-3.75-3.75L5 18.25z" />
+    {/* ink pen (diagonal, nib lower-left) — cap edges aligned to body edge lines, thin gap */}
+    <path d="M21.24 9.51c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83zM5 18.25V22h3.75l10.06-10.06-3.75-3.75L5 18.25z" />
   </svg>
 )
 export const ShortText = () => <S d="M4 9h16v2H4zm0 4h10v2H4z" />
