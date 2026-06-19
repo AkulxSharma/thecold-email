@@ -35,10 +35,9 @@ function TopBar({ onMenu, onLogo, onJemini }) {
       {pfpOpen && (
         <div className="pfp-overlay" onClick={() => setPfpOpen(false)}>
           <div className="pfp-card" onClick={e => e.stopPropagation()}>
-            <button className="pfp-x" onClick={() => setPfpOpen(false)} title="Close"><I.Close w={20} /></button>
-            <img className="pfp-photo" src={meme.img} alt={meme.name} />
-            <div className="pfp-name">{meme.name}</div>
-            <div className="pfp-kicker"><I.Spark /> The takeaway</div>
+            <div className="pfp-email">{meme.email}</div>
+            <div className="pfp-ring"><img className="pfp-photo" src={meme.img} alt={meme.name} /></div>
+            <div className="pfp-hi">Hi, {meme.hi}!</div>
             <div className="pfp-tip">{meme.tip}</div>
           </div>
         </div>

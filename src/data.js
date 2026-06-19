@@ -220,26 +220,26 @@ Get the reply. → thecold.email`,
 ]
 
 // Profile-pic meme pool — a random one shows in the avatar ring each refresh.
-// Click the avatar → reveal card with the name + a usable cold-email takeaway ("tip").
-// Images live in public/memes/ (from PFP_IMGS.zip).
+// Click the avatar → Gmail-style contact card: joke email + "Hi, [hi]!" + a usable cold-email takeaway.
+// Images live in public/memes/ (from PFP_IMGS.zip). Emails are deliberately fake/punny, not real.
 export const MEMES = [
-  { name: 'Elon Musk',        img: '/memes/IMG-20260619-WA0024.jpg', tip: 'Hit send before you talk yourself out of it. The boldest line in the inbox usually wins.' },
-  { name: 'Jeff Bezos',       img: '/memes/IMG-20260619-WA0023.jpg', tip: 'Lead with what THEY get, not what you sell. Obsess over the reader, not the pitch.' },
-  { name: 'Barack Obama',     img: '/memes/IMG-20260619-WA0012.jpg', tip: 'Write to one person, not a list. "You" beats "everyone" every time.' },
-  { name: 'Donald Trump',     img: '/memes/IMG-20260619-WA0020.jpg', tip: 'The subject line is the whole game. If it doesn\'t get opened, nothing else matters.' },
-  { name: 'Kanye West',       img: '/memes/Kanye.jpeg',              tip: 'Believe your pitch more than they doubt it. Conviction is contagious.' },
-  { name: 'Drake',            img: '/memes/IMG-20260619-WA0015.jpg', tip: 'Started from the cold open. A "no reply" today is just a warm lead tomorrow — follow up.' },
-  { name: 'Justin Bieber',    img: '/memes/IMG-20260619-WA0008.jpg', tip: 'A good follow-up beats a perfect first email. Most replies come on email #2 or #3.' },
-  { name: 'Sabrina Carpenter',img: '/memes/IMG-20260619-WA0018.jpg', tip: 'Be the email they can\'t stop thinking about. Memorable beats polished.' },
-  { name: 'Max Verstappen',   img: '/memes/IMG-20260619-WA0011.jpg', tip: 'Speed wins. The faster you send, the more shots on goal — volume is a strategy.' },
-  { name: 'Charlie Kirk',     img: '/memes/IMG-20260619-WA0019.jpg', tip: 'Open a loop they have to close. A sharp question is harder to ignore than a statement.' },
-  { name: 'Mark Zuckerberg',  img: '/memes/IMG-20260619-WA0022.jpg', tip: 'Don\'t sound like a bot. One specific, human detail beats a thousand merge tags.' },
-  { name: 'Anthony Mackie',   img: '/memes/IMG-20260619-WA0014.jpg', tip: 'Confidence, no begging. Ask for the thing like you expect a yes.' },
-  { name: 'Brooklyn 99',      img: '/memes/IMG-20260619-WA0009.jpg', tip: 'Cool, cool, cool — keep it short. If they can read it in 10 seconds, they\'ll actually read it.' },
-  { name: 'Phil Dunphy',      img: '/memes/IMG-20260619-WA0013.jpg', tip: 'Warm beats clever. People reply to people they\'d want to grab a coffee with.' },
-  { name: 'The Kiss-Cam Couple', img: '/memes/IMG-20260619-WA0016.jpg', tip: 'Check the "To" field twice. The wrong recipient turns a cold email into a viral one.' },
-  { name: 'Caught Mid-Sentence', img: '/memes/IMG-20260619-WA0010.jpg', tip: 'Make them smile in line one. A little personality earns the rest of the read.' },
-  { name: 'Corporate Era',    img: '/memes/IMG-20260619-WA0021.jpg', tip: 'Respect their time. Get to the ask fast — busy people reply to clear, not clever.' },
+  { name: 'Elon Musk',        hi: 'Elon',    email: 'dogefather@x.com',           img: '/memes/IMG-20260619-WA0024.jpg', tip: 'Send at 3am and tweet through it — the unhinged-but-bold email gets the reply the polished one never will.' },
+  { name: 'Jeff Bezos',       hi: 'Jeff',    email: '1click@amazon.com',          img: '/memes/IMG-20260619-WA0023.jpg', tip: 'Make replying a one-click decision. Every extra step you ask for is another reason they bounce.' },
+  { name: 'Barack Obama',     hi: 'Barack',  email: 'yeswecan@whitehouse.gov',    img: '/memes/IMG-20260619-WA0012.jpg', tip: 'Write to one person, not a rally. "You" wins more votes than "everyone."' },
+  { name: 'Donald Trump',     hi: 'Donald',  email: 'covfefe@truth.social',       img: '/memes/IMG-20260619-WA0020.jpg', tip: 'Your subject line is the whole campaign — tremendous open rates, the best, or nothing happens. Believe me.' },
+  { name: 'Kanye West',       hi: 'Ye',      email: 'immaletyoufinish@yeezy.com', img: '/memes/Kanye.jpeg',              tip: "Interrupt the inbox like it's the VMAs. Confidence opens what politeness leaves on read." },
+  { name: 'Drake',            hi: 'Drake',   email: 'started@thebottom.com',      img: '/memes/IMG-20260619-WA0015.jpg', tip: 'Started from "no reply," now we here. The follow-up is where the deal actually lives.' },
+  { name: 'Justin Bieber',    hi: 'Justin',  email: 'sorry@beliebers.com',        img: '/memes/IMG-20260619-WA0008.jpg', tip: 'Is it too late now to say sorry? Never — a good follow-up beats a perfect first email every time.' },
+  { name: 'Sabrina Carpenter',hi: 'Sabrina', email: 'espresso@sabrina.com',       img: '/memes/IMG-20260619-WA0018.jpg', tip: 'Be the email that keeps them up like espresso. Memorable beats polished.' },
+  { name: 'Max Verstappen',   hi: 'Max',     email: 'boxbox@redbull.com',         img: '/memes/IMG-20260619-WA0011.jpg', tip: 'Lights out and away you go. Speed wins — the faster you send, the more shots on goal.' },
+  { name: 'Charlie Kirk',     hi: 'Charlie', email: 'provemewrong@tpusa.com',     img: '/memes/IMG-20260619-WA0019.jpg', tip: "Set up a table they can't walk past. A sharp question is harder to ignore than a statement." },
+  { name: 'Mark Zuckerberg',  hi: 'Mark',    email: 'definitelyhuman@meta.com',   img: '/memes/IMG-20260619-WA0022.jpg', tip: "Don't email like an avatar in an empty metaverse. One human detail beats a thousand merge tags." },
+  { name: 'Anthony Mackie',   hi: 'Anthony', email: 'onyourleft@marvel.com',      img: '/memes/IMG-20260619-WA0014.jpg', tip: 'Show up on their left when they least expect it, and ask like you already caught the shield.' },
+  { name: 'Brooklyn 99',      hi: 'Jake',    email: 'coolcoolcool@nine9.com',     img: '/memes/IMG-20260619-WA0009.jpg', tip: 'Cool cool cool, no doubt no doubt — keep it short. Ten-second reads are the ones that get read.' },
+  { name: 'Phil Dunphy',      hi: 'Phil',    email: 'philosophy@dunphy.com',      img: '/memes/IMG-20260619-WA0013.jpg', tip: "WTF — Why The Face? Be the warm one. People reply to the guy they'd grab a coffee with." },
+  { name: 'The Kiss-Cam Couple', hi: 'you two', email: 'wrongperson@coldplay.com', img: '/memes/IMG-20260619-WA0016.jpg', tip: 'Check the "To" field twice. The wrong recipient turns a cold email into a viral one.' },
+  { name: 'Caught Mid-Sentence', hi: 'there', email: 'waitwhat@oops.com',         img: '/memes/IMG-20260619-WA0010.jpg', tip: 'Open mid-thought and they lean in. A weird first line beats "Dear Sir or Madam."' },
+  { name: 'Corporate Era',    hi: 'champ',   email: 'circleback@synergy.com',     img: '/memes/IMG-20260619-WA0021.jpg', tip: "Let's circle back — but actually. Respect their calendar: get to the ask before sentence two." },
 ]
 
 export const TOPIC_NAMES = {
