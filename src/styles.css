@@ -1880,15 +1880,21 @@ html, body, #root {
 @media (max-width: 980px)  { .keep-board { column-count: 2; } }
 @media (max-width: 640px)  { .keep-board { column-count: 1; } }
 
-/* note card */
-.keep-note { position: relative; break-inside: avoid; -webkit-column-break-inside: avoid; display: inline-block; width: 100%; box-sizing: border-box; border: 1px solid rgba(0,0,0,.1); border-radius: 12px; padding: 16px 18px; margin: 0 0 16px; box-shadow: 0 1px 2px rgba(0,0,0,.05); transition: box-shadow .15s, transform .12s; cursor: pointer; max-height: 340px; overflow: hidden; }
-.keep-note:hover { box-shadow: 0 2px 10px rgba(0,0,0,.16); }
-.keep-note:active { cursor: grabbing; }
-.keep-note.keep-dragging { opacity: .4; }
-/* fade hint that a clamped note has more content (expand to read all) */
-.keep-note::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 36px; background: linear-gradient(to bottom, transparent, var(--keep-bg, #fff)); pointer-events: none; opacity: 0; transition: opacity .15s; }
-.keep-note.keep-clamped::after { opacity: 1; }
-.keep-note-title { font-family: 'Google Sans','Product Sans',sans-serif; font-size: 17px; font-weight: 600; color: #202124; margin-bottom: 10px; line-height: 1.3; }
+/* note card — natural (uneven) heights, like real Keep */
+.keep-note { position: relative; break-inside: avoid; -webkit-column-break-inside: avoid; display: inline-block; width: 100%; box-sizing: border-box; border: 1px solid rgba(0,0,0,.1); border-radius: 12px; padding: 16px 18px 6px; margin: 0 0 16px; box-shadow: none; transition: box-shadow .15s; cursor: move; }
+.keep-note:hover { box-shadow: 0 1px 2px rgba(60,64,67,.3), 0 2px 6px 2px rgba(60,64,67,.15); }
+.keep-note.keep-dragging { opacity: .45; box-shadow: 0 6px 16px rgba(0,0,0,.3); }
+
+/* hover-revealed Keep chrome: select check (TL), pin (TR), bottom toolbar */
+.keep-note-select { position: absolute; top: -10px; left: -10px; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; color: #5f6368; opacity: 0; transition: opacity .12s; cursor: pointer; }
+.keep-note-select .msym { background: #fff; border-radius: 50%; }
+.keep-note-pin { position: absolute; top: 10px; right: 12px; color: #3c4043; opacity: 0; transition: opacity .12s; cursor: pointer; padding: 4px; border-radius: 50%; }
+.keep-note-pin:hover { background: rgba(0,0,0,.08); }
+.keep-note-tools { display: flex; gap: 2px; align-items: center; height: 30px; margin-top: 8px; opacity: 0; transition: opacity .12s; }
+.keep-note-tools .msym { color: #5f6368; padding: 6px; border-radius: 50%; cursor: pointer; }
+.keep-note-tools .msym:hover { background: rgba(0,0,0,.08); }
+.keep-note:hover .keep-note-select, .keep-note:hover .keep-note-pin, .keep-note:hover .keep-note-tools { opacity: 1; }
+.keep-note-title { font-family: 'Google Sans','Product Sans',sans-serif; font-size: 17px; font-weight: 600; color: #202124; margin-bottom: 10px; line-height: 1.3; padding-right: 26px; }
 .keep-lead { font-size: 15px; line-height: 1.5; color: #202124; margin: 0 0 10px; font-weight: 500; }
 .keep-text { font-size: 14px; line-height: 1.55; color: #3c4043; margin: 0 0 10px; }
 .keep-support { font-size: 12.5px; line-height: 1.5; color: #5f6368; margin: 12px 0 0; font-style: italic; }
@@ -1932,6 +1938,9 @@ html, body, #root {
 .keep-c-dark .keep-note-title { color: #fff; }
 .keep-c-dark .keep-text { color: #c7c7cc; }
 .keep-c-dark .keep-quote { color: #fff; }
+.keep-c-dark .keep-note-pin, .keep-c-dark .keep-note-tools .msym, .keep-c-dark .keep-note-select { color: #e8eaed; }
+.keep-c-dark .keep-note-select .msym { background: #202124; }
+.keep-c-dark .keep-note-pin:hover, .keep-c-dark .keep-note-tools .msym:hover { background: rgba(255,255,255,.12); }
 
 /* final note — slightly emphasized */
 .keep-note-final .keep-note-title { font-size: 19px; }

@@ -1007,7 +1007,6 @@ function ViewRule({ onEnter }) {
           return (
             <div
               key={n.id}
-              ref={el => { if (el) el.classList.toggle('keep-clamped', el.scrollHeight > el.clientHeight + 4) }}
               className={`keep-note keep-c-${n.color}`}
               draggable
               onDragStart={e => { dragId.current = n.id; e.currentTarget.classList.add('keep-dragging') }}
@@ -1015,10 +1014,19 @@ function ViewRule({ onEnter }) {
               onDrop={() => onDrop(n.id)}
               onDragEnd={e => { dragId.current = null; e.currentTarget.classList.remove('keep-dragging') }}
               onClick={() => setExpanded(n.id)}
-              title="Click to expand · drag to reorder"
             >
+              <span className="keep-note-select" onClick={e => e.stopPropagation()} title="Select note"><I.M name="check_circle" size={24} /></span>
+              <span className="keep-note-pin" onClick={e => e.stopPropagation()} title="Pin note"><I.M name="keep" size={20} /></span>
               <div className="keep-note-title">{n.title}</div>
               {n.render()}
+              <div className="keep-note-tools" onClick={e => e.stopPropagation()}>
+                <I.M name="palette" size={18} />
+                <I.M name="add_alert" size={18} />
+                <I.M name="person_add" size={18} />
+                <I.M name="image" size={18} />
+                <I.M name="archive" size={18} />
+                <I.M name="more_vert" size={18} />
+              </div>
             </div>
           )
         })}
