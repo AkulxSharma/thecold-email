@@ -246,8 +246,6 @@ function JeminiPanel({ onClose, open }) {
           rows={1}
         />
         <div className="jp-compose-row">
-          <span className="jp-compose-ic"><I.M name="science" size={20} /></span>
-          <span className="jp-compose-ic"><I.M name="tune" size={20} /></span>
           <button className="jp-up" onClick={() => send()} title="Send"><I.M name="arrow_upward" size={20} /></button>
         </div>
       </div>
