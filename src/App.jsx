@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useLayoutEffect } from 'react'
 import { EMAILS, TOPIC_NAMES, DEADLINES, SEND_WINDOW, BEST_EMAILS, EVENTS, MEMES, RULES_PAGE } from './data.js'
 import * as I from './icons.jsx'
 
@@ -973,6 +973,34 @@ function ViewRule({ onEnter }) {
   const [order, setOrder] = useState(NOTES.map(n => n.id))
   const [expanded, setExpanded] = useState(null)   // note id or null
   const dragId = useRef(null)
+  const noteRefs = useRef(new Map())
+  const prevRects = useRef(new Map())
+
+  // FLIP: slide notes from their old positions to the new ones when order changes.
+  useLayoutEffect(() => {
+    const refs = noteRefs.current
+    const newRects = new Map()
+    refs.forEach((el, id) => {
+      el.style.transition = 'none'
+      el.style.transform = ''
+      newRects.set(id, el.getBoundingClientRect())
+    })
+    refs.forEach((el, id) => {
+      const oldRect = prevRects.current.get(id)
+      const newRect = newRects.get(id)
+      if (!oldRect) return
+      const dx = oldRect.left - newRect.left
+      const dy = oldRect.top - newRect.top
+      if (dx || dy) el.style.transform = `translate(${dx}px, ${dy}px)`
+    })
+    requestAnimationFrame(() => {
+      refs.forEach(el => {
+        el.style.transition = 'transform 220ms cubic-bezier(.2,0,0,1), box-shadow .15s'
+        el.style.transform = ''
+      })
+    })
+    prevRects.current = newRects
+  }, [order])
 
   // Live reorder: as the dragged note enters another, shift the others around it.
   const moveOver = (targetId) => {
@@ -1008,6 +1036,7 @@ function ViewRule({ onEnter }) {
           return (
             <div
               key={n.id}
+              ref={el => { if (el) noteRefs.current.set(n.id, el); else noteRefs.current.delete(n.id) }}
               className={`keep-note keep-c-${n.color}`}
               draggable
               onDragStart={e => { dragId.current = n.id; e.currentTarget.classList.add('keep-dragging') }}
