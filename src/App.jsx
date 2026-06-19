@@ -974,32 +974,43 @@ function ViewRule({ onEnter }) {
   const [expanded, setExpanded] = useState(null)   // note id or null
   const dragId = useRef(null)
   const noteRefs = useRef(new Map())
-  const prevRects = useRef(new Map())
+  const boardRef = useRef(null)
+  const animOn = useRef(false)
 
-  // FLIP: slide notes from their old positions to the new ones when order changes.
+  // Absolute masonry: every note is translate()'d to its slot. A reorder only changes
+  // `order`, which re-runs this and updates each transform → the CSS transition slides
+  // notes to their new positions (instead of the abrupt CSS-columns reflow).
   useLayoutEffect(() => {
-    const refs = noteRefs.current
-    const newRects = new Map()
-    refs.forEach((el, id) => {
-      el.style.transition = 'none'
-      el.style.transform = ''
-      newRects.set(id, el.getBoundingClientRect())
-    })
-    refs.forEach((el, id) => {
-      const oldRect = prevRects.current.get(id)
-      const newRect = newRects.get(id)
-      if (!oldRect) return
-      const dx = oldRect.left - newRect.left
-      const dy = oldRect.top - newRect.top
-      if (dx || dy) el.style.transform = `translate(${dx}px, ${dy}px)`
-    })
-    requestAnimationFrame(() => {
-      refs.forEach(el => {
-        el.style.transition = 'transform 220ms cubic-bezier(.2,0,0,1), box-shadow .15s'
-        el.style.transform = ''
+    const layout = () => {
+      const board = boardRef.current
+      if (!board) return
+      const GAP = 16, MINCOL = 240
+      const W = board.clientWidth
+      const cols = Math.max(1, Math.min(4, Math.floor((W + GAP) / (MINCOL + GAP))))
+      const colW = (W - GAP * (cols - 1)) / cols
+      const colH = new Array(cols).fill(0)
+      order.forEach(id => {
+        const el = noteRefs.current.get(id)
+        if (!el) return
+        if (!animOn.current) el.style.transition = 'none'
+        el.style.width = colW + 'px'
+        const h = el.offsetHeight
+        let c = 0
+        for (let i = 1; i < cols; i++) if (colH[i] < colH[c]) c = i
+        el.style.transform = `translate(${Math.round(c * (colW + GAP))}px, ${Math.round(colH[c])}px)`
+        colH[c] += h + GAP
       })
-    })
-    prevRects.current = newRects
+      board.style.height = (Math.max(...colH) - GAP) + 'px'
+      if (!animOn.current) {
+        requestAnimationFrame(() => {
+          noteRefs.current.forEach(el => { el.style.transition = 'transform 260ms cubic-bezier(.2,0,0,1), box-shadow .15s' })
+          animOn.current = true
+        })
+      }
+    }
+    layout()
+    window.addEventListener('resize', layout)
+    return () => window.removeEventListener('resize', layout)
   }, [order])
 
   // Live reorder: as the dragged note enters another, shift the others around it.
@@ -1030,7 +1041,7 @@ function ViewRule({ onEnter }) {
       </div>
 
       {/* Masonry of notes — draggable to reorder, click to expand */}
-      <div className="keep-board">
+      <div className="keep-board" ref={boardRef}>
         {order.map(id => {
           const n = byId(id)
           return (

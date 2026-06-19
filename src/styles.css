@@ -1875,15 +1875,13 @@ html, body, #root {
 .keep-composer-icons .msym:hover { background: rgba(0,0,0,.06); }
 
 /* masonry board */
-.keep-board { column-count: 4; column-gap: 16px; padding: 0 24px 60px; max-width: 1400px; margin: 0 auto; }
-@media (max-width: 1280px) { .keep-board { column-count: 3; } }
-@media (max-width: 980px)  { .keep-board { column-count: 2; } }
-@media (max-width: 640px)  { .keep-board { column-count: 1; } }
+/* absolute masonry — notes are translate()'d to their slots by JS (App.jsx) so reorders slide */
+.keep-board { position: relative; width: calc(100% - 48px); max-width: 1200px; margin: 0 auto 60px; }
 
 /* note card — natural (uneven) heights, like real Keep */
-.keep-note { position: relative; break-inside: avoid; -webkit-column-break-inside: avoid; display: inline-block; width: 100%; box-sizing: border-box; border: 1px solid rgba(0,0,0,.1); border-radius: 12px; padding: 16px 18px 6px; margin: 0 0 16px; box-shadow: none; transition: box-shadow .15s; cursor: move; }
-.keep-note:hover { box-shadow: 0 1px 2px rgba(60,64,67,.3), 0 2px 6px 2px rgba(60,64,67,.15); }
-.keep-note.keep-dragging { opacity: .45; box-shadow: 0 6px 16px rgba(0,0,0,.3); }
+.keep-note { position: absolute; top: 0; left: 0; box-sizing: border-box; border: 1px solid rgba(0,0,0,.1); border-radius: 12px; padding: 16px 18px 6px; box-shadow: none; transition: transform 260ms cubic-bezier(.2,0,0,1), box-shadow .15s; cursor: move; will-change: transform; }
+.keep-note:hover { box-shadow: 0 1px 2px rgba(60,64,67,.3), 0 2px 6px 2px rgba(60,64,67,.15); z-index: 2; }
+.keep-note.keep-dragging { opacity: .45; box-shadow: 0 6px 16px rgba(0,0,0,.3); z-index: 3; }
 
 /* hover-revealed Keep chrome: select check (TL), pin (TR), bottom toolbar */
 .keep-note-select { position: absolute; top: -10px; left: -10px; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; color: #5f6368; opacity: 0; transition: opacity .12s; cursor: pointer; }
