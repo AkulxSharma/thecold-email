@@ -25,7 +25,7 @@ function TopBar({ onMenu, onLogo, onJemini }) {
       </div>
       <div className="top-right">
         <div className="jemini" onClick={e => { e.stopPropagation(); onJemini() }}><I.Spark /> Jemini</div>
-        <div className="icon-btn" title="Support"><I.Help /></div>
+        <div className="icon-btn" title="Feedback"><I.Feedback /></div>
         <div className="status-pill"><span className="status-dot" /> Active <I.CaretDown /></div>
         <div className="avatar-ring" title={meme.name}>
           <img className="avatar-img" src={meme.img} alt={meme.name} onError={e => { e.currentTarget.style.display = 'none' }} />
@@ -282,13 +282,6 @@ function ViewOverview({ onEnter, goto }) {
             <p className="home-sub">A cold email competition to find the best cold emails on the planet — proven by who actually replied.</p>
             <button className="lp-cta" onClick={onEnter}>Enter the competition</button>
           </div>
-          <aside className="home-prize-callout">
-            <div className="home-prize-label">Prize pool</div>
-            <div className="home-prize-amount">$3,000</div>
-            <button className="home-prize-btn" onClick={() => goto('prizes')}>
-              See the breakdown <I.M name="arrow_forward" size={16} />
-            </button>
-          </aside>
         </section>
 
         {/* Launch video — big & special placeholder */}
@@ -304,12 +297,14 @@ function ViewOverview({ onEnter, goto }) {
 
         {/* 2 — DEADLINE STRIP */}
         <section className="home-deadlines">
-          {DEADLINES.map((d, i) => (
-            <div className="home-deadline" key={i}>
-              <span className="home-deadline-date">{shortDate(d.date)}</span>
-              <span className="home-deadline-label">{d.label}</span>
-            </div>
-          ))}
+          <div className="home-deadline">
+            <span className="home-deadline-date">Jun 24 – 30</span>
+            <span className="home-deadline-label">Registration</span>
+          </div>
+          <div className="home-deadline">
+            <span className="home-deadline-date">Jul 1 – 7</span>
+            <span className="home-deadline-label">Submissions</span>
+          </div>
         </section>
 
         {/* 3 — WHAT IS THIS / how it works */}

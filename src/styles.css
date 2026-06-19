@@ -1598,11 +1598,12 @@ html, body, #root {
 /* 1 — HERO */
 .home-hero {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 32px;
-  padding: 72px 24px 40px;
+  text-align: center;
+  padding: 84px 24px 48px;
 }
-.home-hero-main { flex: 1 1 auto; }
+.home-hero-main { width: 100%; }
 .home-tagline {
   font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
   font-size: 44px;
@@ -1610,16 +1611,24 @@ html, body, #root {
   letter-spacing: -1px;
   line-height: 1.1;
   color: #202124;
-  margin: 0 0 16px;
-  max-width: 560px;
+  margin: 0 auto 16px;
+  max-width: 680px;
 }
 .home-sub {
   font-family: 'Roboto', Arial, sans-serif;
   font-size: 17px;
   color: #5f6368;
   line-height: 1.55;
-  max-width: 480px;
-  margin: 0 0 28px;
+  max-width: 520px;
+  margin: 0 auto 28px;
+}
+/* Hero CTA — pill-shaped + larger */
+.home-hero .lp-cta {
+  border-radius: 999px;
+  height: 60px;
+  padding: 0 44px;
+  font-size: 18px;
+  font-weight: 600;
 }
 .home-prize-callout {
   flex: 0 0 220px;
