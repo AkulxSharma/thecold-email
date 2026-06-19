@@ -907,6 +907,87 @@ function ViewRule({ onEnter }) {
     setCopied(true)
     setTimeout(() => setCopied(false), 1600)
   }
+
+  // Each note: id, color, title, and a render() reused in both the card and the expanded modal.
+  const NOTES = [
+    { id: 'rule', color: 'yellow', title: 'The Rule', render: () => (<>
+      <p className="keep-lead">A cold email counts only if a real stranger genuinely wrote back.</p>
+      <p className="keep-text">Every competition email must be sent during the event and BCC our official competition inbox for verification.</p>
+      <ul className="rule-tags keep-tags">{R.chips.map(c => <li key={c}>{c}</li>)}</ul>
+      <p className="keep-support">Break any of these and your entry is disqualified.</p>
+    </>) },
+    { id: 'counts', color: 'green', title: 'What counts?', render: () => (<>
+      <p className="keep-text">Your entry qualifies only if all of the following are true.</p>
+      <ul className="rule-check keep-list">{R.whatCounts.map(c => <li key={c}><I.M name="check_circle" size={18} /> {c}</li>)}</ul>
+      <p className="keep-support">A reply can be short. A reply can be negative. A reply can simply be “No.” What matters is that a real person responded.</p>
+    </>) },
+    { id: 'doesnt', color: 'coral', title: 'What doesn’t count?', render: () => (<>
+      <p className="keep-text">Not every response qualifies. These do not count as valid replies.</p>
+      <ul className="rule-x keep-list">{R.doesntCount.map(c => <li key={c}><I.M name="cancel" size={18} /> {c}</li>)}</ul>
+      <p className="keep-support">If a human didn’t personally respond, it doesn’t count.</p>
+    </>) },
+    { id: 'bcc', color: 'blue', title: 'Every competition email must BCC us.', render: () => (<>
+      <div className="keep-bcc">
+        <span className="keep-bcc-email">{R.bccEmail}</span>
+        <button className="rule-bcc-copy" onClick={copyBcc}>
+          <I.M name={copied ? 'check' : 'content_copy'} size={16} /> {copied ? 'Copied!' : 'Copy'}
+        </button>
+      </div>
+      <div className="keep-mini-head">Why we require it</div>
+      <ul className="rule-bullets keep-bullets">{R.bccWhy.map(b => <li key={b}>{b}</li>)}</ul>
+      <p className="keep-support">Failure to BCC may make an entry ineligible.</p>
+    </>) },
+    { id: 'sending', color: 'teal', title: 'Sending rules', render: () => (<>
+      <div className="keep-mini-head keep-yes">Allowed</div>
+      <ul className="rule-check keep-list">{R.allowed.map(a => <li key={a}><I.M name="check_circle" size={18} /> {a}</li>)}</ul>
+      <div className="keep-mini-head keep-no">Not allowed</div>
+      <ul className="rule-x keep-list">{R.notAllowed.map(a => <li key={a}><I.M name="cancel" size={18} /> {a}</li>)}</ul>
+      <p className="keep-support">The competition judges outcomes, not workflows. The only thing that matters is that the outreach is genuine, honest, and earns a real reply.</p>
+    </>) },
+    { id: 'proof', color: 'orange', title: 'Proof', render: () => (<>
+      <p className="keep-text">To submit an entry you’ll need evidence.</p>
+      <ul className="keep-proof">{R.proof.map(p => <li key={p.label}><I.M name={p.icon} size={18} /> {p.label}</li>)}</ul>
+      <p className="keep-support">Judges may request additional verification if needed. Failure to provide proof may result in disqualification.</p>
+    </>) },
+    { id: 'fairplay', color: 'purple', title: 'Fair play', render: () => (<>
+      <p className="keep-text">The goal is to earn trust from a stranger — not leverage an existing relationship.</p>
+      <div className="keep-mini-head">Recipients cannot be</div>
+      <ul className="rule-tags keep-tags">{R.fairPlayNot.map(f => <li key={f}>{f}</li>)}</ul>
+      <p className="keep-support">If the recipient would reasonably recognize you, they are not a stranger.</p>
+    </>) },
+    { id: 'privacy', color: 'gray', title: 'Privacy', render: () => (<>
+      <p className="keep-text">We understand that cold emails often contain sensitive information. Participants may blur:</p>
+      <ul className="rule-tags keep-tags">{R.privacyBlur.map(p => <li key={p}>{p}</li>)}</ul>
+      <p className="keep-support">Judges may request original versions privately for verification. Any verification materials will be handled confidentially.</p>
+    </>) },
+    { id: 'spirit', color: 'dark', title: 'Win by writing.', render: () => (<>
+      <p className="keep-text">The rules cannot cover every loophole. If an entry technically follows the rules but clearly violates the spirit of fair competition, organizers may disqualify it. The purpose of this competition is simple: earn a genuine response from a genuine stranger.</p>
+      <p className="keep-quote">“Write a remarkable cold email. Don’t game the system.”</p>
+    </>) },
+    { id: 'final', color: 'pink', title: 'Write something worth replying to.', render: () => (<>
+      <p className="keep-text">Not the funniest. Not the longest. Not the craziest.</p>
+      <p className="keep-text">Just the kind of email that makes a stranger stop what they’re doing and hit Reply.</p>
+    </>) },
+  ]
+
+  const [order, setOrder] = useState(NOTES.map(n => n.id))
+  const [expanded, setExpanded] = useState(null)   // note id or null
+  const dragId = useRef(null)
+
+  const onDrop = (targetId) => {
+    const from = dragId.current
+    if (!from || from === targetId) return
+    setOrder(prev => {
+      const next = prev.filter(id => id !== from)
+      next.splice(next.indexOf(targetId), 0, from)
+      return next
+    })
+    dragId.current = null
+  }
+
+  const byId = id => NOTES.find(n => n.id === id)
+  const expandedNote = expanded ? byId(expanded) : null
+
   return (
     <div className="view-panel view-panel-keep">
       {/* Keep "Take a note…" composer — opens the entry modal */}
@@ -919,116 +1000,54 @@ function ViewRule({ onEnter }) {
         </div>
       </div>
 
-      {/* Masonry of notes — one per rule section */}
+      {/* Masonry of notes — draggable to reorder, click to expand */}
       <div className="keep-board">
-        {/* 1 — The Rule */}
-        <div className="keep-note keep-c-yellow">
-          <div className="keep-note-title">The Rule</div>
-          <p className="keep-lead">A cold email counts only if a real stranger genuinely wrote back.</p>
-          <p className="keep-text">Every competition email must be sent during the event and BCC our official competition inbox for verification.</p>
-          <ul className="rule-tags keep-tags">
-            {R.chips.map(c => <li key={c}>{c}</li>)}
-          </ul>
-          <p className="keep-support">Break any of these and your entry is disqualified.</p>
-        </div>
-
-        {/* 2 — What Counts? */}
-        <div className="keep-note keep-c-green">
-          <div className="keep-note-title">What counts?</div>
-          <p className="keep-text">Your entry qualifies only if all of the following are true.</p>
-          <ul className="rule-check keep-list">
-            {R.whatCounts.map(c => <li key={c}><I.M name="check_circle" size={18} /> {c}</li>)}
-          </ul>
-          <p className="keep-support">A reply can be short. A reply can be negative. A reply can simply be “No.” What matters is that a real person responded.</p>
-        </div>
-
-        {/* 3 — What Doesn't Count? */}
-        <div className="keep-note keep-c-coral">
-          <div className="keep-note-title">What doesn’t count?</div>
-          <p className="keep-text">Not every response qualifies. These do not count as valid replies.</p>
-          <ul className="rule-x keep-list">
-            {R.doesntCount.map(c => <li key={c}><I.M name="cancel" size={18} /> {c}</li>)}
-          </ul>
-          <p className="keep-support">If a human didn’t personally respond, it doesn’t count.</p>
-        </div>
-
-        {/* 4 — The BCC Rule */}
-        <div className="keep-note keep-c-blue">
-          <div className="keep-note-title">Every competition email must BCC us.</div>
-          <div className="keep-bcc">
-            <span className="keep-bcc-email">{R.bccEmail}</span>
-            <button className="rule-bcc-copy" onClick={copyBcc}>
-              <I.M name={copied ? 'check' : 'content_copy'} size={16} /> {copied ? 'Copied!' : 'Copy'}
-            </button>
-          </div>
-          <div className="keep-mini-head">Why we require it</div>
-          <ul className="rule-bullets keep-bullets">
-            {R.bccWhy.map(b => <li key={b}>{b}</li>)}
-          </ul>
-          <p className="keep-support">Failure to BCC may make an entry ineligible.</p>
-        </div>
-
-        {/* 5 — Sending Rules */}
-        <div className="keep-note keep-c-teal">
-          <div className="keep-note-title">Sending rules</div>
-          <div className="keep-mini-head keep-yes">Allowed</div>
-          <ul className="rule-check keep-list">
-            {R.allowed.map(a => <li key={a}><I.M name="check_circle" size={18} /> {a}</li>)}
-          </ul>
-          <div className="keep-mini-head keep-no">Not allowed</div>
-          <ul className="rule-x keep-list">
-            {R.notAllowed.map(a => <li key={a}><I.M name="cancel" size={18} /> {a}</li>)}
-          </ul>
-          <p className="keep-support">The competition judges outcomes, not workflows. The only thing that matters is that the outreach is genuine, honest, and earns a real reply.</p>
-        </div>
-
-        {/* 6 — Proof */}
-        <div className="keep-note keep-c-orange">
-          <div className="keep-note-title">Proof</div>
-          <p className="keep-text">To submit an entry you’ll need evidence.</p>
-          <ul className="keep-proof">
-            {R.proof.map(p => (
-              <li key={p.label}><I.M name={p.icon} size={18} /> {p.label}</li>
-            ))}
-          </ul>
-          <p className="keep-support">Judges may request additional verification if needed. Failure to provide proof may result in disqualification.</p>
-        </div>
-
-        {/* 7 — Fair Play */}
-        <div className="keep-note keep-c-purple">
-          <div className="keep-note-title">Fair play</div>
-          <p className="keep-text">The goal is to earn trust from a stranger — not leverage an existing relationship.</p>
-          <div className="keep-mini-head">Recipients cannot be</div>
-          <ul className="rule-tags keep-tags">
-            {R.fairPlayNot.map(f => <li key={f}>{f}</li>)}
-          </ul>
-          <p className="keep-support">If the recipient would reasonably recognize you, they are not a stranger.</p>
-        </div>
-
-        {/* 8 — Privacy */}
-        <div className="keep-note keep-c-gray">
-          <div className="keep-note-title">Privacy</div>
-          <p className="keep-text">We understand that cold emails often contain sensitive information. Participants may blur:</p>
-          <ul className="rule-tags keep-tags">
-            {R.privacyBlur.map(p => <li key={p}>{p}</li>)}
-          </ul>
-          <p className="keep-support">Judges may request original versions privately for verification. Any verification materials will be handled confidentially.</p>
-        </div>
-
-        {/* 9 — Spirit of the Competition (dark note) */}
-        <div className="keep-note keep-c-dark">
-          <div className="keep-note-title">Win by writing.</div>
-          <p className="keep-text">The rules cannot cover every loophole. If an entry technically follows the rules but clearly violates the spirit of fair competition, organizers may disqualify it. The purpose of this competition is simple: earn a genuine response from a genuine stranger.</p>
-          <p className="keep-quote">“Write a remarkable cold email. Don’t game the system.”</p>
-        </div>
-
-        {/* 10 — Final Note */}
-        <div className="keep-note keep-c-pink keep-note-final">
-          <div className="keep-note-title">Write something worth replying to.</div>
-          <p className="keep-text">Not the funniest. Not the longest. Not the craziest.</p>
-          <p className="keep-text">Just the kind of email that makes a stranger stop what they’re doing and hit Reply.</p>
-        </div>
+        {order.map(id => {
+          const n = byId(id)
+          return (
+            <div
+              key={n.id}
+              ref={el => { if (el) el.classList.toggle('keep-clamped', el.scrollHeight > el.clientHeight + 4) }}
+              className={`keep-note keep-c-${n.color}`}
+              draggable
+              onDragStart={e => { dragId.current = n.id; e.currentTarget.classList.add('keep-dragging') }}
+              onDragOver={e => e.preventDefault()}
+              onDrop={() => onDrop(n.id)}
+              onDragEnd={e => { dragId.current = null; e.currentTarget.classList.remove('keep-dragging') }}
+              onClick={() => setExpanded(n.id)}
+              title="Click to expand · drag to reorder"
+            >
+              <div className="keep-note-title">{n.title}</div>
+              {n.render()}
+            </div>
+          )
+        })}
       </div>
+
+      {/* Expanded note modal (Keep-style) */}
+      {expandedNote && (
+        <div className="keep-overlay" onClick={() => setExpanded(null)}>
+          <div className={`keep-modal keep-c-${expandedNote.color}`} onClick={e => e.stopPropagation()}>
+            <div className="keep-modal-head">
+              <div className="keep-note-title">{expandedNote.title}</div>
+              <span className="keep-modal-pin" title="Pin note"><I.M name="keep" size={20} /></span>
+            </div>
+            <div className="keep-modal-body">{expandedNote.render()}</div>
+            <div className="keep-modal-toolbar">
+              <div className="keep-modal-tools">
+                <I.M name="format_color_text" size={18} />
+                <I.M name="palette" size={18} />
+                <I.M name="add_alert" size={18} />
+                <I.M name="person_add" size={18} />
+                <I.M name="image" size={18} />
+                <I.M name="archive" size={18} />
+                <I.M name="more_vert" size={18} />
+              </div>
+              <button className="keep-modal-close" onClick={() => setExpanded(null)}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
