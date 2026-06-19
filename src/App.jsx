@@ -246,21 +246,6 @@ function JeminiPanel({ onClose, open }) {
           </div>
         )}
       </div>
-
-      {/* compose */}
-      <div className="jp-compose">
-        <textarea
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() } }}
-          placeholder="Ask Jemini about the event"
-          rows={1}
-        />
-        <div className="jp-compose-row">
-          <button className="jp-up" onClick={() => send()} title="Send"><I.M name="arrow_upward" size={20} /></button>
-        </div>
-      </div>
-      <div className="jp-foot">Jemini only knows this event — double-check anything important.</div>
     </div>
   )
 }
