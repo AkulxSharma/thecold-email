@@ -1863,75 +1863,71 @@ html, body, #root {
   .home-manifesto-quote { font-size: 23px; }
 }
 
-/* ============ THE RULE PAGE (v2.0) ============ */
-.rule-page { background: #fff; }
-.rule-sec { max-width: 720px; margin: 0 auto; padding: 0 32px; box-sizing: border-box; }
-.rule-sec:first-child { padding-top: 56px; }
-.rule-sec + .rule-sec { margin-top: 56px; }
+/* ============ THE RULE PAGE — Google Keep board ============ */
+.view-panel-keep { background: #fff; padding: 0; }
 
-.rule-h1 { font-family: 'Google Sans','Product Sans',sans-serif; font-size: 52px; font-weight: 600; letter-spacing: -1px; color: #202124; margin: 0 0 18px; }
-.rule-h2 { font-family: 'Google Sans','Product Sans',sans-serif; font-size: 26px; font-weight: 600; color: #202124; margin: 0 0 10px; letter-spacing: -.3px; }
-.rule-h2-sm { font-family: 'Google Sans','Product Sans',sans-serif; font-size: 20px; font-weight: 600; color: #5f6368; margin: 0 0 10px; }
-.rule-h3 { font-size: 14px; font-weight: 600; color: #202124; margin: 22px 0 10px; }
-.rule-lead { font-size: 20px; line-height: 1.5; color: #1f1f1f; margin: 0 0 12px; }
-.rule-sub { font-size: 15px; line-height: 1.6; color: #5f6368; margin: 0 0 22px; max-width: 600px; }
-.rule-intro { font-size: 15px; line-height: 1.6; color: #444746; margin: 0 0 16px; }
-.rule-support { font-size: 14px; line-height: 1.6; color: #80868b; margin: 16px 0 0; }
+/* "Take a note…" composer */
+.keep-composer { display: flex; align-items: center; max-width: 600px; margin: 32px auto 28px; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.08); padding: 14px 16px; cursor: text; }
+.keep-composer:hover { box-shadow: 0 1px 6px rgba(0,0,0,.14); }
+.keep-composer-ph { flex: 1; font-size: 16px; font-weight: 500; color: #5f6368; }
+.keep-composer-icons { display: flex; gap: 4px; }
+.keep-composer-icons .msym { color: #5f6368; padding: 8px; border-radius: 50%; }
+.keep-composer-icons .msym:hover { background: rgba(0,0,0,.06); }
 
-/* hero chips */
-.rule-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
-.rule-chip { background: #fff; border: 1.5px solid #d2d8e0; border-radius: 22px; padding: 10px 18px; font-size: 14px; font-weight: 500; color: #202124; }
+/* masonry board */
+.keep-board { column-count: 4; column-gap: 16px; padding: 0 24px 60px; max-width: 1400px; margin: 0 auto; }
+@media (max-width: 1280px) { .keep-board { column-count: 3; } }
+@media (max-width: 980px)  { .keep-board { column-count: 2; } }
+@media (max-width: 640px)  { .keep-board { column-count: 1; } }
 
-/* check / x lists */
-.rule-check, .rule-x { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
-.rule-check li, .rule-x li { display: flex; align-items: center; gap: 10px; font-size: 15px; color: #202124; }
-.rule-check li .msym { color: #1e8e3e; }
-.rule-x li .msym { color: #d93025; }
+/* note card */
+.keep-note { break-inside: avoid; -webkit-column-break-inside: avoid; display: inline-block; width: 100%; box-sizing: border-box; border: 1px solid rgba(0,0,0,.1); border-radius: 12px; padding: 16px 18px; margin: 0 0 16px; box-shadow: 0 1px 2px rgba(0,0,0,.05); transition: box-shadow .15s; }
+.keep-note:hover { box-shadow: 0 2px 10px rgba(0,0,0,.16); }
+.keep-note-title { font-family: 'Google Sans','Product Sans',sans-serif; font-size: 17px; font-weight: 600; color: #202124; margin-bottom: 10px; line-height: 1.3; }
+.keep-lead { font-size: 15px; line-height: 1.5; color: #202124; margin: 0 0 10px; font-weight: 500; }
+.keep-text { font-size: 14px; line-height: 1.55; color: #3c4043; margin: 0 0 10px; }
+.keep-support { font-size: 12.5px; line-height: 1.5; color: #5f6368; margin: 12px 0 0; font-style: italic; }
+.keep-mini-head { font-size: 12px; font-weight: 600; color: #5f6368; margin: 4px 0 8px; text-transform: uppercase; letter-spacing: .04em; }
+.keep-mini-head.keep-yes { color: #1e7e34; }
+.keep-mini-head.keep-no { color: #c5221f; }
+.keep-quote { font-family: 'Google Sans',sans-serif; font-size: 17px; font-style: italic; line-height: 1.5; margin: 14px 0 0; }
 
-/* BCC card */
-.rule-bcc-card { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; background: #e8f0fe; border-radius: 16px; padding: 28px 24px; margin: 4px 0 8px; }
-.rule-bcc-email { font-family: 'Google Sans','Product Sans',sans-serif; font-size: 28px; font-weight: 500; color: #1a4fd0; word-break: break-all; }
-.rule-bcc-copy { display: inline-flex; align-items: center; gap: 7px; background: #1a73e8; color: #fff; border: none; border-radius: 20px; padding: 9px 18px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background .15s; }
+/* check / x / tag / bullet lists (reused inside notes, tightened) */
+.rule-check, .rule-x { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+.rule-check li, .rule-x li { display: flex; align-items: flex-start; gap: 9px; font-size: 14px; color: #202124; line-height: 1.4; }
+.rule-check li .msym { color: #1e8e3e; flex-shrink: 0; }
+.rule-x li .msym { color: #d93025; flex-shrink: 0; }
+.rule-tags { list-style: none; margin: 0 0 4px; padding: 0; display: flex; flex-wrap: wrap; gap: 7px; }
+.rule-tags li { background: rgba(255,255,255,.55); border-radius: 16px; padding: 5px 12px; font-size: 12.5px; color: #3c4043; font-weight: 500; }
+.rule-bullets { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+.rule-bullets li { font-size: 13px; color: #3c4043; line-height: 1.45; }
+.keep-proof { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+.keep-proof li { display: flex; align-items: center; gap: 9px; font-size: 14px; color: #3c4043; }
+.keep-proof li .msym { color: #1a73e8; }
+
+/* BCC inside its note */
+.keep-bcc { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; background: rgba(255,255,255,.6); border-radius: 10px; padding: 14px 16px; margin: 2px 0 12px; }
+.keep-bcc-email { font-family: 'Google Sans','Product Sans',sans-serif; font-size: 18px; font-weight: 500; color: #1a4fd0; word-break: break-all; }
+.rule-bcc-copy { display: inline-flex; align-items: center; gap: 6px; background: #1a73e8; color: #fff; border: none; border-radius: 18px; padding: 7px 14px; font-size: 13px; font-weight: 500; cursor: pointer; transition: background .15s; }
 .rule-bcc-copy:hover { background: #0b57d0; }
-.rule-bullets { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; }
-.rule-bullets li { font-size: 14px; color: #444746; line-height: 1.5; }
 
-/* sending rules split */
-.rule-split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.rule-col { border-radius: 14px; padding: 20px; }
-.rule-col-yes { background: #e6f4ea; }
-.rule-col-no { background: #fce8e6; }
-.rule-col-head { font-family: 'Google Sans',sans-serif; font-size: 15px; font-weight: 600; margin-bottom: 14px; }
-.rule-col-yes .rule-col-head { color: #1e8e3e; }
-.rule-col-no .rule-col-head { color: #d93025; }
-.rule-col .rule-check li, .rule-col .rule-x li { font-size: 14px; align-items: flex-start; }
+/* Keep note colors */
+.keep-c-yellow { background: #fff8b8; }
+.keep-c-green  { background: #e2f6d3; }
+.keep-c-coral  { background: #faafa8; }
+.keep-c-blue   { background: #d4e4ed; }
+.keep-c-teal   { background: #b4ddd3; }
+.keep-c-orange { background: #fbbc9d; }
+.keep-c-purple { background: #d3bfdb; }
+.keep-c-gray   { background: #efeff1; }
+.keep-c-pink   { background: #f6e2dd; }
 
-/* proof cards */
-.rule-proof { display: flex; flex-wrap: wrap; gap: 12px; }
-.rule-proof-card { flex: 1 1 120px; min-width: 120px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; background: #f8f9fa; border: 1px solid #e8eaed; border-radius: 12px; padding: 18px 12px; font-size: 13px; color: #444746; }
-.rule-proof-card .msym { color: #1a73e8; }
+/* dark note */
+.keep-c-dark { background: #202124; border-color: rgba(255,255,255,.12); }
+.keep-c-dark .keep-note-title { color: #fff; }
+.keep-c-dark .keep-text { color: #c7c7cc; }
+.keep-c-dark .keep-quote { color: #fff; }
 
-/* fair play / privacy tag lists */
-.rule-mini-head { font-size: 13px; font-weight: 600; color: #5f6368; margin-bottom: 12px; text-transform: uppercase; letter-spacing: .04em; }
-.rule-tags { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-.rule-tags li { background: #f1f3f4; border-radius: 18px; padding: 7px 14px; font-size: 13px; color: #444746; }
-.rule-privacy { opacity: .92; }
-
-/* 9 — Spirit (dark, full-bleed) */
-.rule-spirit { background: #0b0b0c; padding: 88px 32px; margin-top: 64px; }
-.rule-spirit-inner { max-width: 640px; margin: 0 auto; text-align: center; }
-.rule-spirit-h { font-family: 'Google Sans','Product Sans',sans-serif; font-size: 44px; font-weight: 600; color: #fff; margin: 0 0 22px; letter-spacing: -.5px; }
-.rule-spirit-body { font-size: 16px; line-height: 1.7; color: #c7c7cc; margin: 0 0 28px; }
-.rule-spirit-quote { font-family: 'Google Sans',sans-serif; font-size: 22px; font-style: italic; color: #fff; margin: 0; line-height: 1.5; }
-
-/* 10 — Final note (centered, minimal) */
-.rule-final { text-align: center; max-width: 600px; margin: 0 auto; padding: 72px 32px 80px; }
-.rule-final-lead { font-family: 'Google Sans','Product Sans',sans-serif; font-size: 30px; font-weight: 600; color: #202124; margin: 0 0 18px; letter-spacing: -.3px; }
-.rule-final-sub { font-size: 16px; line-height: 1.7; color: #5f6368; margin: 0; }
-
-@media (max-width: 640px) {
-  .rule-h1 { font-size: 38px; }
-  .rule-split { grid-template-columns: 1fr; }
-  .rule-spirit-h { font-size: 32px; }
-}
+/* final note — slightly emphasized */
+.keep-note-final .keep-note-title { font-size: 19px; }
 
