@@ -10,6 +10,7 @@ const TRACKS = ['unreachable', 'subject', 'twoliner', 'ask'].map(t => EMAILS.fin
 function TopBar({ onMenu, onLogo, onJemini }) {
   const [q, setQ] = useState('')
   const [meme] = useState(() => MEMES[Math.floor(Math.random() * MEMES.length)])
+  const [pfpOpen, setPfpOpen] = useState(false)
   return (
     <div className="topbar">
       <div className="icon-btn" title="Main menu" onClick={onMenu}><I.Menu /></div>
@@ -27,10 +28,21 @@ function TopBar({ onMenu, onLogo, onJemini }) {
         <div className="jemini" onClick={e => { e.stopPropagation(); onJemini() }}><I.Spark /> Jemini</div>
         <div className="icon-btn" title="Feedback"><I.Feedback /></div>
         <div className="status-pill"><span className="status-dot" /> Active <I.CaretDown /></div>
-        <div className="avatar-ring" title={meme.name}>
+        <div className="avatar-ring" title={`${meme.name} — click for the takeaway`} onClick={() => setPfpOpen(true)}>
           <img className="avatar-img" src={meme.img} alt={meme.name} onError={e => { e.currentTarget.style.display = 'none' }} />
         </div>
       </div>
+      {pfpOpen && (
+        <div className="pfp-overlay" onClick={() => setPfpOpen(false)}>
+          <div className="pfp-card" onClick={e => e.stopPropagation()}>
+            <button className="pfp-x" onClick={() => setPfpOpen(false)} title="Close"><I.Close w={20} /></button>
+            <img className="pfp-photo" src={meme.img} alt={meme.name} />
+            <div className="pfp-name">{meme.name}</div>
+            <div className="pfp-kicker"><I.Spark /> The takeaway</div>
+            <div className="pfp-tip">{meme.tip}</div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

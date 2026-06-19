@@ -219,15 +219,27 @@ Get the reply. → thecold.email`,
   },
 ]
 
-// Profile-pic meme pool — random one shows in the avatar ring each refresh.
-// Drop matching images into public/memes/ (filenames below); click avatar to enlarge.
+// Profile-pic meme pool — a random one shows in the avatar ring each refresh.
+// Click the avatar → reveal card with the name + a usable cold-email takeaway ("tip").
+// Images live in public/memes/ (from PFP_IMGS.zip).
 export const MEMES = [
-  { name: 'Elon smoking on Rogan',  img: '/memes/elon-weed.png' },
-  { name: 'Distracted Boyfriend',   img: '/memes/distracted-boyfriend.png' },
-  { name: 'Drake Hotline Bling',    img: '/memes/drake.png' },
-  { name: 'Side-Eyeing Chloe',      img: '/memes/chloe.png' },
-  { name: 'Gigachad',               img: '/memes/gigachad.png' },
-  { name: 'Hide the Pain Harold',   img: '/memes/harold.png' },
+  { name: 'Elon Musk',        img: '/memes/IMG-20260619-WA0024.jpg', tip: 'Hit send before you talk yourself out of it. The boldest line in the inbox usually wins.' },
+  { name: 'Jeff Bezos',       img: '/memes/IMG-20260619-WA0023.jpg', tip: 'Lead with what THEY get, not what you sell. Obsess over the reader, not the pitch.' },
+  { name: 'Barack Obama',     img: '/memes/IMG-20260619-WA0012.jpg', tip: 'Write to one person, not a list. "You" beats "everyone" every time.' },
+  { name: 'Donald Trump',     img: '/memes/IMG-20260619-WA0020.jpg', tip: 'The subject line is the whole game. If it doesn\'t get opened, nothing else matters.' },
+  { name: 'Kanye West',       img: '/memes/Kanye.jpeg',              tip: 'Believe your pitch more than they doubt it. Conviction is contagious.' },
+  { name: 'Drake',            img: '/memes/IMG-20260619-WA0015.jpg', tip: 'Started from the cold open. A "no reply" today is just a warm lead tomorrow — follow up.' },
+  { name: 'Justin Bieber',    img: '/memes/IMG-20260619-WA0008.jpg', tip: 'A good follow-up beats a perfect first email. Most replies come on email #2 or #3.' },
+  { name: 'Sabrina Carpenter',img: '/memes/IMG-20260619-WA0018.jpg', tip: 'Be the email they can\'t stop thinking about. Memorable beats polished.' },
+  { name: 'Max Verstappen',   img: '/memes/IMG-20260619-WA0011.jpg', tip: 'Speed wins. The faster you send, the more shots on goal — volume is a strategy.' },
+  { name: 'Charlie Kirk',     img: '/memes/IMG-20260619-WA0019.jpg', tip: 'Open a loop they have to close. A sharp question is harder to ignore than a statement.' },
+  { name: 'Mark Zuckerberg',  img: '/memes/IMG-20260619-WA0022.jpg', tip: 'Don\'t sound like a bot. One specific, human detail beats a thousand merge tags.' },
+  { name: 'Anthony Mackie',   img: '/memes/IMG-20260619-WA0014.jpg', tip: 'Confidence, no begging. Ask for the thing like you expect a yes.' },
+  { name: 'Brooklyn 99',      img: '/memes/IMG-20260619-WA0009.jpg', tip: 'Cool, cool, cool — keep it short. If they can read it in 10 seconds, they\'ll actually read it.' },
+  { name: 'Phil Dunphy',      img: '/memes/IMG-20260619-WA0013.jpg', tip: 'Warm beats clever. People reply to people they\'d want to grab a coffee with.' },
+  { name: 'The Kiss-Cam Couple', img: '/memes/IMG-20260619-WA0016.jpg', tip: 'Check the "To" field twice. The wrong recipient turns a cold email into a viral one.' },
+  { name: 'Caught Mid-Sentence', img: '/memes/IMG-20260619-WA0010.jpg', tip: 'Make them smile in line one. A little personality earns the rest of the read.' },
+  { name: 'Corporate Era',    img: '/memes/IMG-20260619-WA0021.jpg', tip: 'Respect their time. Get to the ask fast — busy people reply to clear, not clever.' },
 ]
 
 export const TOPIC_NAMES = {
