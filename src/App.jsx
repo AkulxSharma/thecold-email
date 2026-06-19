@@ -975,7 +975,7 @@ function ViewRule({ onEnter }) {
   const noteRefs = useRef(new Map())
   const boardRef = useRef(null)
   const animOn = useRef(false)
-  const [checked, setChecked] = useState(() => new Set())     // struck-through items
+  const [checked, setChecked] = useState(() => new Set(RULES_PAGE.fairPlayNot.map(t => `fairplay|${t}`)))  // pre-checked
   const [collapsed, setCollapsed] = useState(() => new Set())  // collapsed groups
   const toggleCheck = k => setChecked(p => { const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n })
   const toggleCollapse = k => setCollapsed(p => { const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n })
@@ -986,7 +986,7 @@ function ViewRule({ onEnter }) {
     return (
       <li key={text} className={`keep-ci${done ? ' done' : ''}`} onClick={e => { e.stopPropagation(); toggleCheck(k) }}>
         <I.M name={done ? 'check_box' : 'check_box_outline_blank'} size={18} />
-        <span>{text}</span>
+        <span className="keep-ci-text">{text}</span>
       </li>
     )
   }
