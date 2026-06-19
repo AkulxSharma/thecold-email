@@ -974,15 +974,16 @@ function ViewRule({ onEnter }) {
   const [expanded, setExpanded] = useState(null)   // note id or null
   const dragId = useRef(null)
 
-  const onDrop = (targetId) => {
+  // Live reorder: as the dragged note enters another, shift the others around it.
+  const moveOver = (targetId) => {
     const from = dragId.current
     if (!from || from === targetId) return
     setOrder(prev => {
+      if (prev.indexOf(from) === -1) return prev
       const next = prev.filter(id => id !== from)
       next.splice(next.indexOf(targetId), 0, from)
       return next
     })
-    dragId.current = null
   }
 
   const byId = id => NOTES.find(n => n.id === id)
@@ -1010,8 +1011,9 @@ function ViewRule({ onEnter }) {
               className={`keep-note keep-c-${n.color}`}
               draggable
               onDragStart={e => { dragId.current = n.id; e.currentTarget.classList.add('keep-dragging') }}
+              onDragEnter={() => moveOver(n.id)}
               onDragOver={e => e.preventDefault()}
-              onDrop={() => onDrop(n.id)}
+              onDrop={e => { e.preventDefault(); dragId.current = null }}
               onDragEnd={e => { dragId.current = null; e.currentTarget.classList.remove('keep-dragging') }}
               onClick={() => setExpanded(n.id)}
             >
