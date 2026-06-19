@@ -1863,3 +1863,75 @@ html, body, #root {
   .home-manifesto-quote { font-size: 23px; }
 }
 
+/* ============ THE RULE PAGE (v2.0) ============ */
+.rule-page { background: #fff; }
+.rule-sec { max-width: 720px; margin: 0 auto; padding: 0 32px; box-sizing: border-box; }
+.rule-sec:first-child { padding-top: 56px; }
+.rule-sec + .rule-sec { margin-top: 56px; }
+
+.rule-h1 { font-family: 'Google Sans','Product Sans',sans-serif; font-size: 52px; font-weight: 600; letter-spacing: -1px; color: #202124; margin: 0 0 18px; }
+.rule-h2 { font-family: 'Google Sans','Product Sans',sans-serif; font-size: 26px; font-weight: 600; color: #202124; margin: 0 0 10px; letter-spacing: -.3px; }
+.rule-h2-sm { font-family: 'Google Sans','Product Sans',sans-serif; font-size: 20px; font-weight: 600; color: #5f6368; margin: 0 0 10px; }
+.rule-h3 { font-size: 14px; font-weight: 600; color: #202124; margin: 22px 0 10px; }
+.rule-lead { font-size: 20px; line-height: 1.5; color: #1f1f1f; margin: 0 0 12px; }
+.rule-sub { font-size: 15px; line-height: 1.6; color: #5f6368; margin: 0 0 22px; max-width: 600px; }
+.rule-intro { font-size: 15px; line-height: 1.6; color: #444746; margin: 0 0 16px; }
+.rule-support { font-size: 14px; line-height: 1.6; color: #80868b; margin: 16px 0 0; }
+
+/* hero chips */
+.rule-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
+.rule-chip { background: #fff; border: 1.5px solid #d2d8e0; border-radius: 22px; padding: 10px 18px; font-size: 14px; font-weight: 500; color: #202124; }
+
+/* check / x lists */
+.rule-check, .rule-x { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.rule-check li, .rule-x li { display: flex; align-items: center; gap: 10px; font-size: 15px; color: #202124; }
+.rule-check li .msym { color: #1e8e3e; }
+.rule-x li .msym { color: #d93025; }
+
+/* BCC card */
+.rule-bcc-card { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; background: #e8f0fe; border-radius: 16px; padding: 28px 24px; margin: 4px 0 8px; }
+.rule-bcc-email { font-family: 'Google Sans','Product Sans',sans-serif; font-size: 28px; font-weight: 500; color: #1a4fd0; word-break: break-all; }
+.rule-bcc-copy { display: inline-flex; align-items: center; gap: 7px; background: #1a73e8; color: #fff; border: none; border-radius: 20px; padding: 9px 18px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background .15s; }
+.rule-bcc-copy:hover { background: #0b57d0; }
+.rule-bullets { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; }
+.rule-bullets li { font-size: 14px; color: #444746; line-height: 1.5; }
+
+/* sending rules split */
+.rule-split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.rule-col { border-radius: 14px; padding: 20px; }
+.rule-col-yes { background: #e6f4ea; }
+.rule-col-no { background: #fce8e6; }
+.rule-col-head { font-family: 'Google Sans',sans-serif; font-size: 15px; font-weight: 600; margin-bottom: 14px; }
+.rule-col-yes .rule-col-head { color: #1e8e3e; }
+.rule-col-no .rule-col-head { color: #d93025; }
+.rule-col .rule-check li, .rule-col .rule-x li { font-size: 14px; align-items: flex-start; }
+
+/* proof cards */
+.rule-proof { display: flex; flex-wrap: wrap; gap: 12px; }
+.rule-proof-card { flex: 1 1 120px; min-width: 120px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; background: #f8f9fa; border: 1px solid #e8eaed; border-radius: 12px; padding: 18px 12px; font-size: 13px; color: #444746; }
+.rule-proof-card .msym { color: #1a73e8; }
+
+/* fair play / privacy tag lists */
+.rule-mini-head { font-size: 13px; font-weight: 600; color: #5f6368; margin-bottom: 12px; text-transform: uppercase; letter-spacing: .04em; }
+.rule-tags { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.rule-tags li { background: #f1f3f4; border-radius: 18px; padding: 7px 14px; font-size: 13px; color: #444746; }
+.rule-privacy { opacity: .92; }
+
+/* 9 — Spirit (dark, full-bleed) */
+.rule-spirit { background: #0b0b0c; padding: 88px 32px; margin-top: 64px; }
+.rule-spirit-inner { max-width: 640px; margin: 0 auto; text-align: center; }
+.rule-spirit-h { font-family: 'Google Sans','Product Sans',sans-serif; font-size: 44px; font-weight: 600; color: #fff; margin: 0 0 22px; letter-spacing: -.5px; }
+.rule-spirit-body { font-size: 16px; line-height: 1.7; color: #c7c7cc; margin: 0 0 28px; }
+.rule-spirit-quote { font-family: 'Google Sans',sans-serif; font-size: 22px; font-style: italic; color: #fff; margin: 0; line-height: 1.5; }
+
+/* 10 — Final note (centered, minimal) */
+.rule-final { text-align: center; max-width: 600px; margin: 0 auto; padding: 72px 32px 80px; }
+.rule-final-lead { font-family: 'Google Sans','Product Sans',sans-serif; font-size: 30px; font-weight: 600; color: #202124; margin: 0 0 18px; letter-spacing: -.3px; }
+.rule-final-sub { font-size: 16px; line-height: 1.7; color: #5f6368; margin: 0; }
+
+@media (max-width: 640px) {
+  .rule-h1 { font-size: 38px; }
+  .rule-split { grid-template-columns: 1fr; }
+  .rule-spirit-h { font-size: 32px; }
+}
+

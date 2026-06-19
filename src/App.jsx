@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { EMAILS, TOPIC_NAMES, DEADLINES, SEND_WINDOW, BEST_EMAILS, EVENTS, MEMES } from './data.js'
+import { EMAILS, TOPIC_NAMES, DEADLINES, SEND_WINDOW, BEST_EMAILS, EVENTS, MEMES, RULES_PAGE } from './data.js'
 import * as I from './icons.jsx'
 
 const GMAIL_LOGO = '/logo.png'
@@ -899,19 +899,133 @@ function ViewTrack({ topic }) {
 
 // ---------------- VIEW: THE RULE ----------------
 function ViewRule() {
-  const rules = ['No impersonation', 'No lying', 'No pre-existing relationship', 'No mass-blasting']
+  const R = RULES_PAGE
+  const [copied, setCopied] = useState(false)
+  const copyBcc = () => {
+    navigator.clipboard?.writeText(R.bccEmail)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1600)
+  }
   return (
-    <div className="view-panel">
-      <div className="view-header">
-        <h2 className="view-title">The Rule</h2>
-      </div>
-      <div className="view-body">
-        <p className="lp-lead">A cold email counts only if a real stranger actually wrote back.</p>
-        <ul className="lp-list" style={{ marginBottom: 20 }}>
-          {rules.map(r => <li key={r}>{r}</li>)}
+    <div className="view-panel rule-page">
+      {/* 1 — The Rule (hero) */}
+      <section className="rule-sec rule-hero">
+        <h1 className="rule-h1">The Rule</h1>
+        <p className="rule-lead">A cold email counts only if a real stranger genuinely wrote back.</p>
+        <p className="rule-sub">Every competition email must be sent during the event and BCC our official competition inbox for verification.</p>
+        <div className="rule-chips">
+          {R.chips.map(c => <span key={c} className="rule-chip">{c}</span>)}
+        </div>
+        <p className="rule-support">Break any of these and your entry is disqualified.</p>
+      </section>
+
+      {/* 2 — What Counts? */}
+      <section className="rule-sec">
+        <h2 className="rule-h2">What counts?</h2>
+        <p className="rule-intro">Your entry qualifies only if all of the following are true.</p>
+        <ul className="rule-check">
+          {R.whatCounts.map(c => <li key={c}><I.M name="check_circle" size={20} /> {c}</li>)}
         </ul>
-        <p className="lp-fine">Break any of these and you're disqualified. Verified by us — a screenshot of the reply.</p>
-      </div>
+        <p className="rule-support">A reply can be short. A reply can be negative. A reply can simply be “No.” What matters is that a real person responded.</p>
+      </section>
+
+      {/* 3 — What Doesn't Count? */}
+      <section className="rule-sec">
+        <h2 className="rule-h2">What doesn’t count?</h2>
+        <p className="rule-intro">Not every response qualifies. These do not count as valid replies.</p>
+        <ul className="rule-x">
+          {R.doesntCount.map(c => <li key={c}><I.M name="cancel" size={20} /> {c}</li>)}
+        </ul>
+        <p className="rule-support">If a human didn’t personally respond, it doesn’t count.</p>
+      </section>
+
+      {/* 4 — The BCC Rule */}
+      <section className="rule-sec">
+        <h2 className="rule-h2">Every competition email must BCC us.</h2>
+        <div className="rule-bcc-card">
+          <span className="rule-bcc-email">{R.bccEmail}</span>
+          <button className="rule-bcc-copy" onClick={copyBcc}>
+            <I.M name={copied ? 'check' : 'content_copy'} size={18} /> {copied ? 'Copied!' : 'Copy'}
+          </button>
+        </div>
+        <h3 className="rule-h3">Why we require it</h3>
+        <ul className="rule-bullets">
+          {R.bccWhy.map(b => <li key={b}>{b}</li>)}
+        </ul>
+        <p className="rule-support">Failure to BCC may make an entry ineligible.</p>
+      </section>
+
+      {/* 5 — Sending Rules */}
+      <section className="rule-sec">
+        <h2 className="rule-h2">Sending rules</h2>
+        <div className="rule-split">
+          <div className="rule-col rule-col-yes">
+            <div className="rule-col-head">Allowed</div>
+            <ul className="rule-check">
+              {R.allowed.map(a => <li key={a}><I.M name="check_circle" size={20} /> {a}</li>)}
+            </ul>
+          </div>
+          <div className="rule-col rule-col-no">
+            <div className="rule-col-head">Not allowed</div>
+            <ul className="rule-x">
+              {R.notAllowed.map(a => <li key={a}><I.M name="cancel" size={20} /> {a}</li>)}
+            </ul>
+          </div>
+        </div>
+        <p className="rule-support">The competition judges outcomes, not workflows. The only thing that matters is that the outreach is genuine, honest, and earns a real reply.</p>
+      </section>
+
+      {/* 6 — Proof */}
+      <section className="rule-sec">
+        <h2 className="rule-h2">Proof</h2>
+        <p className="rule-intro">To submit an entry you’ll need evidence.</p>
+        <div className="rule-proof">
+          {R.proof.map(p => (
+            <div key={p.label} className="rule-proof-card">
+              <I.M name={p.icon} size={24} />
+              <span>{p.label}</span>
+            </div>
+          ))}
+        </div>
+        <p className="rule-support">Judges may request additional verification if needed. Failure to provide proof may result in disqualification.</p>
+      </section>
+
+      {/* 7 — Fair Play */}
+      <section className="rule-sec">
+        <h2 className="rule-h2">Fair play</h2>
+        <p className="rule-intro">The goal is to earn trust from a stranger — not leverage an existing relationship.</p>
+        <div className="rule-mini-head">Recipients cannot be</div>
+        <ul className="rule-tags">
+          {R.fairPlayNot.map(f => <li key={f}>{f}</li>)}
+        </ul>
+        <p className="rule-support">If the recipient would reasonably recognize you, they are not a stranger.</p>
+      </section>
+
+      {/* 8 — Privacy */}
+      <section className="rule-sec rule-privacy">
+        <h2 className="rule-h2-sm">Privacy</h2>
+        <p className="rule-intro">We understand that cold emails often contain sensitive information. Participants may blur:</p>
+        <ul className="rule-tags">
+          {R.privacyBlur.map(p => <li key={p}>{p}</li>)}
+        </ul>
+        <p className="rule-support">Judges may request original versions privately for verification. Any verification materials will be handled confidentially.</p>
+      </section>
+
+      {/* 9 — Spirit of the Competition (dark, full-bleed) */}
+      <section className="rule-spirit">
+        <div className="rule-spirit-inner">
+          <h2 className="rule-spirit-h">Win by writing.</h2>
+          <p className="rule-spirit-body">The rules cannot cover every loophole. If an entry technically follows the rules but clearly violates the spirit of fair competition, organizers may disqualify it. The purpose of this competition is simple: earn a genuine response from a genuine stranger.</p>
+          <p className="rule-spirit-quote">“Write a remarkable cold email. Don’t game the system.”</p>
+        </div>
+      </section>
+
+      {/* 10 — Final Note */}
+      <section className="rule-final">
+        <p className="rule-final-lead">Write something worth replying to.</p>
+        <p className="rule-final-sub">Not the funniest. Not the longest. Not the craziest.</p>
+        <p className="rule-final-sub">Just the kind of email that makes a stranger stop what they’re doing and hit Reply.</p>
+      </section>
     </div>
   )
 }

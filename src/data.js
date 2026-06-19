@@ -242,6 +242,70 @@ export const MEMES = [
   { name: 'Corporate Era',    hi: 'champ',   email: 'circleback@synergy.com',     img: '/memes/IMG-20260619-WA0021.jpg', tip: "Let's circle back — but actually. Respect their calendar: get to the ask before sentence two." },
 ]
 
+// The Rule page (v2.0 spec) — list content; headings/copy live inline in ViewRule.
+export const RULES_PAGE = {
+  chips: ['No Impersonation', 'No Lying', 'No Existing Relationship', 'No Mass-Blasting', 'BCC Required'],
+  whatCounts: [
+    'A real person replied',
+    'The recipient was a stranger',
+    'The email was sent during the competition',
+    "You BCC'd our competition inbox",
+    'You can provide proof',
+    'The interaction was genuine',
+  ],
+  doesntCount: [
+    'Out of office replies',
+    'Auto-responders',
+    'Newsletter confirmations',
+    'Delivery notifications',
+    'Bounce messages',
+    'AI-generated autoresponses',
+    'Existing contacts',
+    'Purchased introductions',
+    'Paid responses',
+  ],
+  bccWhy: [
+    'Creates an independent timestamp',
+    'Prevents fake screenshots',
+    'Verifies the email was actually sent',
+    'Keeps judging fair',
+    'Protects the integrity of the competition',
+  ],
+  allowed: [
+    'Personal research',
+    'Custom-written emails',
+    'Personalized outreach',
+    'Up to two follow-ups',
+    'Any writing or research workflow that follows the rules',
+    'Human or software-assisted drafting',
+  ],
+  notAllowed: [
+    'Spam',
+    'Fake identities',
+    'Impersonation',
+    'Misleading credentials',
+    'Fabricated achievements',
+    'Mass-blasting substantially identical emails',
+    'Fake screenshots',
+    'Fake replies',
+  ],
+  proof: [
+    { icon: 'mail',          label: 'Original email' },
+    { icon: 'chat_bubble',   label: 'Reply received' },
+    { icon: 'photo_camera',  label: 'Screenshot of the exchange' },
+    { icon: 'verified',      label: 'Matching BCC verification' },
+    { icon: 'assignment',    label: 'Submission form' },
+  ],
+  fairPlayNot: [
+    'Family', 'Friends', 'Classmates', 'Colleagues',
+    'Existing clients', 'Former clients', 'Previous contacts', 'Anyone who already knows you',
+  ],
+  privacyBlur: [
+    'Email addresses', 'Phone numbers', 'Company information', 'Personal details', 'Private conversations',
+  ],
+  bccEmail: 'hello@thecold.email',
+}
+
 export const TOPIC_NAMES = {
   rule: 'The Rule',
   unreachable: 'The Unreachable',
