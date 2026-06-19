@@ -261,15 +261,115 @@ function JeminiPanel({ onClose, open }) {
 // ================================================================
 
 // ---------------- VIEW: OVERVIEW (Inbox / Hero) ----------------
-function ViewOverview({ onEnter }) {
+// Format a YYYY-MM-DD deadline date into "Jun 24" (avoids Date() timezone drift)
+function shortDate(iso) {
+  const [, m, d] = iso.split('-')
+  return `${MONTH_ABBR[+m - 1]} ${+d}`
+}
+
+// The 4 tracks, in sidebar order — topic keys map to TRACK_ICONS + the track-* views
+const TRACK_TEASERS = ['unreachable', 'subject', 'twoliner', 'ask']
+
+function ViewOverview({ onEnter, goto }) {
   return (
     <div className="view-panel">
-      <div className="lp-hero">
-        <div className="lp-eyebrow">★ THECOLD.EMAIL · GET THE REPLY</div>
-        <h1 className="lp-tagline">The world replies to those who know how to write.</h1>
-        <p className="lp-sub">A cold email competition to find the best cold emails on the planet — proven by who actually replied.</p>
-        <button className="lp-cta" onClick={onEnter}>Enter the competition</button>
-        <div className="lp-meta">Launch Jun 24 · Submit by Jul 7 · Winners Jul 10 · $3,000 in prizes</div>
+      <div className="home">
+
+        {/* 1 — HERO */}
+        <section className="home-hero">
+          <div className="home-hero-main">
+            <h1 className="home-tagline">The world replies to those who know how to write.</h1>
+            <p className="home-sub">A cold email competition to find the best cold emails on the planet — proven by who actually replied.</p>
+            <button className="lp-cta" onClick={onEnter}>Enter the competition</button>
+          </div>
+          <aside className="home-prize-callout">
+            <div className="home-prize-label">Prize pool</div>
+            <div className="home-prize-amount">$3,000</div>
+            <button className="home-prize-btn" onClick={() => goto('prizes')}>
+              See the breakdown <I.M name="arrow_forward" size={16} />
+            </button>
+          </aside>
+        </section>
+
+        {/* Launch video — big & special placeholder */}
+        <section className="home-video">
+          <div className="home-video-frame">
+            <div className="home-video-play"><I.M name="play_arrow" size={40} /></div>
+            <div className="home-video-text">
+              <div className="home-video-title">Launch film</div>
+              <div className="home-video-sub">Drops June 24</div>
+            </div>
+          </div>
+        </section>
+
+        {/* 2 — DEADLINE STRIP */}
+        <section className="home-deadlines">
+          {DEADLINES.map((d, i) => (
+            <div className="home-deadline" key={i}>
+              <span className="home-deadline-date">{shortDate(d.date)}</span>
+              <span className="home-deadline-label">{d.label}</span>
+            </div>
+          ))}
+        </section>
+
+        {/* 3 — WHAT IS THIS / how it works */}
+        <section className="home-what">
+          <h2 className="home-h2">One cold email. One real reply. That's the whole game.</h2>
+          <div className="home-flow">
+            <div className="home-flow-step"><span className="home-flow-num">1</span>Send a cold email</div>
+            <I.M name="arrow_forward" size={20} />
+            <div className="home-flow-step"><span className="home-flow-num">2</span>Get a real reply</div>
+            <I.M name="arrow_forward" size={20} />
+            <div className="home-flow-step"><span className="home-flow-num">3</span>Prove it &amp; compete</div>
+          </div>
+        </section>
+
+        {/* 4 — TRACK TEASER (icons → track pages, no descriptions) */}
+        <section className="home-tracks">
+          <div className="home-section-kicker">Four ways to win</div>
+          <div className="home-track-grid">
+            {TRACK_TEASERS.map(topic => (
+              <button className="home-track" key={topic} onClick={() => goto(`track-${topic}`)}>
+                <span className="home-track-icon">{TRACK_ICONS[topic]}</span>
+                <span className="home-track-name">{TOPIC_NAMES[topic]}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* 5 — PRIZE TEASER */}
+        <section className="home-prize-teaser">
+          <span className="home-prize-icon"><I.M name="payments" size={48} /></span>
+          <div className="home-prize-big">$3,000</div>
+          <p className="home-prize-desc">A cash prize for every track, plus a bigger grand prize for the best cold email overall.</p>
+          <button className="home-prize-btn dark" onClick={() => goto('prizes')}>
+            See the breakdown <I.M name="arrow_forward" size={16} />
+          </button>
+        </section>
+
+        {/* 6 — MANIFESTO (placeholder copy — DK supplies the real line) */}
+        <section className="home-manifesto">
+          <blockquote className="home-manifesto-quote">
+            “The cold email is the last open door. Anyone can knock. Almost no one does it well.”
+          </blockquote>
+          <div className="home-manifesto-note">— manifesto placeholder, real copy TBD</div>
+        </section>
+
+        {/* 7 — FOOTER */}
+        <footer className="home-footer">
+          <div className="home-footer-brand">
+            <img src="/logo.png" alt="" className="home-footer-logo" />
+            <span className="home-footer-wordmark">thecold.email</span>
+          </div>
+          <div className="home-footer-socials">
+            <a href="#" className="home-footer-link">X</a>
+            <a href="#" className="home-footer-link">Instagram</a>
+            <a href="#" className="home-footer-link">LinkedIn</a>
+            <a href="#" className="home-footer-link">TikTok</a>
+          </div>
+          <div className="home-footer-sponsors">Sponsors — your logo here</div>
+        </footer>
+
       </div>
     </div>
   )
@@ -900,9 +1000,9 @@ function ViewJudging() {
 // ================================================================
 // MAIN PANEL — renders the active view
 // ================================================================
-function MainPanel({ view, onEnter }) {
+function MainPanel({ view, onEnter, goto }) {
   switch (view) {
-    case 'overview':          return <ViewOverview onEnter={onEnter} />
+    case 'overview':          return <ViewOverview onEnter={onEnter} goto={goto} />
     case 'winners':           return <ViewWinners />
     case 'spam':              return <ViewSpam />
     case 'enter':             return <ViewEnter onEnter={onEnter} />
@@ -915,7 +1015,7 @@ function MainPanel({ view, onEnter }) {
     case 'rule':              return <ViewRule />
     case 'prizes':            return <ViewPrizes />
     case 'judging':           return <ViewJudging />
-    default:                  return <ViewOverview onEnter={onEnter} />
+    default:                  return <ViewOverview onEnter={onEnter} goto={goto} />
   }
 }
 
@@ -958,7 +1058,7 @@ export default function App() {
           open={sidebarOpen}
         />
         <div className="main">
-          <MainPanel view={view} onEnter={() => setComposeOpen(true)} />
+          <MainPanel view={view} onEnter={() => setComposeOpen(true)} goto={setView} />
         </div>
       </div>
 
