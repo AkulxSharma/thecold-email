@@ -951,8 +951,7 @@ function ViewRule({ onEnter }) {
     </>) },
     { id: 'fairplay', color: 'purple', title: 'Fair play', render: () => (<>
       <p className="keep-text">The goal is to earn trust from a stranger — not leverage an existing relationship.</p>
-      <div className="keep-mini-head">Recipients cannot be</div>
-      <ul className="rule-tags keep-tags">{R.fairPlayNot.map(f => <li key={f}>{f}</li>)}</ul>
+      {group('fairplay', 'Recipients cannot be', R.fairPlayNot)}
       <p className="keep-support">If the recipient would reasonably recognize you, they are not a stranger.</p>
     </>) },
     { id: 'privacy', color: 'gray', title: 'Privacy', render: () => (<>
@@ -976,6 +975,34 @@ function ViewRule({ onEnter }) {
   const noteRefs = useRef(new Map())
   const boardRef = useRef(null)
   const animOn = useRef(false)
+  const [checked, setChecked] = useState(() => new Set())     // struck-through items
+  const [collapsed, setCollapsed] = useState(() => new Set())  // collapsed groups
+  const toggleCheck = k => setChecked(p => { const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n })
+  const toggleCollapse = k => setCollapsed(p => { const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n })
+
+  // Keep-style checklist: each item is a checkbox that strikes through its text when checked.
+  const checkItem = (k, text) => {
+    const done = checked.has(k)
+    return (
+      <li key={text} className={`keep-ci${done ? ' done' : ''}`} onClick={e => { e.stopPropagation(); toggleCheck(k) }}>
+        <I.M name={done ? 'check_box' : 'check_box_outline_blank'} size={18} />
+        <span>{text}</span>
+      </li>
+    )
+  }
+  const checklist = (id, items) => <ul className="keep-checklist">{items.map(t => checkItem(`${id}|${t}`, t))}</ul>
+  // Collapsible group header (chevron + label), like Keep's completed-items group.
+  const group = (id, label, items) => {
+    const open = !collapsed.has(id)
+    return (
+      <div className="keep-group">
+        <div className="keep-group-head" onClick={e => { e.stopPropagation(); toggleCollapse(id) }}>
+          <I.M name={open ? 'expand_more' : 'chevron_right'} size={18} /><span>{label}</span>
+        </div>
+        {open && checklist(id, items)}
+      </div>
+    )
+  }
 
   // Absolute masonry: every note is translate()'d to its slot. A reorder only changes
   // `order`, which re-runs this and updates each transform → the CSS transition slides
@@ -1011,7 +1038,7 @@ function ViewRule({ onEnter }) {
     layout()
     window.addEventListener('resize', layout)
     return () => window.removeEventListener('resize', layout)
-  }, [order])
+  }, [order, collapsed])
 
   // Live reorder: as the dragged note enters another, shift the others around it.
   const moveOver = (targetId) => {

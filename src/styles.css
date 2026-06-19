@@ -1943,6 +1943,23 @@ html, body, #root {
 /* final note — slightly emphasized */
 .keep-note-final .keep-note-title { font-size: 19px; }
 
+/* Keep checklist — clickable checkbox rows; checking strikes through the text */
+.keep-checklist { list-style: none; margin: 2px 0 6px; padding: 0; }
+.keep-ci { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 1.45; color: #202124; padding: 4px 4px; margin: 0 -4px; border-radius: 4px; cursor: pointer; }
+.keep-ci:hover { background: rgba(0,0,0,.05); }
+.keep-ci .msym { color: #5f6368; flex-shrink: 0; margin-top: 1px; }
+.keep-ci.done { color: #5f6368; }
+.keep-ci.done span { text-decoration: line-through; }
+/* collapsible group header (chevron + label), like Keep's completed-items group */
+.keep-group + .keep-group { margin-top: 4px; }
+.keep-group-head { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #3c4043; cursor: pointer; padding: 8px 0 4px; border-top: 1px solid rgba(0,0,0,.12); margin-top: 8px; }
+.keep-group:first-of-type .keep-group-head { border-top: none; margin-top: 0; padding-top: 4px; }
+.keep-group-head .msym { color: #5f6368; }
+/* dark note checklist colors */
+.keep-c-dark .keep-ci { color: #e8eaed; }
+.keep-c-dark .keep-ci .msym, .keep-c-dark .keep-group-head, .keep-c-dark .keep-group-head .msym { color: #c7c7cc; }
+.keep-c-dark .keep-ci:hover { background: rgba(255,255,255,.08); }
+
 /* expanded note modal (Keep-style) */
 .keep-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: flex; align-items: flex-start; justify-content: center; z-index: 400; padding: 56px 16px; overflow-y: auto; animation: keepFade .12s ease-out; }
 @keyframes keepFade { from { opacity: 0 } to { opacity: 1 } }
