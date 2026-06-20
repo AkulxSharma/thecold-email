@@ -528,98 +528,261 @@ const FORMS_ICON = (
   </svg>
 )
 
+// Shared "how to enter" steps — reused by all three variants
+const ENTER_STEPS = [
+  { n: 1, icon: 'how_to_reg',       title: 'Register',                 text: 'Fill the form below. We save your details and email you a confirmation.' },
+  { n: 2, icon: 'send',             title: 'Send one real cold email', text: 'Pick a track. Write to a real stranger. No templates, no spray.' },
+  { n: 3, icon: 'mark_email_read',  title: 'Get a reply & submit',     text: 'When they reply, attach a screenshot/PDF of the thread and submit your entry.' },
+]
+
 function ViewEnter({ onEnter }) {
+  const [variant, setVariant] = useState('sites')   // sites | slides | classroom
+  const [slide, setSlide] = useState(0)
   const [submitted, setSubmitted] = useState(false)
 
   const renderInput = (qq) => {
     switch (qq.type) {
-      case 'email':     return <input type="email" className="gform-input" placeholder="Your answer" />
-      case 'url':       return <input type="url"   className="gform-input" placeholder="https://" />
-      case 'paragraph': return <textarea className="gform-textarea" rows={3} placeholder="Your answer" />
+      case 'email':     return <input type="email" className="enter-input" placeholder="Your answer" />
+      case 'url':       return <input type="url"   className="enter-input" placeholder="https://" />
+      case 'paragraph': return <textarea className="enter-textarea" rows={3} placeholder="Your answer" />
       case 'dropdown':  return (
-        <select className="gform-select" defaultValue="">
+        <select className="enter-select" defaultValue="">
           <option value="" disabled>Choose</option>
           {qq.options.map(o => <option key={o} value={o}>{o}</option>)}
         </select>
       )
       case 'radio':     return (
-        <div className="gform-choices">
+        <div className="enter-choices">
           {qq.options.map(o => (
-            <label className="gform-choice" key={o}><span className="gform-radio" /> {o}</label>
+            <label className="enter-choice" key={o}><span className="enter-radio" /> {o}</label>
           ))}
         </div>
       )
       case 'checkbox':  return (
-        <div className="gform-choices">
+        <div className="enter-choices">
           {qq.options.map(o => (
-            <label className="gform-choice" key={o}><span className="gform-checkbox" /> {o}</label>
+            <label className="enter-choice" key={o}><span className="enter-checkbox" /> {o}</label>
           ))}
         </div>
       )
-      default:          return <input type="text" className="gform-input" placeholder="Your answer" />
+      default:          return <input type="text" className="enter-input" placeholder="Your answer" />
     }
   }
 
-  return (
-    <div className="view-panel gform-canvas">
-      {/* Forms top bar */}
-      <div className="gform-topbar">
-        <span className="gform-doc-icon">{FORMS_ICON}</span>
-        <div className="gform-title-block">
-          <div className="gform-title-row">
-            <span className="gform-docname">The Procedure</span>
-            <span className="gform-star" title="Star"><I.M name="star_border" size={18} /></span>
+  const FieldList = () => (
+    <div className="enter-fields">
+      {ENTER_FORM.questions.map((qq, i) => (
+        <label className="enter-field" key={i}>
+          <span className="enter-field-q">{qq.q}{qq.required && <span className="enter-req"> *</span>}</span>
+          {renderInput(qq)}
+        </label>
+      ))}
+    </div>
+  )
+
+  const Done = ({ cls }) => (
+    <div className={'enter-done ' + cls}>
+      <I.M name="check_circle" size={40} />
+      <h3>You’re registered.</h3>
+      <p>We’ve emailed you a confirmation. Now go send one real cold email — then come back and submit the reply.</p>
+      <span className="enter-link" onClick={() => setSubmitted(false)}>Register someone else</span>
+    </div>
+  )
+
+  const switcher = (
+    <div className="enter-switch">
+      {[['sites', 'Sites'], ['slides', 'Slides'], ['classroom', 'Classroom']].map(([k, l]) => (
+        <button key={k} className={'enter-switch-btn' + (variant === k ? ' on' : '')} onClick={() => setVariant(k)}>{l}</button>
+      ))}
+    </div>
+  )
+
+  // ---------------- VARIANT 1: GOOGLE SITES ----------------
+  if (variant === 'sites') {
+    return (
+      <div className="view-panel enter-canvas gsite">
+        {switcher}
+        <div className="gsite-topbar">
+          <span className="gsite-logo"><I.M name="public" size={20} /></span>
+          <span className="gsite-name">thecold.email</span>
+          <nav className="gsite-nav"><a className="on">How to Enter</a><a>Tracks</a><a>Prizes</a></nav>
+          <button className="gsite-publish">Publish</button>
+        </div>
+
+        <header className="gsite-hero">
+          <div className="gsite-hero-in">
+            <p className="gsite-kicker">THE PROCEDURE</p>
+            <h1 className="gsite-h1">How to Enter</h1>
+            <p className="gsite-sub">{ENTER_FORM.desc}</p>
+            <button className="gsite-cta" onClick={onEnter}>Enter the competition</button>
           </div>
-          <div className="gform-tabs">
-            <span className="gform-tab gform-tab-active">Questions</span>
-            <span className="gform-tab">Responses</span>
-            <span className="gform-tab">Settings</span>
+        </header>
+
+        <section className="gsite-sec">
+          <h2 className="gsite-h2">Three steps</h2>
+          <div className="gsite-steps">
+            {ENTER_STEPS.map(s => (
+              <div className="gsite-step" key={s.n}>
+                <span className="gsite-step-ico"><I.M name={s.icon} size={28} /></span>
+                <span className="gsite-step-n">Step {s.n}</span>
+                <h3>{s.title}</h3>
+                <p>{s.text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="gsite-sec gsite-form-sec">
+          <h2 className="gsite-h2">Funnel 1 — Register</h2>
+          {submitted ? <Done cls="enter-done-light" /> : (
+            <>
+              <FieldList />
+              <button className="gsite-cta" onClick={() => setSubmitted(true)}>Submit registration</button>
+            </>
+          )}
+        </section>
+
+        <section className="gsite-sec gsite-f2">
+          <h2 className="gsite-h2">Funnel 2 — Submit your entry</h2>
+          <p className="gsite-lead">Once a real stranger replies, attach a screenshot or PDF of the full email thread, pick your track, and submit. Opens the submission compose.</p>
+          <button className="gsite-cta gsite-cta-alt" onClick={onEnter}>Open submission</button>
+        </section>
+
+        <footer className="gsite-foot">thecold.email · Made with Sites</footer>
+      </div>
+    )
+  }
+
+  // ---------------- VARIANT 2: GOOGLE SLIDES ----------------
+  if (variant === 'slides') {
+    const SLIDES = [
+      { kind: 'title' },
+      ...ENTER_STEPS.map(s => ({ kind: 'step', s })),
+      { kind: 'form' },
+      { kind: 'f2' },
+    ]
+    const slideLabel = (sl) => sl.kind === 'title' ? 'How to Enter'
+      : sl.kind === 'step' ? `Step ${sl.s.n}`
+      : sl.kind === 'form' ? 'Register' : 'Submit'
+
+    const renderSlide = (sl) => {
+      if (sl.kind === 'title') return (
+        <div className="gslide-title">
+          <p className="gslide-kicker">THE PROCEDURE</p>
+          <h1>How to Enter</h1>
+          <p className="gslide-sub">{ENTER_FORM.desc}</p>
+        </div>
+      )
+      if (sl.kind === 'step') return (
+        <div className="gslide-step">
+          <span className="gslide-step-ico"><I.M name={sl.s.icon} size={44} /></span>
+          <p className="gslide-step-n">Step {sl.s.n}</p>
+          <h1>{sl.s.title}</h1>
+          <p className="gslide-sub">{sl.s.text}</p>
+        </div>
+      )
+      if (sl.kind === 'form') return (
+        <div className="gslide-form">
+          <h1>Funnel 1 — Register</h1>
+          {submitted ? <Done cls="enter-done-light" /> : (
+            <>
+              <FieldList />
+              <button className="gsite-cta" onClick={() => setSubmitted(true)}>Submit registration</button>
+            </>
+          )}
+        </div>
+      )
+      return (
+        <div className="gslide-title">
+          <p className="gslide-kicker">FUNNEL 2</p>
+          <h1>Submit your entry</h1>
+          <p className="gslide-sub">Got a real reply? Attach a screenshot/PDF of the thread, pick your track, submit.</p>
+          <button className="gsite-cta gsite-cta-alt" onClick={onEnter}>Open submission</button>
+        </div>
+      )
+    }
+
+    return (
+      <div className="view-panel enter-canvas gslide">
+        {switcher}
+        <div className="gslide-top">
+          <span className="gslide-logo"><I.M name="slideshow" size={20} /></span>
+          <span className="gslide-name">The Procedure</span>
+          <span className="gslide-present"><I.M name="play_arrow" size={18} /> Present</span>
+        </div>
+        <div className="gslide-work">
+          <div className="gslide-rail">
+            {SLIDES.map((sl, i) => (
+              <div className={'gslide-thumb' + (i === slide ? ' on' : '')} key={i} onClick={() => setSlide(i)}>
+                <span className="gslide-thumb-n">{i + 1}</span>
+                <div className="gslide-thumb-canvas"><span>{slideLabel(sl)}</span></div>
+              </div>
+            ))}
+          </div>
+          <div className="gslide-stage">
+            <div className="gslide-deck">{renderSlide(SLIDES[slide])}</div>
+            <div className="gslide-bar">
+              <button onClick={() => setSlide(Math.max(0, slide - 1))} disabled={slide === 0}><I.M name="chevron_left" size={22} /></button>
+              <span>{slide + 1} / {SLIDES.length}</span>
+              <button onClick={() => setSlide(Math.min(SLIDES.length - 1, slide + 1))} disabled={slide === SLIDES.length - 1}><I.M name="chevron_right" size={22} /></button>
+            </div>
           </div>
         </div>
       </div>
+    )
+  }
 
-      {/* Form body */}
-      <div className="gform-body">
-        {submitted ? (
-          <div className="gform-card gform-done">
-            <div className="gform-stripe" />
-            <h1 className="gform-h1">{ENTER_FORM.title}</h1>
-            <p className="gform-desc">Your response has been recorded.</p>
-            <p className="gform-conf">We’ll email you a confirmation shortly. Watch your inbox — then go get the reply.</p>
-            <span className="gform-link" onClick={() => setSubmitted(false)}>Submit another response</span>
+  // ---------------- VARIANT 3: GOOGLE CLASSROOM ----------------
+  return (
+    <div className="view-panel enter-canvas gclass">
+      {switcher}
+      <div className="gclass-banner">
+        <div className="gclass-banner-in">
+          <p className="gclass-section">thecold.email</p>
+          <h1 className="gclass-title">The Procedure</h1>
+          <p className="gclass-sub">How to enter · Funnel 1 → Funnel 2</p>
+        </div>
+      </div>
+      <div className="gclass-body">
+        <aside className="gclass-side">
+          <div className="gclass-card gclass-due">
+            <h4>Due soon</h4>
+            <p className="gclass-duedate"><I.M name="event" size={16} /> Registration closes Jul 6</p>
+            <p className="gclass-duedate"><I.M name="event" size={16} /> Submit reply by Jul 7</p>
           </div>
-        ) : (
-          <>
-            {/* Header card */}
-            <div className="gform-card gform-header-card">
-              <div className="gform-stripe" />
-              <h1 className="gform-h1">{ENTER_FORM.title}</h1>
-              <p className="gform-desc">{ENTER_FORM.desc}</p>
-              <p className="gform-required-note">* Indicates required question</p>
+        </aside>
+        <main className="gclass-main">
+          <div className="gclass-assign">
+            <span className="gclass-assign-ico"><I.M name="assignment" size={22} /></span>
+            <div>
+              <h2 className="gclass-assign-title">{ENTER_FORM.title}</h2>
+              <p className="gclass-assign-meta">100 points · Due Jul 7</p>
             </div>
+          </div>
 
-            {/* Question cards */}
-            {ENTER_FORM.questions.map((qq, i) => (
-              <div className="gform-card gform-q" key={i}>
-                <div className="gform-q-label">{qq.q}{qq.required && <span className="gform-asterisk"> *</span>}</div>
-                {renderInput(qq)}
-              </div>
-            ))}
+          <div className="gclass-card gclass-instr">
+            <p>{ENTER_FORM.desc}</p>
+            <ol className="gclass-steps">
+              {ENTER_STEPS.map(s => <li key={s.n}><b>{s.title}.</b> {s.text}</li>)}
+            </ol>
+          </div>
 
-            {/* Submit */}
-            <div className="gform-actions">
-              <button className="gform-submit" onClick={() => setSubmitted(true)}>Submit</button>
-              <span className="gform-clear">Clear form</span>
-            </div>
+          <div className="gclass-card">
+            <h3 className="gclass-h3">Funnel 1 — Registration</h3>
+            {submitted ? <Done cls="enter-done-light" /> : (
+              <>
+                <FieldList />
+                <button className="gclass-btn" onClick={() => setSubmitted(true)}>Hand in registration</button>
+              </>
+            )}
+          </div>
 
-            {/* Funnel 2 — Submission */}
-            <div className="gform-card gform-q gform-funnel2">
-              <div className="gform-q-label">Funnel 2 — Submit your entry</div>
-              <p className="gform-desc">Once a real stranger replies, submit your entry: attach a screenshot or PDF of the full email thread and pick your track. Opens the submission compose.</p>
-              <button className="gform-submit gform-submit-alt" onClick={onEnter}>Open submission</button>
-            </div>
-          </>
-        )}
+          <div className="gclass-card gclass-attach">
+            <h3 className="gclass-h3">Funnel 2 — Your submission</h3>
+            <p>When a real stranger replies, attach a screenshot/PDF of the thread and submit your entry.</p>
+            <button className="gclass-attach-btn" onClick={onEnter}><I.M name="attach_file" size={18} /> Open submission</button>
+          </div>
+        </main>
       </div>
     </div>
   )
