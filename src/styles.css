@@ -2831,3 +2831,91 @@ html, body, #root {
 .gclass-btn { background: #1e8e3e; color: #fff; border: 0; border-radius: 6px; padding: 10px 22px; font: 600 14px 'Google Sans', sans-serif; cursor: pointer; }
 .gclass-attach-btn { display: inline-flex; align-items: center; gap: 8px; background: #fff; color: #1e8e3e; border: 1px solid #1e8e3e; border-radius: 6px; padding: 10px 20px; font: 600 14px 'Google Sans', sans-serif; cursor: pointer; }
 .gclass-attach p { font: 400 14px 'Roboto', sans-serif; color: #5f6368; margin: 0 0 16px; line-height: 1.5; }
+
+/* ============================================================
+   GLOBAL RESPONSIVE — tablet + mobile across every view
+   ============================================================ */
+
+/* -------- Tablet (<= 900px) -------- */
+@media (max-width: 900px) {
+  .gsite-steps { grid-template-columns: 1fr 1fr; }
+  .gsite-sec { padding: 44px 20px; }
+  .gsite-h1 { font-size: 46px; }
+  .gdocs-templates { gap: 12px; }
+  .gdocs-recent { grid-template-columns: repeat(3, 1fr) !important; }
+  .gclass-body { max-width: none; }
+  .view-panel-calendar { overflow-x: auto; }
+  .gcal-grid { min-width: 660px; }
+  .tab { min-width: 180px; padding: 0 18px; }
+}
+
+/* -------- Mobile / small tablet (<= 768px): sidebar becomes a drawer -------- */
+@media (max-width: 768px) {
+  .app { position: relative; }
+  .sidebar { position: fixed; top: 64px; left: 0; bottom: 0; z-index: 90;
+    background: #f6f8fc; box-shadow: 2px 0 14px rgba(0,0,0,.18); }
+  .sidebar.sidebar-collapsed { box-shadow: none; }
+  .main { border-radius: 0; }
+
+  /* inbox list + reading pane */
+  .detail-scroll { padding: 16px 16px 56px; }
+  .detail-subject { font-size: 19px; }
+  .cell-sender { width: 130px; }
+  .cell-date { width: 64px; }
+  .toolbar { padding: 4px 10px; }
+  .ai-overview { margin: 10px 10px 4px; padding: 12px 14px; }
+
+  /* compose drawer full-width */
+  .compose-win { right: 0; left: 0; width: auto; border-radius: 0; }
+
+  /* enter variants */
+  .gslide-work { flex-direction: column; }
+  .gslide-rail { width: auto; flex-direction: row; height: auto; gap: 10px;
+    border-right: 0; border-bottom: 1px solid #e8eaed; padding: 10px; }
+  .gslide-thumb { flex-direction: column; align-items: center; flex: 0 0 96px; }
+  .gslide-thumb-n { width: auto; padding: 0 0 2px; }
+  .gslide-deck { aspect-ratio: auto; min-height: 58vh; padding: 28px; }
+  .gslide-title h1, .gslide-step h1, .gslide-form h1 { font-size: 30px; }
+  .gclass-body { flex-direction: column; }
+  .gclass-side { width: auto; }
+  .gclass-banner { margin: 12px 14px 0; padding: 26px 22px; }
+  .gclass-title { font-size: 30px; }
+}
+
+/* -------- Phone (<= 600px) -------- */
+@media (max-width: 600px) {
+  /* hide low-value list columns, keep it readable */
+  .cell-check, .cell-star { display: none; }
+  .cell-sender { width: 110px; padding-right: 8px; }
+  .cell-body .preview { display: none; }
+  .tab { min-width: auto; padding: 0 12px; gap: 8px; }
+  .tab .tab-sub { display: none; }
+
+  /* enter — Sites */
+  .gsite-steps { grid-template-columns: 1fr; }
+  .gsite-hero { padding: 52px 20px; }
+  .gsite-h1 { font-size: 36px; }
+  .gsite-sub { font-size: 16px; }
+  .gsite-form-sec, .gsite-f2 { padding: 26px 20px; }
+  .gsite-nav { display: none; }
+
+  /* shared form fields go full width */
+  .enter-input, .enter-textarea, .enter-select { max-width: 100%; }
+  .enter-switch { padding: 2px; }
+  .enter-switch-btn { padding: 6px 12px; font-size: 12px; }
+
+  /* docs home */
+  .gdocs-recent { grid-template-columns: repeat(2, 1fr) !important; }
+  .gdocs-templates { flex-wrap: nowrap; overflow-x: auto; }
+
+  /* prizes / pay hero */
+  .gpay-balance-amt { font-size: 60px !important; letter-spacing: -1px; }
+  .gpay-balance-label { font-size: 16px !important; }
+  .gpay-balance-sub { font-size: 16px !important; }
+
+  /* home hero one column already handled; tighten track grid */
+  .home-track-grid { grid-template-columns: 1fr !important; }
+
+  /* keep board single column */
+  .keep-board { width: calc(100% - 24px); }
+}
