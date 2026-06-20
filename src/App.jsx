@@ -1522,15 +1522,6 @@ function ViewTrackDoc({ data, title }) {
 
           <h2 className="gdoc-h2">Prize</h2>
           <p className="gdoc-p"><strong>$500</strong> for the winning entry. Every qualifying entry is also automatically considered for the ★ Best Cold Email ($1,000 grand prize).</p>
-
-          {/* Remember callout */}
-          <div className="gdoc-callout">
-            <div className="gdoc-callout-title">Remember</div>
-            <p className="gdoc-callout-lead">{TRACK_REMEMBER.lead}</p>
-            <p className="gdoc-callout-bold">{TRACK_REMEMBER.bold}</p>
-            <p className="gdoc-callout-body">{TRACK_REMEMBER.body}</p>
-            <p className="gdoc-callout-tag">{TRACK_REMEMBER.tag}</p>
-          </div>
         </div>
       </div>
     </div>
