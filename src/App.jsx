@@ -1,4 +1,4 @@
-import { useState, useRef, useLayoutEffect } from 'react'
+import { useState, useRef, useLayoutEffect, useEffect } from 'react'
 import { EMAILS, TOPIC_NAMES, DEADLINES, SEND_WINDOW, BEST_EMAILS, EVENTS, MEMES, RULES_PAGE } from './data.js'
 import * as I from './icons.jsx'
 
@@ -264,19 +264,162 @@ function shortDate(iso) {
 // The 4 tracks, in sidebar order — topic keys map to TRACK_ICONS + the track-* views
 const TRACK_TEASERS = ['unreachable', 'subject', 'twoliner', 'ask']
 
+// ---- wallet.google-style pinned scroll hero ----
+const WAL_COLORS = ['#34A853', '#FBBC04', '#EA4335', '#4285F4'] // green, amber, red, blue (top→bottom)
+const _clamp01 = v => (v < 0 ? 0 : v > 1 ? 1 : v)
+const _lerp = (a, b, t) => a + (b - a) * t
+const _seg = (p, a, b) => _clamp01((p - a) / (b - a))
+const _ease = t => t * t * (3 - 2 * t) // smoothstep
+
+function WalletHero({ onEnter, goto }) {
+  const outerRef = useRef(null)
+  const [p, setP] = useState(0)
+  const [vh, setVh] = useState(() => (typeof window !== 'undefined' ? window.innerHeight : 800))
+  const reduced = typeof window !== 'undefined'
+    && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  useEffect(() => {
+    if (reduced) return
+    const outer = outerRef.current
+    if (!outer) return
+    const scroller = outer.closest('.view-panel') || window
+    let raf = 0
+    const measure = () => {
+      const h = (scroller === window ? window.innerHeight : scroller.clientHeight) || 800
+      setVh(h)
+    }
+    const compute = () => {
+      raf = 0
+      const h = (scroller === window ? window.innerHeight : scroller.clientHeight) || 800
+      const top = outer.offsetTop
+      const scrollTop = scroller === window ? window.scrollY : scroller.scrollTop
+      const travel = outer.offsetHeight - h
+      setP(_clamp01(travel > 0 ? (scrollTop - top) / travel : 0))
+    }
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(compute) }
+    measure(); compute()
+    scroller.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', () => { measure(); compute() })
+    return () => {
+      scroller.removeEventListener('scroll', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [reduced])
+
+  const cards = TRACK_TEASERS.slice(0, 4)
+
+  // floating pill nav — reuses goto() to real views
+  const pill = (
+    <nav className="walhero-pill">
+      <button onClick={() => goto('track-unreachable')}>Tracks</button>
+      <button onClick={() => goto('prizes')}>Prizes</button>
+      <button onClick={() => goto('rule')}>Rules</button>
+      <button onClick={() => goto('calendar')}>Calendar</button>
+      <button onClick={() => goto('best')}>Best</button>
+    </nav>
+  )
+
+  // ----- reduced motion: static STATE A only -----
+  if (reduced) {
+    return (
+      <section className="walhero walhero-static">
+        {pill}
+        <div className="walhero-headline">
+          <h1 className="walhero-title">The world replies to those who know how to write.</h1>
+          <p className="walhero-sub">A cold email competition to find the best cold emails on the planet — proven by who actually replied.</p>
+          <button className="lp-cta" onClick={onEnter}>Enter the competition</button>
+        </div>
+        <div className="walhero-static-cards">
+          {cards.map((topic, i) => (
+            <button className="wcard" key={topic} onClick={() => goto(`track-${topic}`)}
+              style={{ '--wc': WAL_COLORS[i] }}>
+              <span className="wcard-icon">{TRACK_ICONS[topic]}</span>
+              <span className="wcard-name">{TOPIC_NAMES[topic]}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  // ----- animated states -----
+  const rise     = _ease(_seg(p, 0.00, 0.30))
+  const compress = _ease(_seg(p, 0.30, 0.58))
+  const shrink   = _ease(_seg(p, 0.55, 0.82))
+  const exit     = _ease(_seg(p, 0.85, 1.00))
+  const hHide    = _ease(_seg(p, 0.02, 0.30))
+  const logoOp   = _ease(_seg(p, 0.78, 0.92))
+  const cardFade = _ease(_seg(p, 0.80, 0.92))
+
+  const headStyle = {
+    opacity: 1 - hHide,
+    transform: `translate(-50%, calc(-50% - ${hHide * 160}px))`,
+    pointerEvents: hHide > 0.5 ? 'none' : 'auto',
+  }
+  const deckStyle = {
+    transform: `translateY(${-exit * vh * 0.55}px)`,
+    opacity: 1 - exit,
+  }
+  const logoStyle = {
+    opacity: logoOp * (1 - exit),
+    transform: `translate(-50%, -50%) scale(${_lerp(0.5, 1, logoOp)})`,
+  }
+
+  return (
+    <section className="walhero" ref={outerRef}>
+      <div className="walhero-stage" style={{ height: vh }}>
+        {pill}
+
+        <div className="walhero-headline" style={headStyle}>
+          <h1 className="walhero-title">The world replies to those who know how to write.</h1>
+          <p className="walhero-sub">A cold email competition to find the best cold emails on the planet — proven by who actually replied.</p>
+          <button className="lp-cta" onClick={onEnter}>Enter the competition</button>
+        </div>
+
+        <div className="walhero-deck" style={deckStyle}>
+          {cards.map((topic, i) => {
+            const startOff = vh * 0.50 + i * 14
+            const fanOff   = (i - 1.5) * 76
+            const compOff  = (i - 1.5) * 12
+            let offY = _lerp(startOff, fanOff, rise)
+            offY = _lerp(offY, compOff, compress)
+            offY = _lerp(offY, 0, shrink)
+            let scale = _lerp(0.9, 1.0, rise)
+            scale = _lerp(scale, 0.86, compress)
+            scale = _lerp(scale, 0.4, shrink)
+            const rot = _lerp((i - 1.5) * 5, 0, rise)
+            const style = {
+              '--wc': WAL_COLORS[i],
+              zIndex: 10 - i,
+              opacity: 1 - cardFade,
+              transform: `translate(-50%, calc(-50% + ${offY}px)) scale(${scale}) rotate(${rot}deg)`,
+            }
+            return (
+              <button className="wcard" key={topic} style={style}
+                onClick={() => goto(`track-${topic}`)}>
+                <span className="wcard-icon">{TRACK_ICONS[topic]}</span>
+                <span className="wcard-name">{TOPIC_NAMES[topic]}</span>
+              </button>
+            )
+          })}
+          <img className="walhero-logo" src="/logo.png" alt="" style={logoStyle} />
+        </div>
+
+        <button className="walhero-enter-pill" onClick={onEnter}>
+          Enter <I.M name="arrow_forward" size={16} />
+        </button>
+      </div>
+    </section>
+  )
+}
+
 function ViewOverview({ onEnter, goto }) {
   return (
     <div className="view-panel">
       <div className="home">
 
-        {/* 1 — HERO */}
-        <section className="home-hero">
-          <div className="home-hero-main">
-            <h1 className="home-tagline">The world replies to those who know how to write.</h1>
-            <p className="home-sub">A cold email competition to find the best cold emails on the planet — proven by who actually replied.</p>
-            <button className="lp-cta" onClick={onEnter}>Enter the competition</button>
-          </div>
-        </section>
+        {/* 1 — HERO (wallet.google-style pinned scroll sequence) */}
+        <WalletHero onEnter={onEnter} goto={goto} />
 
         {/* Launch video — big & special placeholder */}
         <section className="home-video">
