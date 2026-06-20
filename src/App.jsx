@@ -719,34 +719,57 @@ function timeToMinutes(t) {
   return h * 60 + m
 }
 
-// Events are authored in IST (+5:30). Convert each timed event to the viewer's
-// local timezone so it lands on the right day/slot wherever they are.
+// Events are authored in IST (+5:30). Convert each timed event into a target
+// IANA timezone so it lands on the right day/slot for the viewer. The target tz
+// is resolved from the viewer's IP (so a VPN is respected), falling back to the
+// device clock. DST-safe: we build the true UTC instant, then read it back in tz.
 const IST_OFFSET_MIN = 330
-function istToLocal(ymd, hhmm) {
+// Device timezone, used as the default + fallback.
+const DEVICE_TZ = (() => {
+  try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Kolkata' }
+  catch { return 'Asia/Kolkata' }
+})()
+// IST wall-clock (ymd, hhmm) → { date, time } in the given IANA timezone.
+function istToTz(ymd, hhmm, tz) {
   const [y, mo, d] = ymd.split('-').map(Number)
   const [h, mi] = hhmm.split(':').map(Number)
-  const local = new Date(Date.UTC(y, mo - 1, d, h, mi) - IST_OFFSET_MIN * 60000)
-  const p = (n) => String(n).padStart(2, '0')
-  return {
-    date: `${local.getFullYear()}-${p(local.getMonth() + 1)}-${p(local.getDate())}`,
-    time: `${p(local.getHours())}:${p(local.getMinutes())}`,
-  }
+  const instant = new Date(Date.UTC(y, mo - 1, d, h, mi) - IST_OFFSET_MIN * 60000)
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', hour12: false,
+  }).formatToParts(instant).reduce((a, p) => (a[p.type] = p.value, a), {})
+  const hr = parts.hour === '24' ? '00' : parts.hour
+  return { date: `${parts.year}-${parts.month}-${parts.day}`, time: `${hr}:${parts.minute}` }
 }
-// Viewer's timezone abbreviation, e.g. "PDT", "GMT+2" (fallback "local")
-const LOCAL_TZ = (() => {
+// Short label for a timezone, e.g. "PDT", "GMT+2" (fallback "local")
+function tzAbbr(tz) {
   try {
-    const parts = new Intl.DateTimeFormat('en-US', { timeZoneName: 'short' }).formatToParts(new Date())
+    const parts = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'short' }).formatToParts(new Date())
     return parts.find(p => p.type === 'timeZoneName')?.value || 'local'
   } catch { return 'local' }
-})()
-
-const EVENTS_LOCAL = EVENTS.map(ev => {
-  if (ev.allDay || !ev.start) return ev
-  const s = istToLocal(ev.date, ev.start)
-  const e = istToLocal(ev.date, ev.end)
-  const end = e.date === s.date ? e.time : '23:59' // clamp if it crosses local midnight
-  return { ...ev, date: s.date, start: s.time, end, istDate: ev.date, istStart: ev.start, istEnd: ev.end }
-})
+}
+// Map all events into target tz (timed only; all-day banners stay as date markers).
+function localizeEvents(tz) {
+  return EVENTS.map(ev => {
+    if (ev.allDay || !ev.start) return ev
+    const s = istToTz(ev.date, ev.start, tz)
+    const e = istToTz(ev.date, ev.end, tz)
+    const end = e.date === s.date ? e.time : '23:59' // clamp if it crosses local midnight
+    return { ...ev, date: s.date, start: s.time, end, istDate: ev.date, istStart: ev.start, istEnd: ev.end }
+  })
+}
+// Resolve the viewer's timezone from their IP (respects VPN). Falls back to device.
+async function fetchIpTz() {
+  try {
+    const r = await fetch('https://ipapi.co/json/')
+    if (r.ok) { const j = await r.json(); if (j && j.timezone) return j.timezone }
+  } catch {}
+  try {
+    const r = await fetch('https://ipwho.is/')
+    if (r.ok) { const j = await r.json(); if (j && j.timezone && j.timezone.id) return j.timezone.id }
+  } catch {}
+  return null
+}
 
 // Default week: Mon Jun 22 2026
 const DEFAULT_WEEK = new Date(2026, 5, 22)
@@ -760,13 +783,13 @@ function fmt12(hhmm) {
   return `${h12}:${String(m).padStart(2, '0')} ${ap}`
 }
 // Date/time line for the event popup
-function eventWhen(ev) {
+function eventWhen(ev, tzLabel = 'local') {
   const base = parseDate(ev.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
   if (ev.allDay) {
     if (ev.dateEnd) return `${base} – ${parseDate(ev.dateEnd).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}`
     return base
   }
-  const local = `${base} · ${fmt12(ev.start)} – ${fmt12(ev.end)} ${LOCAL_TZ}`
+  const local = `${base} · ${fmt12(ev.start)} – ${fmt12(ev.end)} ${tzLabel}`
   if (ev.istStart) return `${local}  (${fmt12(ev.istStart)} – ${fmt12(ev.istEnd)} IST)`
   return local
 }
@@ -774,6 +797,16 @@ function eventWhen(ev) {
 function ViewCalendar() {
   const [monDate, setMonDate] = useState(weekStart(DEFAULT_WEEK))
   const [sel, setSel] = useState(null)  // selected event → detail popup
+
+  // Viewer timezone: start from device clock, then upgrade to IP-based (VPN-aware).
+  const [tz, setTz] = useState(DEVICE_TZ)
+  useEffect(() => {
+    let alive = true
+    fetchIpTz().then(t => { if (alive && t) setTz(t) })
+    return () => { alive = false }
+  }, [])
+  const events  = localizeEvents(tz)
+  const tzLabel = tzAbbr(tz)
 
   // The 7 days Mon→Sun
   const days = Array.from({ length: 7 }, (_, i) => addDays(monDate, i))
@@ -798,7 +831,7 @@ function ViewCalendar() {
   const timedByDay   = {}  // ymd → [event, ...]
   dayYMDs.forEach(ymd => { timedByDay[ymd] = [] })
 
-  EVENTS_LOCAL.forEach(ev => {
+  events.forEach(ev => {
     if (ev.allDay) {
       const evStart = parseDate(ev.date).getTime()
       const evEnd   = ev.dateEnd ? parseDate(ev.dateEnd).getTime() : evStart
@@ -1025,7 +1058,7 @@ function ViewCalendar() {
                 <span className="gcev-dot" style={{ background: COLOR_MAP[sel.ev.color] || '#1a73e8' }} />
                 <div className="gcev-head-text">
                   <div className="gcev-title">{sel.ev.title}</div>
-                  <div className="gcev-when">{eventWhen(sel.ev)}</div>
+                  <div className="gcev-when">{eventWhen(sel.ev, tzLabel)}</div>
                 </div>
               </div>
               <div className="gcev-row">
