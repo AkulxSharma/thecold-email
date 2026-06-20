@@ -1408,7 +1408,7 @@ function ViewTrackFinance({ data }) {
         </div>
 
         <div className="gfin-disclaimer">
-          Scores are illustrative. Every qualifying entry is also considered for the ★ Best Cold Email ($1,000 grand prize).
+          Scores are illustrative. Every qualifying entry is also considered for the Best Cold Email ($1,000 grand prize).
         </div>
 
       </div>
@@ -1531,7 +1531,7 @@ function ViewTrackDoc({ data, title }) {
           </table>
 
           <h2 className="gdoc-h2">Prize</h2>
-          <p className="gdoc-p"><strong>$500</strong> for the winning entry. Every qualifying entry is also automatically considered for the ★ Best Cold Email ($1,000 grand prize).</p>
+          <p className="gdoc-p"><strong>$500</strong> for the winning entry. Every qualifying entry is also automatically considered for the Best Cold Email ($1,000 grand prize).</p>
         </div>
       </div>
     </div>
