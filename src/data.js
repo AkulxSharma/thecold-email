@@ -515,6 +515,25 @@ export const EVENTS = [
   { date: '2026-07-10', start: '17:00', end: '18:00', title: 'Winners announced (live)',      color: 'green' },
 ]
 
+// ENTER / "The Procedure" — Funnel 1 registration form (Google Forms surface)
+// type: short | email | url | dropdown | radio | checkbox | paragraph
+export const ENTER_FORM = {
+  title: 'Enter the Competition',
+  desc: 'Funnel 1 — Registration. Tell us who you are and why you’re in. One real cold email. One real reply — that’s the whole game.',
+  questions: [
+    { q: 'Full name',              type: 'short',     required: true },
+    { q: 'Email',                  type: 'email',     required: true },
+    { q: 'Country',                type: 'dropdown',  required: true, options: ['United States', 'United Kingdom', 'India', 'Canada', 'Australia', 'Other'] },
+    { q: 'Age band',               type: 'radio',     required: true, options: ['Under 18', '18–24', '25–34', '35–44', '45+'] },
+    { q: 'Company / Institution',  type: 'short',     required: false },
+    { q: 'Position / Role',        type: 'short',     required: false },
+    { q: 'Social link / handle',   type: 'url',       required: false },
+    { q: 'Your background',        type: 'checkbox',  required: false, options: ['Writing', 'Marketing', 'Sales', 'Builder'] },
+    { q: 'Why are you joining?',                 type: 'paragraph', required: true },
+    { q: 'What do you want from the event?',     type: 'paragraph', required: true },
+  ],
+}
+
 // Best Email Ever — PLACEHOLDER examples (Akul will replace with real entries)
 export const BEST_EMAILS = [
   {

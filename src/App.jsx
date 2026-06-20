@@ -1,5 +1,5 @@
 import { useState, useRef, useLayoutEffect, useEffect } from 'react'
-import { EMAILS, TOPIC_NAMES, DEADLINES, SEND_WINDOW, BEST_EMAILS, EVENTS, MEMES, RULES_PAGE, TRACK_PAGES, TRACK_REMEMBER } from './data.js'
+import { EMAILS, TOPIC_NAMES, DEADLINES, SEND_WINDOW, BEST_EMAILS, EVENTS, MEMES, RULES_PAGE, TRACK_PAGES, TRACK_REMEMBER, ENTER_FORM } from './data.js'
 import * as I from './icons.jsx'
 
 const GMAIL_LOGO = '/logo.png'
@@ -518,16 +518,108 @@ function ViewSpam() {
 }
 
 // ---------------- VIEW: ENTER (Sent / How to Enter) ----------------
+// Google Forms icon (purple)
+const FORMS_ICON = (
+  <svg width="22" height="28" viewBox="0 0 48 64" xmlns="http://www.w3.org/2000/svg">
+    <path d="M29 0H6C2.69 0 0 2.69 0 6v52c0 3.31 2.69 6 6 6h36c3.31 0 6-2.69 6-6V19L29 0z" fill="#7248B9"/>
+    <path d="M29 0v13c0 3.31 2.69 6 6 6h13L29 0z" fill="#C5A1EA"/>
+    <path d="M22.4 32.3h12.8v3H22.4v-3zm0 6.4h12.8v3H22.4v-3zm0 6.4h12.8v3H22.4v-3z" fill="#fff"/>
+    <circle cx="16" cy="33.8" r="1.8" fill="#fff"/><circle cx="16" cy="40.2" r="1.8" fill="#fff"/><circle cx="16" cy="46.6" r="1.8" fill="#fff"/>
+  </svg>
+)
+
 function ViewEnter({ onEnter }) {
-  return (
-    <div className="view-panel">
-      <div className="view-body">
-        <div className="lp-steps">
-          <div className="lp-step">Send your cold email — real stranger, real ask.</div>
-          <div className="lp-step">Get a real reply.</div>
-          <div className="lp-step">Submit the form with a screenshot of the reply before July 7.</div>
+  const [submitted, setSubmitted] = useState(false)
+
+  const renderInput = (qq) => {
+    switch (qq.type) {
+      case 'email':     return <input type="email" className="gform-input" placeholder="Your answer" />
+      case 'url':       return <input type="url"   className="gform-input" placeholder="https://" />
+      case 'paragraph': return <textarea className="gform-textarea" rows={3} placeholder="Your answer" />
+      case 'dropdown':  return (
+        <select className="gform-select" defaultValue="">
+          <option value="" disabled>Choose</option>
+          {qq.options.map(o => <option key={o} value={o}>{o}</option>)}
+        </select>
+      )
+      case 'radio':     return (
+        <div className="gform-choices">
+          {qq.options.map(o => (
+            <label className="gform-choice" key={o}><span className="gform-radio" /> {o}</label>
+          ))}
         </div>
-        <button className="lp-cta" style={{ marginTop: 8 }} onClick={onEnter}>Enter the competition</button>
+      )
+      case 'checkbox':  return (
+        <div className="gform-choices">
+          {qq.options.map(o => (
+            <label className="gform-choice" key={o}><span className="gform-checkbox" /> {o}</label>
+          ))}
+        </div>
+      )
+      default:          return <input type="text" className="gform-input" placeholder="Your answer" />
+    }
+  }
+
+  return (
+    <div className="view-panel gform-canvas">
+      {/* Forms top bar */}
+      <div className="gform-topbar">
+        <span className="gform-doc-icon">{FORMS_ICON}</span>
+        <div className="gform-title-block">
+          <div className="gform-title-row">
+            <span className="gform-docname">The Procedure</span>
+            <span className="gform-star" title="Star"><I.M name="star_border" size={18} /></span>
+          </div>
+          <div className="gform-tabs">
+            <span className="gform-tab gform-tab-active">Questions</span>
+            <span className="gform-tab">Responses</span>
+            <span className="gform-tab">Settings</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Form body */}
+      <div className="gform-body">
+        {submitted ? (
+          <div className="gform-card gform-done">
+            <div className="gform-stripe" />
+            <h1 className="gform-h1">{ENTER_FORM.title}</h1>
+            <p className="gform-desc">Your response has been recorded.</p>
+            <p className="gform-conf">We’ll email you a confirmation shortly. Watch your inbox — then go get the reply.</p>
+            <span className="gform-link" onClick={() => setSubmitted(false)}>Submit another response</span>
+          </div>
+        ) : (
+          <>
+            {/* Header card */}
+            <div className="gform-card gform-header-card">
+              <div className="gform-stripe" />
+              <h1 className="gform-h1">{ENTER_FORM.title}</h1>
+              <p className="gform-desc">{ENTER_FORM.desc}</p>
+              <p className="gform-required-note">* Indicates required question</p>
+            </div>
+
+            {/* Question cards */}
+            {ENTER_FORM.questions.map((qq, i) => (
+              <div className="gform-card gform-q" key={i}>
+                <div className="gform-q-label">{qq.q}{qq.required && <span className="gform-asterisk"> *</span>}</div>
+                {renderInput(qq)}
+              </div>
+            ))}
+
+            {/* Submit */}
+            <div className="gform-actions">
+              <button className="gform-submit" onClick={() => setSubmitted(true)}>Submit</button>
+              <span className="gform-clear">Clear form</span>
+            </div>
+
+            {/* Funnel 2 — Submission */}
+            <div className="gform-card gform-q gform-funnel2">
+              <div className="gform-q-label">Funnel 2 — Submit your entry</div>
+              <p className="gform-desc">Once a real stranger replies, submit your entry: attach a screenshot or PDF of the full email thread and pick your track. Opens the submission compose.</p>
+              <button className="gform-submit gform-submit-alt" onClick={onEnter}>Open submission</button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   )
