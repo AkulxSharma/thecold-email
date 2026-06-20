@@ -1,7 +1,7 @@
 // thecold.email — the event, presented as an inbox.
 // Content sourced from event-structure.md / event-brief.md / summary.md.
 const HOST = 'thecold.email'
-const HOST_EMAIL = 'hello@thecold.email'
+const HOST_EMAIL = 'judges@thecold.email'
 const YOU = 'you'
 
 export const EMAILS = [
@@ -303,7 +303,7 @@ export const RULES_PAGE = {
   privacyBlur: [
     'Email addresses', 'Phone numbers', 'Company information', 'Personal details', 'Private conversations',
   ],
-  bccEmail: 'hello@thecold.email',
+  bccEmail: 'judges@thecold.email',
 }
 
 export const TOPIC_NAMES = {
