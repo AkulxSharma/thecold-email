@@ -107,7 +107,7 @@ function ComposeWindow({ onClose, onSend }) {
       </div>
       <div className="cw-field">
         <span className="cw-label">To</span>
-        <input value="judges@thecold.email" readOnly tabIndex={-1} style={{ color: '#5e5e5e' }} />
+        <input value="hello@thecold.email" readOnly tabIndex={-1} style={{ color: '#5e5e5e' }} />
         <span className="cw-ccbcc">Cc&nbsp;&nbsp;Bcc</span>
       </div>
       <div className="cw-field">

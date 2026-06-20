@@ -1,7 +1,7 @@
 // thecold.email — the event, presented as an inbox.
 // Content sourced from event-structure.md / event-brief.md / summary.md.
 const HOST = 'thecold.email'
-const HOST_EMAIL = 'team@thecold.email'
+const HOST_EMAIL = 'hello@thecold.email'
 const YOU = 'you'
 
 export const EMAILS = [
