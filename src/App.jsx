@@ -76,7 +76,6 @@ function Sidebar({ onCompose, view, setView, open }) {
       <div className="section-head"><I.CaretDown /> THE EVENT</div>
       <NavItem icon={<I.M name="rule" />}        label="The Rule"   active={view === 'rule'}    onClick={() => setView('rule')} />
       <NavItem icon={<I.M name="emoji_events" />} label="Prizes"     active={view === 'prizes'}  onClick={() => setView('prizes')} />
-      <NavItem icon={<I.M name="account_balance_wallet" />} label="Prizes (Pay)" active={view === 'prizes-pay'} onClick={() => setView('prizes-pay')} />
       <NavItem icon={<I.M name="balance" />}      label="Judging"    active={view === 'judging'} onClick={() => setView('judging')} />
     </div>
   )
@@ -1582,114 +1581,8 @@ function ViewRule({ onEnter }) {
 }
 
 // ---------------- VIEW: PRIZES (Google Sheets) ----------------
-function ViewPrizes() {
-  const menus = ['File', 'Edit', 'View', 'Insert', 'Format', 'Data', 'Tools', 'Extensions', 'Help']
-  const cols = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))  // A..Z
-  const ROWS = 100
-  // row index (1-based) → { col: value, ...flags }
-  const data = {
-    1: { A: 'Category', B: 'Prize (USD)', C: 'Notes', head: true },
-    2: { A: '★ The Best Cold Email', B: '$1,000', C: 'Grand prize — best overall', grand: true },
-    3: { A: 'The Unreachable', B: '$500', C: 'Track 1' },
-    4: { A: 'Best Subject Line', B: '$500', C: 'Track 2' },
-    5: { A: 'The Two-Liner', B: '$500', C: 'Track 3' },
-    6: { A: 'The Ask', B: '$500', C: 'Track 4' },
-    8: { A: 'Total', B: '$3,000', C: '4 tracks + grand prize', total: true },
-  }
-  return (
-    <div className="view-panel gsheet-canvas">
-      <div className="gsheet-chrome">
-        {/* Title bar */}
-        <div className="gsheet-titlebar">
-          <span className="gsheet-doc-icon" aria-label="Google Sheets">
-            <svg width="22" height="28" viewBox="0 0 48 64" xmlns="http://www.w3.org/2000/svg">
-              <path d="M29 0H6C2.69 0 0 2.69 0 6v52c0 3.31 2.69 6 6 6h36c3.31 0 6-2.69 6-6V19L29 0z" fill="#188038"/>
-              <path d="M29 0v13c0 3.31 2.69 6 6 6h13L29 0z" fill="#8ed1b1"/>
-              <path d="M12 28h24v20H12V28zm3 3v3.5h7V31h-7zm10 0v3.5h8V31h-8zM15 37v3.5h7V37h-7zm10 0v3.5h8V37h-8zM15 43v3h7v-3h-7zm10 0v3h8v-3h-8z" fill="#fff"/>
-            </svg>
-          </span>
-          <div className="gsheet-title-block">
-            <div className="gsheet-title-row">
-              <span className="gsheet-docname">Prizes</span>
-              <span className="gdoc-star" title="Star"><I.M name="star_border" size={18} /></span>
-              <span className="gdoc-move" title="Move"><I.M name="drive_file_move" size={18} /></span>
-            </div>
-            <div className="gdoc-menubar">
-              {menus.map(m => <span className="gdoc-menu" key={m}>{m}</span>)}
-            </div>
-          </div>
-        </div>
-
-        {/* Toolbar */}
-        <div className="gdoc-toolbar gsheet-toolbar">
-          <span className="gdoc-tb-btn" title="Undo"><I.M name="undo" size={20} /></span>
-          <span className="gdoc-tb-btn" title="Redo"><I.M name="redo" size={20} /></span>
-          <span className="gdoc-tb-btn" title="Print"><I.M name="print" size={20} /></span>
-          <span className="gdoc-tb-sep" />
-          <span className="gdoc-tb-zoom">100%<I.M name="arrow_drop_down" size={18} /></span>
-          <span className="gdoc-tb-sep" />
-          <span className="gdoc-tb-btn" title="Currency">$</span>
-          <span className="gdoc-tb-btn" title="Percent">%</span>
-          <span className="gdoc-tb-btn" title="Decrease decimals">.0</span>
-          <span className="gdoc-tb-btn" title="Increase decimals">.00</span>
-          <span className="gdoc-tb-sep" />
-          <span className="gdoc-tb-font">Default<I.M name="arrow_drop_down" size={18} /></span>
-          <span className="gdoc-tb-sep" />
-          <span className="gdoc-tb-step">−</span>
-          <span className="gdoc-tb-size">10</span>
-          <span className="gdoc-tb-step">+</span>
-          <span className="gdoc-tb-sep" />
-          <span className="gdoc-tb-btn gdoc-tb-bold" title="Bold">B</span>
-          <span className="gdoc-tb-btn gdoc-tb-italic" title="Italic">I</span>
-          <span className="gdoc-tb-btn gdoc-tb-color" title="Text color">A<span className="gdoc-tb-color-bar" /></span>
-          <span className="gdoc-tb-sep" />
-          <span className="gdoc-tb-btn" title="Merge cells"><I.M name="cell_merge" size={20} /></span>
-          <span className="gdoc-tb-btn" title="Functions"><I.M name="functions" size={20} /></span>
-        </div>
-
-        {/* Formula bar */}
-        <div className="gsheet-fbar">
-          <span className="gsheet-namebox">B8 <I.M name="arrow_drop_down" size={16} /></span>
-          <span className="gsheet-fx">fx</span>
-          <span className="gsheet-formula">=SUM(B2:B6)</span>
-        </div>
-
-        {/* Column header row */}
-      </div>
-
-      {/* Scrollable grid (horizontal + vertical) — sticky column header + row numbers */}
-      <div className="gsheet-scroll">
-        <div className="gsheet-colhead">
-          <span className="gsheet-corner" />
-          {cols.map(c => <span className="gsheet-colh" key={c}>{c}</span>)}
-        </div>
-        <div className="gsheet-grid">
-          {Array.from({ length: ROWS }, (_, ri) => {
-            const r = ri + 1
-            const row = data[r] || {}
-            const cls = row.head ? ' gs-head' : row.total ? ' gs-total' : row.grand ? ' gs-grand' : ''
-            return (
-              <div className="gsheet-row" key={r}>
-                <span className="gsheet-rownum">{r}</span>
-                {cols.map(c => {
-                  const sel = r === 8 && c === 'B'
-                  return (
-                    <span className={`gsheet-cell${cls}${sel ? ' gs-sel' : ''}${c === 'B' ? ' gs-num' : ''}`} key={c}>
-                      {row[c] || ''}
-                    </span>
-                  )
-                })}
-              </div>
-            )
-          })}
-        </div>
-      </div>
-    </div>
-  )
-}
-
 // ---------------- VIEW: PRIZES (Google Pay) ----------------
-function ViewPrizesPay() {
+function ViewPrizes({ onEnter, goto }) {
   const passes = [
     { name: 'The Best Cold Email', sub: 'Grand prize · best overall', amount: '$1,000', grand: true,
       c1: '#202124', c2: '#3c4043' },
@@ -1698,6 +1591,24 @@ function ViewPrizesPay() {
     { name: 'The Two-Liner',    sub: 'Track 3', amount: '$500', c1: '#d93025', c2: '#ea4335' },
     { name: 'The Ask',          sub: 'Track 4', amount: '$500', c1: '#1a73e8', c2: '#4285f4' },
   ]
+  // drag-to-scroll the card row with the mouse (grab + drag, like a real Wallet carousel)
+  const rowRef = useRef(null)
+  const drag = useRef({ down: false, startX: 0, scroll: 0 })
+  const onDown = (e) => {
+    const el = rowRef.current; if (!el) return
+    drag.current = { down: true, startX: e.pageX, scroll: el.scrollLeft }
+    el.classList.add('dragging')
+  }
+  const onMove = (e) => {
+    const el = rowRef.current; if (!el || !drag.current.down) return
+    e.preventDefault()
+    el.scrollLeft = drag.current.scroll - (e.pageX - drag.current.startX)
+  }
+  const endDrag = () => {
+    const el = rowRef.current; if (!el) return
+    drag.current.down = false
+    el.classList.remove('dragging')
+  }
   return (
     <div className="view-panel gpay-canvas">
       {/* Balance hero */}
@@ -1706,16 +1617,17 @@ function ViewPrizesPay() {
         <div className="gpay-balance-amt">$3,000</div>
         <div className="gpay-balance-sub">Win up to $1,000 for one great cold email</div>
         <div className="gpay-actions">
-          <button className="gpay-act"><span className="gpay-act-ic"><I.M name="bolt" size={22} /></span>Enter</button>
-          <button className="gpay-act"><span className="gpay-act-ic"><I.M name="emoji_events" size={22} /></span>Tracks</button>
-          <button className="gpay-act"><span className="gpay-act-ic"><I.M name="receipt_long" size={22} /></span>Rules</button>
+          <button className="gpay-act" onClick={onEnter}><span className="gpay-act-ic"><I.M name="bolt" size={22} /></span>Enter</button>
+          <button className="gpay-act" onClick={() => goto && goto('track-unreachable')}><span className="gpay-act-ic"><I.M name="emoji_events" size={22} /></span>Tracks</button>
+          <button className="gpay-act" onClick={() => goto && goto('rule')}><span className="gpay-act-ic"><I.M name="receipt_long" size={22} /></span>Rules</button>
         </div>
       </div>
 
-      {/* Card renderer reused by all 3 trial layouts */}
-      {(() => {
-        const card = (p, i, extraCls = '') => (
-          <div className={`gpay-card${p.grand ? ' gpay-card-grand' : ''}${extraCls}`} key={i}
+      {/* Prize cards — horizontal scroll row; drag to scroll with the mouse */}
+      <div className="gpay-cards" ref={rowRef}
+        onMouseDown={onDown} onMouseMove={onMove} onMouseUp={endDrag} onMouseLeave={endDrag}>
+        {passes.map((p, i) => (
+          <div className={`gpay-card${p.grand ? ' gpay-card-grand' : ''}`} key={i}
             style={{ background: `linear-gradient(135deg, ${p.c1}, ${p.c2})` }}>
             <div className="gpay-card-top">
               <span className="gpay-card-name">{p.grand ? '★ ' : ''}{p.name}</span>
@@ -1724,30 +1636,8 @@ function ViewPrizesPay() {
             <div className="gpay-card-amt">{p.amount}</div>
             <div className="gpay-card-sub">{p.sub}</div>
           </div>
-        )
-        return (
-          <>
-            {/* OPTION 1 — stacked like a real Wallet */}
-            <div className="gpay-section-h">Option 1 — Stacked (real Wallet)</div>
-            <div className="gpay-stack">
-              {passes.map((p, i) => card(p, i, ' gpay-stack-card'))}
-            </div>
-
-            {/* OPTION 2 — wrap to a grid */}
-            <div className="gpay-section-h">Option 2 — Grid (all visible)</div>
-            <div className="gpay-grid">
-              {passes.map((p, i) => card(p, i, ' gpay-grid-card'))}
-            </div>
-
-            {/* OPTION 3 — horizontal scroll, full-height (no cut-off) */}
-            <div className="gpay-section-h">Option 3 — Scroll row (full height)</div>
-            <div className="gpay-cards">
-              {passes.map((p, i) => card(p, i))}
-            </div>
-          </>
-        )
-      })()}
-
+        ))}
+      </div>
     </div>
   )
 }
@@ -1806,8 +1696,7 @@ function MainPanel({ view, onEnter, goto }) {
     case 'track-twoliner':    return <ViewTrack topic="twoliner" />
     case 'track-ask':         return <ViewTrack topic="ask" />
     case 'rule':              return <ViewRule onEnter={onEnter} />
-    case 'prizes':            return <ViewPrizes />
-    case 'prizes-pay':        return <ViewPrizesPay />
+    case 'prizes':            return <ViewPrizes onEnter={onEnter} goto={goto} />
     case 'judging':           return <ViewJudging />
     default:                  return <ViewOverview onEnter={onEnter} goto={goto} />
   }

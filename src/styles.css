@@ -2333,59 +2333,11 @@ html, body, #root {
 .gdoc-chrome { position: sticky; top: 0; z-index: 20; background: #fff; }
 
 /* =====================================================================
-   PRIZES — Google Sheets (.gsheet-*)  [reuses .gdoc-toolbar/.gdoc-tb-*/.gdoc-menubar]
-   ===================================================================== */
-.gsheet-canvas { background: #fff; padding: 0 !important; }
-.gsheet-chrome { position: sticky; top: 0; z-index: 20; background: #fff; }
-.gsheet-titlebar { display: flex; align-items: flex-start; gap: 10px; padding: 10px 16px 4px; }
-.gsheet-doc-icon { margin-top: 4px; flex: none; display: inline-flex; }
-.gsheet-title-block { display: flex; flex-direction: column; gap: 2px; }
-.gsheet-title-row { display: flex; align-items: center; gap: 8px; }
-.gsheet-docname { font: 400 18px 'Google Sans','Roboto',Arial,sans-serif; color: #202124; }
-.gsheet-toolbar { margin: 4px 12px 8px; }
-
-/* formula bar */
-.gsheet-fbar { display: flex; align-items: center; gap: 0; border-top: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; background: #fff; height: 28px; }
-.gsheet-namebox { display: flex; align-items: center; gap: 2px; min-width: 90px; padding: 0 8px; height: 100%; font: 400 13px 'Roboto',Arial,sans-serif; color: #3c4043; border-right: 1px solid #e0e0e0; }
-.gsheet-fx { padding: 0 14px; font: italic 500 13px 'Roboto',Arial,sans-serif; color: #5f6368; border-right: 1px solid #e0e0e0; height: 100%; display: flex; align-items: center; }
-.gsheet-formula { padding: 0 12px; font: 400 13px 'Roboto Mono','Roboto',monospace; color: #202124; }
-
-/* scroll container — both axes; chrome above stays put */
-.gsheet-scroll { overflow: auto; max-height: calc(100vh - 230px); background: #fff; }
-
-/* column header row (sticky to top of scroll) */
-.gsheet-colhead { display: flex; width: max-content; position: sticky; top: 0; z-index: 6; }
-.gsheet-corner { width: 44px; flex: none; background: #f8f9fa; border-right: 1px solid #e0e0e0; border-bottom: 1px solid #c0c0c0; position: sticky; left: 0; z-index: 7; }
-.gsheet-colh { width: 100px; flex: none; text-align: center; padding: 4px 0; font: 400 12px 'Roboto',Arial,sans-serif; color: #5f6368; background: #f8f9fa; border-right: 1px solid #e0e0e0; border-bottom: 1px solid #c0c0c0; }
-.gsheet-colh:nth-child(2) { width: 220px; }  /* A = wide category col */
-.gsheet-colh:nth-child(3) { width: 110px; }  /* B = prize */
-.gsheet-colh:nth-child(4) { width: 200px; }  /* C = notes col */
-
-/* grid */
-.gsheet-grid { background: #fff; width: max-content; }
-.gsheet-row { display: flex; }
-.gsheet-rownum { width: 44px; flex: none; text-align: center; padding: 6px 0; font: 400 12px 'Roboto',Arial,sans-serif; color: #5f6368; background: #f8f9fa; border-right: 1px solid #c0c0c0; border-bottom: 1px solid #e0e0e0; position: sticky; left: 0; z-index: 5; }
-.gsheet-cell { width: 100px; flex: none; padding: 6px 8px; font: 400 13px 'Roboto',Arial,sans-serif; color: #202124; border-right: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.gsheet-cell:nth-child(2) { width: 220px; }
-.gsheet-cell:nth-child(3) { width: 110px; }
-.gsheet-cell:nth-child(4) { width: 200px; }
-.gs-num { font-variant-numeric: tabular-nums; }
-.gs-head { font-weight: 700; background: #f8f9fa; }
-.gs-grand { background: #fef7e0; }
-.gs-total { font-weight: 700; background: #e6f4ea; }
-.gs-sel { box-shadow: inset 0 0 0 2px #1a73e8; }
-
-/* =====================================================================
    PRIZES — Google Pay (.gpay-*)
    ===================================================================== */
-.gpay-canvas { background: #f1f3f4; padding: 0 !important; }
-.gpay-top { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; background: #fff; }
-.gpay-brand { font: 500 22px 'Google Sans','Roboto',Arial,sans-serif; letter-spacing: -.5px; }
-.gpay-pay { color: #5f6368; margin-left: 4px; }
-.gpay-avatar { width: 34px; height: 34px; border-radius: 50%; overflow: hidden; display: inline-flex; background: #e8f0fe; }
-.gpay-avatar img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+.gpay-canvas { background: #f1f3f4; padding: 0 !important; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100%; box-sizing: border-box; }
 
-.gpay-balance { background: #fff; text-align: center; padding: 14px 20px 28px; border-bottom: 1px solid #e8eaed; }
+.gpay-balance { background: transparent; text-align: center; padding: 14px 20px 24px; }
 .gpay-balance-label { font-size: 14px; color: #5f6368; }
 .gpay-balance-amt { font: 400 52px 'Google Sans','Roboto',Arial,sans-serif; color: #202124; margin: 4px 0; }
 .gpay-balance-sub { font-size: 14px; color: #5f6368; }
@@ -2394,33 +2346,13 @@ html, body, #root {
 .gpay-act-ic { display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; border-radius: 50%; background: #e8f0fe; color: #1a73e8; }
 .gpay-act:hover .gpay-act-ic { background: #d2e3fc; }
 
-.gpay-section-h { font: 500 14px 'Google Sans','Roboto',Arial,sans-serif; color: #3c4043; padding: 22px 22px 10px; }
-/* Option 3 — horizontal scroll row, full height (no cut-off) */
-.gpay-cards { display: flex; flex: none; gap: 16px; overflow-x: auto; overflow-y: hidden; padding: 4px 22px 18px; align-items: flex-start; min-height: 202px; }
-
-/* Option 1 — stacked like a real Wallet. Cards are absolutely positioned at fixed
-   offsets so a hovered card expands OVER the others without reflowing the stack. */
-.gpay-stack { position: relative; flex: none; width: 300px; height: 414px; margin: 0 22px 8px; }
-.gpay-stack .gpay-stack-card { position: absolute; left: 0; width: 300px; height: 76px; min-height: 76px;
-  margin: 0; overflow: hidden; cursor: pointer; transition: height .22s ease, box-shadow .22s ease; }
-.gpay-stack .gpay-stack-card:nth-child(1) { top: 0;     z-index: 1; }
-.gpay-stack .gpay-stack-card:nth-child(2) { top: 56px;  z-index: 2; }
-.gpay-stack .gpay-stack-card:nth-child(3) { top: 112px; z-index: 3; }
-.gpay-stack .gpay-stack-card:nth-child(4) { top: 168px; z-index: 4; }
-.gpay-stack .gpay-stack-card:nth-child(5) { top: 224px; height: 190px; min-height: 190px; z-index: 5; }  /* front card open */
-.gpay-stack .gpay-stack-card:hover { height: 190px; min-height: 190px; z-index: 10; box-shadow: 0 10px 28px rgba(0,0,0,.35); }
-.gpay-stack .gpay-card-amt { margin-top: 16px; }
-/* amount/sub only on the front card or the hovered card */
-.gpay-stack .gpay-stack-card .gpay-card-amt,
-.gpay-stack .gpay-stack-card .gpay-card-sub { display: none; }
-.gpay-stack .gpay-stack-card:nth-child(5) .gpay-card-amt,
-.gpay-stack .gpay-stack-card:nth-child(5) .gpay-card-sub,
-.gpay-stack .gpay-stack-card:hover .gpay-card-amt,
-.gpay-stack .gpay-stack-card:hover .gpay-card-sub { display: block; }
-
-/* Option 2 — wrap to a grid, all visible */
-.gpay-grid { display: flex; flex-wrap: wrap; gap: 16px; padding: 4px 22px 18px; }
-.gpay-grid-card { width: 280px; }
+/* prize cards — horizontal scroll row, centered; scrolls if it overflows */
+.gpay-cards { display: flex; flex: none; gap: 16px; overflow-x: auto; overflow-y: hidden; padding: 4px 22px 18px; align-items: flex-start; min-height: 202px; max-width: 100%; box-sizing: border-box; cursor: grab; scrollbar-width: none; }
+.gpay-cards::-webkit-scrollbar { display: none; }  /* hide horizontal scrollbar (drag to scroll instead) */
+.gpay-cards.dragging { cursor: grabbing; user-select: none; }
+.gpay-cards.dragging .gpay-card { pointer-events: none; }
+/* auto-margin spacers center the row when it fits, but collapse to 0 (no start-clip) when it overflows */
+.gpay-cards::before, .gpay-cards::after { content: ''; margin: auto; }
 .gpay-card { flex: none; width: 300px; height: 180px; min-height: 180px; border-radius: 16px; padding: 18px; color: #fff; box-shadow: 0 2px 8px rgba(60,64,67,.24); display: flex; flex-direction: column; box-sizing: border-box; }
 .gpay-card-grand { box-shadow: 0 4px 16px rgba(0,0,0,.32); }
 .gpay-card-top { display: flex; align-items: flex-start; justify-content: space-between; }
@@ -2429,16 +2361,6 @@ html, body, #root {
 .gpay-card-amt { font: 400 40px 'Google Sans','Roboto',Arial,sans-serif; margin-top: auto; }
 .gpay-card-sub { font-size: 13px; opacity: .9; margin-top: 2px; }
 
-.gpay-activity { background: #fff; margin: 0 22px 28px; border-radius: 14px; overflow: hidden; border: 1px solid #e8eaed; }
-.gpay-act-row { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-bottom: 1px solid #f1f3f4; }
-.gpay-act-row:last-child { border-bottom: none; }
-.gpay-act-dot { width: 40px; height: 40px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; color: #fff; font: 600 15px 'Roboto',Arial,sans-serif; }
-.gpay-dot-total { background: #1a73e8 !important; }
-.gpay-act-main { flex: 1; min-width: 0; }
-.gpay-act-name { font: 500 14px 'Roboto',Arial,sans-serif; color: #202124; }
-.gpay-act-sub { font-size: 13px; color: #5f6368; }
-.gpay-act-amt { font: 500 15px 'Google Sans','Roboto',Arial,sans-serif; color: #202124; }
-.gpay-act-total .gpay-act-amt, .gpay-act-total .gpay-act-name { font-weight: 700; }
 .gdoc-title-block { display: flex; flex-direction: column; min-width: 0; }
 .gdoc-title-row { display: flex; align-items: center; gap: 8px; }
 .gdoc-docname { font-size: 18px; color: #3c4043; line-height: 24px; }
