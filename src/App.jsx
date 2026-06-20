@@ -719,6 +719,35 @@ function timeToMinutes(t) {
   return h * 60 + m
 }
 
+// Events are authored in IST (+5:30). Convert each timed event to the viewer's
+// local timezone so it lands on the right day/slot wherever they are.
+const IST_OFFSET_MIN = 330
+function istToLocal(ymd, hhmm) {
+  const [y, mo, d] = ymd.split('-').map(Number)
+  const [h, mi] = hhmm.split(':').map(Number)
+  const local = new Date(Date.UTC(y, mo - 1, d, h, mi) - IST_OFFSET_MIN * 60000)
+  const p = (n) => String(n).padStart(2, '0')
+  return {
+    date: `${local.getFullYear()}-${p(local.getMonth() + 1)}-${p(local.getDate())}`,
+    time: `${p(local.getHours())}:${p(local.getMinutes())}`,
+  }
+}
+// Viewer's timezone abbreviation, e.g. "PDT", "GMT+2" (fallback "local")
+const LOCAL_TZ = (() => {
+  try {
+    const parts = new Intl.DateTimeFormat('en-US', { timeZoneName: 'short' }).formatToParts(new Date())
+    return parts.find(p => p.type === 'timeZoneName')?.value || 'local'
+  } catch { return 'local' }
+})()
+
+const EVENTS_LOCAL = EVENTS.map(ev => {
+  if (ev.allDay || !ev.start) return ev
+  const s = istToLocal(ev.date, ev.start)
+  const e = istToLocal(ev.date, ev.end)
+  const end = e.date === s.date ? e.time : '23:59' // clamp if it crosses local midnight
+  return { ...ev, date: s.date, start: s.time, end, istDate: ev.date, istStart: ev.start, istEnd: ev.end }
+})
+
 // Default week: Mon Jun 22 2026
 const DEFAULT_WEEK = new Date(2026, 5, 22)
 const TODAY_YMD = '2026-06-18'
@@ -737,7 +766,9 @@ function eventWhen(ev) {
     if (ev.dateEnd) return `${base} – ${parseDate(ev.dateEnd).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}`
     return base
   }
-  return `${base} · ${fmt12(ev.start)} – ${fmt12(ev.end)}`
+  const local = `${base} · ${fmt12(ev.start)} – ${fmt12(ev.end)} ${LOCAL_TZ}`
+  if (ev.istStart) return `${local}  (${fmt12(ev.istStart)} – ${fmt12(ev.istEnd)} IST)`
+  return local
 }
 
 function ViewCalendar() {
@@ -767,7 +798,7 @@ function ViewCalendar() {
   const timedByDay   = {}  // ymd → [event, ...]
   dayYMDs.forEach(ymd => { timedByDay[ymd] = [] })
 
-  EVENTS.forEach(ev => {
+  EVENTS_LOCAL.forEach(ev => {
     if (ev.allDay) {
       const evStart = parseDate(ev.date).getTime()
       const evEnd   = ev.dateEnd ? parseDate(ev.dateEnd).getTime() : evStart
