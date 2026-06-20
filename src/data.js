@@ -337,7 +337,7 @@ export const TRACK_REMEMBER = {
 
 export const TRACK_PAGES = {
   unreachable: {
-    goal: 'Get a reply from someone who almost never replies.',
+    goal: 'Get a **reply** from someone who **almost never replies**.',
     goalExtra: 'Think founders, CEOs, investors, politicians, public intellectuals, celebrities, or anyone whose inbox is flooded every day.',
     howWon: [
       "The hardest target to reach wins.",
@@ -351,7 +351,7 @@ export const TRACK_PAGES = {
       'The people everyone wants a response from.',
       'The people whose inboxes are buried under thousands of emails.',
       "The challenge isn't writing the email.",
-      'The challenge is earning attention where attention is almost impossible to earn.',
+      'The challenge is __earning attention__ where attention is almost **impossible** to earn.',
     ],
     judges: [
       'Difficulty of the target',
@@ -380,7 +380,7 @@ export const TRACK_PAGES = {
     ],
   },
   subject: {
-    goal: 'Earn a reply because of the subject line.',
+    goal: 'Earn a reply **because of the subject line**.',
     howWon: [
       'The strongest subject-line craft wins.',
       'The reply proves the email was opened.',
@@ -412,14 +412,14 @@ export const TRACK_PAGES = {
     ],
   },
   twoliner: {
-    goal: 'Get a reply using two sentences or fewer.',
+    goal: 'Get a reply using **two sentences or fewer**.',
     howWon: ['The most result from the fewest words wins.'],
     rewards: [
       'Anyone can write a long email.',
       'Very few people can make every word count.',
       'This track rewards extreme clarity, precision, and restraint.',
       "The challenge isn't saying more.",
-      "It's saying less.",
+      "It's __saying less__.",
     ],
     judges: [
       'Brevity',
@@ -447,7 +447,7 @@ export const TRACK_PAGES = {
     ],
   },
   ask: {
-    goal: 'Earn a major "yes" from a stranger.',
+    goal: 'Earn a **major "yes"** from a stranger.',
     goalExtra: 'A job. An introduction. Funding. A meeting. A partnership. A favor. Something that matters.',
     howWon: ['The biggest yes wins.'],
     rewards: [

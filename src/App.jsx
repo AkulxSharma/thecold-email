@@ -1418,6 +1418,16 @@ function ViewTrackFinance({ data }) {
 
 // ---------------- VIEW: THE UNREACHABLE (Google Docs) ----------------
 // Renders the unreachable track styled as a faithful Google Docs document.
+// inline rich text for track copy: **bold**, __underline__
+function RT({ children }) {
+  if (typeof children !== 'string') return children
+  return children.split(/(\*\*[^*]+\*\*|__[^_]+__)/g).map((p, i) => {
+    if (p.startsWith('**') && p.endsWith('**')) return <strong key={i}>{p.slice(2, -2)}</strong>
+    if (p.startsWith('__') && p.endsWith('__')) return <u key={i}>{p.slice(2, -2)}</u>
+    return p
+  })
+}
+
 function ViewTrackDoc({ data, title }) {
   const menus = ['File', 'Edit', 'View', 'Insert', 'Format', 'Tools', 'Extensions', 'Help']
   return (
@@ -1484,28 +1494,28 @@ function ViewTrackDoc({ data, title }) {
           <h1 className="gdoc-h1">{title}</h1>
 
           <h2 className="gdoc-h2">The Goal</h2>
-          <p className="gdoc-p">{data.goal}</p>
-          {data.goalExtra && <p className="gdoc-p">{data.goalExtra}</p>}
+          <p className="gdoc-p"><RT>{data.goal}</RT></p>
+          {data.goalExtra && <p className="gdoc-p"><RT>{data.goalExtra}</RT></p>}
 
           <h2 className="gdoc-h2">How It's Won</h2>
-          {data.howWon.map((l, i) => <p className="gdoc-p" key={i}>{l}</p>)}
+          {data.howWon.map((l, i) => <p className="gdoc-p" key={i}><RT>{l}</RT></p>)}
 
           <h2 className="gdoc-h2">What This Track Rewards</h2>
-          {data.rewards.map((l, i) => <p className="gdoc-p" key={i}>{l}</p>)}
+          {data.rewards.map((l, i) => <p className="gdoc-p" key={i}><RT>{l}</RT></p>)}
 
           <h2 className="gdoc-h2">What Judges Look For</h2>
-          <ul className="gdoc-list gdoc-list-check">
-            {data.judges.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-yes">✓</span><span>{l}</span></li>)}
+          <ul className="gdoc-list">
+            {data.judges.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-tri">▸</span><span><RT>{l}</RT></span></li>)}
           </ul>
 
           <h2 className="gdoc-h2">Strong Entries</h2>
-          <ul className="gdoc-list gdoc-list-dot">
-            {data.strong.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-dot">•</span><span>{l}</span></li>)}
+          <ul className="gdoc-list">
+            {data.strong.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-dot">•</span><span><RT>{l}</RT></span></li>)}
           </ul>
 
           <h2 className="gdoc-h2">Common Mistakes</h2>
-          <ul className="gdoc-list gdoc-list-cross">
-            {data.mistakes.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-no">✕</span><span>{l}</span></li>)}
+          <ul className="gdoc-list">
+            {data.mistakes.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-dash">–</span><span><RT>{l}</RT></span></li>)}
           </ul>
 
           <h2 className="gdoc-h2">Scoring</h2>
