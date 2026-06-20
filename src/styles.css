@@ -2459,6 +2459,15 @@ html, body, #root {
 .gdocs-mini-lg .gdocs-mini-h1 { font-size: 13px; margin-bottom: 10px; }
 .gdocs-mini-lg .gdocs-mini-sub { font-size: 8px; margin: 9px 0 4px; }
 .gdocs-mini-lg .gdocs-mini-p { font-size: 7.5px; margin-bottom: 4px; }
+.gdocs-mini-list { list-style: none; margin: 0 0 3px; padding: 0; }
+.gdocs-mini-list li { display: flex; gap: 3px; font: 400 5.5px 'Arial',sans-serif; color: #3c4043; line-height: 1.5; margin-bottom: 2px; }
+.gdocs-mini-mark { flex: none; color: #5f6368; }
+.gdocs-mini-list u { text-underline-offset: 1px; }
+.gdocs-mini-table { width: 100%; border-collapse: collapse; margin: 0 0 3px; font: 400 5.5px 'Arial',sans-serif; color: #3c4043; }
+.gdocs-mini-table td { border: 0.5px solid #dadce0; padding: 1.5px 3px; }
+.gdocs-mini-pts { text-align: right; width: 22%; }
+.gdocs-mini-lg .gdocs-mini-list li, .gdocs-mini-lg .gdocs-mini-table { font-size: 7.5px; }
+.gdocs-mini-lg .gdocs-mini-list li { gap: 4px; margin-bottom: 3px; }
 
 /* recent documents */
 .gdocs-recent { max-width: 1040px; margin: 0 auto; padding: 22px 24px 40px; }

@@ -1557,12 +1557,43 @@ function ViewTracksHome({ goto, onEnter }) {
     return (
       <div className={`gdocs-mini${lg ? ' gdocs-mini-lg' : ''}`}>
         <div className="gdocs-mini-h1">{TOPIC_NAMES[t]}</div>
+
         <div className="gdocs-mini-sub">The Goal</div>
         <p className="gdocs-mini-p"><RT>{d.goal}</RT></p>
-        {lg && d.goalExtra && <p className="gdocs-mini-p"><RT>{d.goalExtra}</RT></p>}
+        {d.goalExtra && <p className="gdocs-mini-p"><RT>{d.goalExtra}</RT></p>}
+
         <div className="gdocs-mini-sub">How It's Won</div>
-        <p className="gdocs-mini-p"><RT>{d.howWon[0]}</RT></p>
-        {lg && d.howWon[1] && <p className="gdocs-mini-p"><RT>{d.howWon[1]}</RT></p>}
+        {d.howWon.map((l, i) => <p className="gdocs-mini-p" key={i}><RT>{l}</RT></p>)}
+
+        <div className="gdocs-mini-sub">What This Track Rewards</div>
+        {d.rewards.map((l, i) => <p className="gdocs-mini-p" key={i}><RT>{l}</RT></p>)}
+
+        <div className="gdocs-mini-sub">What Judges Look For</div>
+        <ul className="gdocs-mini-list">
+          {d.judges.map((l, i) => <li key={i}><span className="gdocs-mini-mark">▸</span><span><RT>{l}</RT></span></li>)}
+        </ul>
+
+        <div className="gdocs-mini-sub">Strong Entries</div>
+        <ul className="gdocs-mini-list">
+          {d.strong.map((l, i) => <li key={i}><span className="gdocs-mini-mark">•</span><span><RT>{l}</RT></span></li>)}
+        </ul>
+
+        <div className="gdocs-mini-sub">Common Mistakes</div>
+        <ul className="gdocs-mini-list">
+          {d.mistakes.map((l, i) => <li key={i}><span className="gdocs-mini-mark">–</span><span><RT>{l}</RT></span></li>)}
+        </ul>
+
+        <div className="gdocs-mini-sub">Scoring</div>
+        <table className="gdocs-mini-table">
+          <tbody>
+            {d.scoring.map((s, i) => (
+              <tr key={i}><td>{s.label}</td><td className="gdocs-mini-pts">{s.pts}</td></tr>
+            ))}
+          </tbody>
+        </table>
+
+        <div className="gdocs-mini-sub">Prize</div>
+        <p className="gdocs-mini-p"><strong>$500</strong> for the winning entry. Every qualifying entry is also automatically considered for the Best Cold Email ($1,000 grand prize).</p>
       </div>
     )
   }
