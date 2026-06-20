@@ -2338,9 +2338,9 @@ html, body, #root {
 .gpay-canvas { background: #f1f3f4; padding: 0 !important; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100%; box-sizing: border-box; }
 
 .gpay-balance { background: transparent; text-align: center; padding: 14px 20px 24px; }
-.gpay-balance-label { font-size: 14px; color: #5f6368; }
-.gpay-balance-amt { font: 400 52px 'Google Sans','Roboto',Arial,sans-serif; color: #202124; margin: 4px 0; }
-.gpay-balance-sub { font-size: 14px; color: #5f6368; }
+.gpay-balance-label { font-size: 20px; color: #5f6368; }
+.gpay-balance-amt { font: 700 96px 'Google Sans','Roboto',Arial,sans-serif; line-height: 1.05; color: #202124; margin: 6px 0; letter-spacing: -2px; }
+.gpay-balance-sub { font-size: 22px; color: #5f6368; }
 .gpay-actions { display: flex; justify-content: center; gap: 28px; margin-top: 22px; }
 .gpay-act { display: flex; flex-direction: column; align-items: center; gap: 8px; background: none; border: 0; cursor: pointer; font: 500 13px 'Roboto',Arial,sans-serif; color: #3c4043; }
 .gpay-act-ic { display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; border-radius: 50%; background: #e8f0fe; color: #1a73e8; }
@@ -2360,6 +2360,63 @@ html, body, #root {
 .gpay-card-ico { display: inline-flex; align-items: center; justify-content: center; color: #fff; opacity: .95; }
 .gpay-card-ico svg { stroke: #fff; }
 .gpay-card-ico.fill .msym { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+/* =====================================================================
+   TRACKS HOME — Google Docs start page (.gdocs-*)
+   ===================================================================== */
+.section-head-btn { cursor: pointer; }
+.section-head-btn:hover { color: #202124; }
+.section-head-btn.active { color: #202124; }
+
+.gdocs-home { display: block; background: #fff; padding: 0 !important; overflow-y: auto; }
+/* template gallery band */
+.gdocs-band { background: #f1f3f4; border-bottom: 1px solid #e0e0e0; padding: 18px 0 26px; }
+.gdocs-band-inner { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+.gdocs-band-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.gdocs-band-title { font: 400 16px 'Google Sans','Roboto',Arial,sans-serif; color: #202124; }
+.gdocs-band-right { display: flex; align-items: center; gap: 6px; color: #5f6368; }
+.gdocs-gallery { display: inline-flex; align-items: center; gap: 4px; font: 500 14px 'Google Sans','Roboto',Arial,sans-serif; cursor: pointer; }
+.gdocs-sep { width: 1px; height: 22px; background: #dadce0; margin: 0 6px; }
+.gdocs-kebab { display: inline-flex; cursor: pointer; }
+.gdocs-templates { display: flex; gap: 28px; flex-wrap: wrap; }
+.gdocs-tpl { width: 150px; cursor: pointer; }
+.gdocs-tpl-thumb { width: 150px; height: 195px; background: #fff; border: 1px solid #dadce0; border-radius: 2px; overflow: hidden; display: flex; align-items: center; justify-content: center; transition: border-color .15s, box-shadow .15s; }
+.gdocs-tpl:hover .gdocs-tpl-thumb { border-color: #4285f4; box-shadow: 0 1px 3px rgba(60,64,67,.3); }
+.gdocs-tpl-blank { align-items: center; justify-content: center; }
+.gdocs-tpl-name { margin-top: 8px; font: 500 14px 'Roboto',Arial,sans-serif; color: #3c4043; }
+.gdocs-tpl:hover .gdocs-tpl-name { color: #1a73e8; }
+.gdocs-tpl-sub { font: 400 12px 'Roboto',Arial,sans-serif; color: #5f6368; }
+
+/* mini document preview */
+.gdocs-mini { width: 100%; height: 100%; padding: 14px 12px; box-sizing: border-box; text-align: left; }
+.gdocs-mini-h1 { font: 700 9px 'Google Sans','Roboto',Arial,sans-serif; color: #202124; margin-bottom: 7px; line-height: 1.2; }
+.gdocs-mini-sub { font: 700 6px 'Roboto',Arial,sans-serif; color: #1a73e8; margin: 6px 0 4px; }
+.gdocs-mini-line { height: 3px; background: #e8eaed; border-radius: 2px; margin-bottom: 4px; }
+.gdocs-mini-line.short { width: 60%; }
+.gdocs-mini-lg { padding: 18px 16px; }
+.gdocs-mini-lg .gdocs-mini-h1 { font-size: 13px; margin-bottom: 10px; }
+.gdocs-mini-lg .gdocs-mini-sub { font-size: 8px; }
+.gdocs-mini-lg .gdocs-mini-line { height: 4px; margin-bottom: 6px; }
+
+/* recent documents */
+.gdocs-recent { max-width: 1040px; margin: 0 auto; padding: 22px 24px 40px; }
+.gdocs-recent-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.gdocs-recent-title { font: 400 16px 'Google Sans','Roboto',Arial,sans-serif; color: #202124; }
+.gdocs-recent-right { display: flex; align-items: center; gap: 4px; color: #5f6368; }
+.gdocs-owner { display: inline-flex; align-items: center; gap: 2px; font: 500 14px 'Google Sans','Roboto',Arial,sans-serif; cursor: pointer; margin-right: 8px; }
+.gdocs-ric { display: inline-flex; padding: 6px; border-radius: 50%; cursor: pointer; }
+.gdocs-ric:hover { background: rgba(60,64,67,.08); }
+.gdocs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 18px; }
+.gdocs-card { border: 1px solid #dadce0; border-radius: 8px; overflow: hidden; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+.gdocs-card:hover { border-color: #4285f4; box-shadow: 0 1px 3px rgba(60,64,67,.3); }
+.gdocs-card-thumb { height: 200px; background: #fff; border-bottom: 1px solid #e8eaed; overflow: hidden; }
+.gdocs-card-foot { display: flex; align-items: center; gap: 10px; padding: 12px 14px; }
+.gdocs-card-ico { display: inline-flex; flex: none; }
+.gdocs-card-meta { flex: 1; min-width: 0; }
+.gdocs-card-name { font: 500 14px 'Roboto',Arial,sans-serif; color: #3c4043; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gdocs-card-date { font: 400 12px 'Roboto',Arial,sans-serif; color: #5f6368; margin-top: 2px; }
+.gdocs-card-kebab { display: inline-flex; flex: none; color: #5f6368; padding: 4px; border-radius: 50%; }
+.gdocs-card-kebab:hover { background: rgba(60,64,67,.08); }
 .gpay-card-amt { font: 400 40px 'Google Sans','Roboto',Arial,sans-serif; margin-top: auto; }
 .gpay-card-sub { font-size: 13px; opacity: .9; margin-top: 2px; }
 

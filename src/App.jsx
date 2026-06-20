@@ -67,7 +67,7 @@ function Sidebar({ onCompose, view, setView, open }) {
       <NavItem icon={<I.M name="calendar_month" />} label="Event Calendar"                    active={view === 'calendar'} onClick={() => setView('calendar')} />
       <NavItem icon={<I.M name="auto_awesome" />}  label="Best Emails"                    active={view === 'best'}     onClick={() => setView('best')} />
 
-      <div className="section-head"><I.CaretDown /> TRACKS</div>
+      <div className={`section-head section-head-btn${view === 'tracks-home' ? ' active' : ''}`} onClick={() => setView('tracks-home')}><I.CaretDown /> TRACKS</div>
       <NavItem icon={<I.Plane size={20} />}  label="The Unreachable"    active={view === 'track-unreachable'} onClick={() => setView('track-unreachable')} />
       <NavItem icon={<I.SparkPen size={20} />} label="Best Subject Line"  active={view === 'track-subject'}     onClick={() => setView('track-subject')} />
       <NavItem icon={<I.M name="short_text" />} label="The Two-Liner"      active={view === 'track-twoliner'}    onClick={() => setView('track-twoliner')} />
@@ -1345,6 +1345,93 @@ function ViewTrackDoc({ data, title }) {
   )
 }
 
+// ---------------- VIEW: TRACKS HOME (Google Docs start page) ----------------
+const DOCS_ICON = (
+  <svg width="18" height="22" viewBox="0 0 48 64" xmlns="http://www.w3.org/2000/svg">
+    <path d="M29 0H6C2.69 0 0 2.69 0 6v52c0 3.31 2.69 6 6 6h36c3.31 0 6-2.69 6-6V19L29 0z" fill="#4285F4"/>
+    <path d="M29 0v13c0 3.31 2.69 6 6 6h13L29 0z" fill="#A1C2FA"/>
+    <rect x="12" y="30" width="24" height="3.4" rx="1.7" fill="#fff"/>
+    <rect x="12" y="38.5" width="24" height="3.4" rx="1.7" fill="#fff"/>
+    <rect x="12" y="47" width="16" height="3.4" rx="1.7" fill="#fff"/>
+  </svg>
+)
+
+function ViewTracksHome({ goto, onEnter }) {
+  const topics = ['unreachable', 'subject', 'twoliner', 'ask']
+  const dates = ['Opened 9:22 PM', 'Jun 19, 2026', 'Jun 17, 2026', 'Jun 17, 2026']
+  const mini = (t, lg) => (
+    <div className={`gdocs-mini${lg ? ' gdocs-mini-lg' : ''}`}>
+      <div className="gdocs-mini-h1">{TOPIC_NAMES[t]}</div>
+      <div className="gdocs-mini-sub">The Goal</div>
+      <div className="gdocs-mini-line" /><div className="gdocs-mini-line" /><div className="gdocs-mini-line short" />
+      {lg && <>
+        <div className="gdocs-mini-sub">How It's Won</div>
+        <div className="gdocs-mini-line" /><div className="gdocs-mini-line short" />
+      </>}
+    </div>
+  )
+  return (
+    <div className="view-panel gdocs-home">
+      {/* Template gallery band */}
+      <div className="gdocs-band">
+        <div className="gdocs-band-inner">
+          <div className="gdocs-band-head">
+            <span className="gdocs-band-title">Start a new document</span>
+            <div className="gdocs-band-right">
+              <span className="gdocs-gallery">Template gallery <I.M name="unfold_more" size={18} /></span>
+              <span className="gdocs-sep" />
+              <span className="gdocs-kebab"><I.M name="more_vert" size={20} /></span>
+            </div>
+          </div>
+          <div className="gdocs-templates">
+            <div className="gdocs-tpl" onClick={onEnter}>
+              <div className="gdocs-tpl-thumb gdocs-tpl-blank">
+                <svg width="46" height="46" viewBox="0 0 24 24"><path fill="#4285F4" d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z"/></svg>
+              </div>
+              <div className="gdocs-tpl-name">Blank document</div>
+            </div>
+            {topics.map(t => (
+              <div className="gdocs-tpl" key={t} onClick={() => goto('track-' + t)}>
+                <div className="gdocs-tpl-thumb">{mini(t, false)}</div>
+                <div className="gdocs-tpl-name">{TOPIC_NAMES[t]}</div>
+                <div className="gdocs-tpl-sub">Track</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Recent documents */}
+      <div className="gdocs-recent">
+        <div className="gdocs-recent-head">
+          <span className="gdocs-recent-title">Recent documents</span>
+          <div className="gdocs-recent-right">
+            <span className="gdocs-owner">Owned by anyone <I.M name="arrow_drop_down" size={18} /></span>
+            <span className="gdocs-ric" title="List view"><I.M name="list" size={20} /></span>
+            <span className="gdocs-ric" title="Sort"><I.M name="sort_by_alpha" size={20} /></span>
+            <span className="gdocs-ric" title="Folder"><I.M name="folder_open" size={20} /></span>
+          </div>
+        </div>
+        <div className="gdocs-grid">
+          {topics.map((t, i) => (
+            <div className="gdocs-card" key={t} onClick={() => goto('track-' + t)}>
+              <div className="gdocs-card-thumb">{mini(t, true)}</div>
+              <div className="gdocs-card-foot">
+                <span className="gdocs-card-ico">{DOCS_ICON}</span>
+                <div className="gdocs-card-meta">
+                  <div className="gdocs-card-name">{TOPIC_NAMES[t]}</div>
+                  <div className="gdocs-card-date">{dates[i]}</div>
+                </div>
+                <span className="gdocs-card-kebab" onClick={e => e.stopPropagation()}><I.M name="more_vert" size={18} /></span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ---------------- VIEW: THE RULE ----------------
 function ViewRule({ onEnter }) {
   const R = RULES_PAGE
@@ -1617,7 +1704,7 @@ function ViewPrizes({ onEnter, goto }) {
         <div className="gpay-balance-sub">Win up to $1,000 for one great cold email</div>
         <div className="gpay-actions">
           <button className="gpay-act" onClick={onEnter}><span className="gpay-act-ic"><I.M name="bolt" size={22} /></span>Enter</button>
-          <button className="gpay-act" onClick={() => goto && goto('track-unreachable')}><span className="gpay-act-ic"><I.M name="emoji_events" size={22} /></span>Tracks</button>
+          <button className="gpay-act" onClick={() => goto && goto('tracks-home')}><span className="gpay-act-ic"><I.M name="emoji_events" size={22} /></span>Tracks</button>
           <button className="gpay-act" onClick={() => goto && goto('rule')}><span className="gpay-act-ic"><I.M name="receipt_long" size={22} /></span>Rules</button>
         </div>
       </div>
@@ -1652,6 +1739,7 @@ function MainPanel({ view, onEnter, goto }) {
     case 'enter':             return <ViewEnter onEnter={onEnter} />
     case 'calendar':          return <ViewCalendar />
     case 'best':              return <ViewBest />
+    case 'tracks-home':       return <ViewTracksHome goto={goto} onEnter={onEnter} />
     case 'track-unreachable': return <ViewTrack topic="unreachable" />
     case 'track-subject':     return <ViewTrack topic="subject" />
     case 'track-twoliner':    return <ViewTrack topic="twoliner" />
