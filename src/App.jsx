@@ -76,7 +76,6 @@ function Sidebar({ onCompose, view, setView, open }) {
       <div className="section-head"><I.CaretDown /> THE EVENT</div>
       <NavItem icon={<I.M name="rule" />}        label="The Rule"   active={view === 'rule'}    onClick={() => setView('rule')} />
       <NavItem icon={<I.M name="emoji_events" />} label="Prizes"     active={view === 'prizes'}  onClick={() => setView('prizes')} />
-      <NavItem icon={<I.M name="balance" />}      label="Judging"    active={view === 'judging'} onClick={() => setView('judging')} />
     </div>
   )
 }
@@ -1631,50 +1630,12 @@ function ViewPrizes({ onEnter, goto }) {
             style={{ background: `linear-gradient(135deg, ${p.c1}, ${p.c2})` }}>
             <div className="gpay-card-top">
               <span className="gpay-card-name">{p.name}</span>
-              <span className="gpay-card-ico">{p.grand ? <I.M name="star" size={26} /> : TRACK_ICONS[p.topic]}</span>
+              <span className={`gpay-card-ico${p.grand ? ' fill' : ''}`}>{p.grand ? <I.M name="star" size={26} /> : TRACK_ICONS[p.topic]}</span>
             </div>
             <div className="gpay-card-amt">{p.amount}</div>
             <div className="gpay-card-sub">{p.sub}</div>
           </div>
         ))}
-      </div>
-    </div>
-  )
-}
-
-// ---------------- VIEW: JUDGING ----------------
-function ViewJudging() {
-  return (
-    <div className="view-panel">
-      <div className="view-header">
-        <h2 className="view-title">Judging</h2>
-      </div>
-      <div className="view-body">
-        <div className="judging-step">
-          <div className="judging-step-num">1</div>
-          <div className="judging-step-body">
-            <div className="judging-step-title">The Gate <span className="judging-badge judging-passfail">Pass / Fail</span></div>
-            <p className="judging-step-desc">Every entry must clear this before it's scored:</p>
-            <ul className="judging-list">
-              <li>A real reply from a real stranger</li>
-              <li>No impersonation</li>
-              <li>No lying</li>
-              <li>No pre-existing relationship</li>
-              <li>No mass-blasting</li>
-            </ul>
-            <p className="judging-step-fine">Fail any → disqualified.</p>
-          </div>
-        </div>
-        <div className="judging-step">
-          <div className="judging-step-num">2</div>
-          <div className="judging-step-body">
-            <div className="judging-step-title">Scoring <span className="judging-badge judging-score">out of 100</span></div>
-            <p className="judging-step-desc">
-              A panel of organizers + guest judges scores each qualifying entry on a rubric weighted per track.
-              Highest score per track wins that track. The strongest entry overall takes <strong>The Best Cold Email</strong>.
-            </p>
-          </div>
-        </div>
       </div>
     </div>
   )
@@ -1697,7 +1658,6 @@ function MainPanel({ view, onEnter, goto }) {
     case 'track-ask':         return <ViewTrack topic="ask" />
     case 'rule':              return <ViewRule onEnter={onEnter} />
     case 'prizes':            return <ViewPrizes onEnter={onEnter} goto={goto} />
-    case 'judging':           return <ViewJudging />
     default:                  return <ViewOverview onEnter={onEnter} goto={goto} />
   }
 }
