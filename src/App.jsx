@@ -2076,9 +2076,16 @@ export default function App() {
   const [view, setView] = useState('overview')
   const [composeOpen, setComposeOpen] = useState(false)
   const [jeminiOpen, setJeminiOpen] = useState(false)
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(() => typeof window === 'undefined' || window.innerWidth > 768)
   const [toast, setToast] = useState('')
   const toastTimer = useRef()
+
+  // Auto-collapse the sidebar on mobile, auto-expand back on desktop
+  useEffect(() => {
+    const onResize = () => setSidebarOpen(window.innerWidth > 768)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   const showToast = (m) => {
     setToast(m)
