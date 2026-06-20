@@ -2919,3 +2919,12 @@ html, body, #root {
   /* keep board single column */
   .keep-board { width: calc(100% - 24px); }
 }
+
+/* -------- Mobile topbar: keep only logo + avatar -------- */
+@media (max-width: 768px) {
+  .topbar .search { display: none; }
+  .topbar .wordmark { display: none; }
+  .topbar .jemini,
+  .topbar .top-right .icon-btn,
+  .topbar .status-pill { display: none; }
+}
