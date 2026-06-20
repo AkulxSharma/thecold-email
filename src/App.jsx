@@ -597,8 +597,26 @@ function timeToMinutes(t) {
 const DEFAULT_WEEK = new Date(2026, 5, 22)
 const TODAY_YMD = '2026-06-18'
 
+// "09:00" → "9:00 AM"
+function fmt12(hhmm) {
+  const [h, m] = hhmm.split(':').map(Number)
+  const ap = h < 12 ? 'AM' : 'PM'
+  const h12 = h % 12 === 0 ? 12 : h % 12
+  return `${h12}:${String(m).padStart(2, '0')} ${ap}`
+}
+// Date/time line for the event popup
+function eventWhen(ev) {
+  const base = parseDate(ev.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
+  if (ev.allDay) {
+    if (ev.dateEnd) return `${base} – ${parseDate(ev.dateEnd).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}`
+    return base
+  }
+  return `${base} · ${fmt12(ev.start)} – ${fmt12(ev.end)}`
+}
+
 function ViewCalendar() {
   const [monDate, setMonDate] = useState(weekStart(DEFAULT_WEEK))
+  const [sel, setSel] = useState(null)  // selected event → detail popup
 
   // The 7 days Mon→Sun
   const days = Array.from({ length: 7 }, (_, i) => addDays(monDate, i))
@@ -754,8 +772,10 @@ function ViewCalendar() {
                       background: bg,
                       color: isFaint ? COLOR_TEXT['faint-blue'] : '#fff',
                       border: isFaint ? '1px solid rgba(26,115,232,0.4)' : 'none',
+                      cursor: 'pointer',
                     }}
                     title={ev.title}
+                    onClick={(e) => setSel({ ev, x: e.clientX, y: e.clientY })}
                   >
                     {ev.title}
                   </div>
@@ -810,8 +830,10 @@ function ViewCalendar() {
                           left:   `${col * widthPct + 1}%`,
                           width:  `${widthPct - 2}%`,
                           background: bg,
+                          cursor: 'pointer',
                         }}
                         title={`${ev.start}–${ev.end} ${ev.title}`}
+                        onClick={(e) => setSel({ ev, x: e.clientX, y: e.clientY })}
                       >
                         <div className="gcalw-event-title">{ev.title}</div>
                         <div className="gcalw-event-time">{ev.start}–{ev.end}</div>
@@ -824,6 +846,50 @@ function ViewCalendar() {
           </div>
         </div>
       </div>
+
+      {/* ---- Event detail popup (Google Calendar style) ---- */}
+      {sel && (() => {
+        const CARD_W = 440, CARD_H = 360, PAD = 12
+        const left = Math.max(PAD, Math.min(sel.x + 8, window.innerWidth - CARD_W - PAD))
+        const top  = Math.max(PAD, Math.min(sel.y + 8, window.innerHeight - CARD_H - PAD))
+        // animate outward from the click point relative to the card's top-left
+        const ox = Math.max(0, Math.min(sel.x - left, CARD_W))
+        const oy = Math.max(0, Math.min(sel.y - top, CARD_H))
+        return (
+          <div className="gcev-overlay" onClick={() => setSel(null)}>
+            <div className="gcev-card" onClick={e => e.stopPropagation()}
+              style={{ left, top, transformOrigin: `${ox}px ${oy}px` }}>
+              <div className="gcev-actions">
+                <span className="gcev-ic" title="Delete"><I.M name="delete" size={20} /></span>
+                <span className="gcev-ic" title="More options"><I.M name="more_vert" size={20} /></span>
+                <span className="gcev-ic" title="Close" onClick={() => setSel(null)}><I.M name="close" size={20} /></span>
+              </div>
+              <div className="gcev-head">
+                <span className="gcev-dot" style={{ background: COLOR_MAP[sel.ev.color] || '#1a73e8' }} />
+                <div className="gcev-head-text">
+                  <div className="gcev-title">{sel.ev.title}</div>
+                  <div className="gcev-when">{eventWhen(sel.ev)}</div>
+                </div>
+              </div>
+              <div className="gcev-row">
+                <span className="gcev-row-ic"><I.M name="segment" size={20} /></span>
+                <div className="gcev-row-text">
+                  <div>{sel.ev.allDay ? 'All-day event' : 'thecold.email event'}</div>
+                  <div className="gcev-row-sub">Get the reply — one cold email can change everything.</div>
+                </div>
+              </div>
+              <div className="gcev-row">
+                <span className="gcev-row-ic"><I.M name="calendar_month" size={20} /></span>
+                <div className="gcev-row-text">thecold.email</div>
+              </div>
+              <div className="gcev-row">
+                <span className="gcev-row-ic"><I.M name="public" size={20} /></span>
+                <div className="gcev-row-text">Public</div>
+              </div>
+            </div>
+          </div>
+        )
+      })()}
     </div>
   )
 }

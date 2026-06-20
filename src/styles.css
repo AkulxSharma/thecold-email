@@ -2368,6 +2368,22 @@ html, body, #root {
 .section-head-btn:hover { color: #202124; }
 .section-head-btn.active { color: #202124; }
 
+/* Google-Calendar event detail popup (.gcev-*) — light, anchored at click point */
+.gcev-overlay { position: fixed; inset: 0; z-index: 1200; background: transparent; }
+@keyframes gcev-pop { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: scale(1); } }
+.gcev-card { position: fixed; width: 440px; max-width: calc(100vw - 24px); background: #fff; color: #3c4043; border-radius: 12px; padding: 8px 24px 24px; box-shadow: 0 8px 24px rgba(60,64,67,.28), 0 2px 6px rgba(60,64,67,.15); font-family: 'Roboto',Arial,sans-serif; animation: gcev-pop .15s cubic-bezier(.2,0,0,1); }
+.gcev-actions { display: flex; justify-content: flex-end; gap: 6px; padding: 4px 0; }
+.gcev-ic { display: inline-flex; padding: 8px; border-radius: 50%; color: #5f6368; cursor: pointer; }
+.gcev-ic:hover { background: rgba(60,64,67,.08); }
+.gcev-head { display: flex; gap: 16px; margin: 6px 0 22px; }
+.gcev-dot { width: 16px; height: 16px; border-radius: 4px; flex: none; margin-top: 9px; }
+.gcev-title { font: 400 22px 'Google Sans','Roboto',Arial,sans-serif; color: #202124; line-height: 1.3; }
+.gcev-when { font-size: 14px; color: #5f6368; margin-top: 4px; }
+.gcev-row { display: flex; gap: 16px; align-items: flex-start; padding: 8px 0; }
+.gcev-row-ic { display: inline-flex; color: #5f6368; flex: none; }
+.gcev-row-text { font-size: 14px; color: #3c4043; line-height: 1.45; }
+.gcev-row-sub { color: #5f6368; }
+
 .gdocs-home { display: block; background: #fff; padding: 0 !important; overflow-y: auto; }
 /* template gallery band */
 .gdocs-band { background: #f1f3f4; border-bottom: 1px solid #e0e0e0; padding: 18px 0 26px; }
