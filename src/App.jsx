@@ -191,7 +191,7 @@ function jeminiAnswer(qRaw) {
   if (has('track')) return "4 tracks, $500 each:\n• The Unreachable\n• Best Subject Line\n• The Two-Liner\n• The Ask\nEvery entry also competes for The Best Cold Email — the $1,000 grand prize."
   if (has('prize', 'money', 'win', 'cash', '$', 'pay')) return "$3,000 total:\n• The Best Cold Email (grand) — $1,000\n• Each of the 4 tracks — $500"
   if (has('grand', 'best cold email', 'overall')) return "The Best Cold Email is the $1,000 grand prize — the single best email of the event. Every entry, any track, is in the running."
-  if (has('rule', 'cheat', 'allowed', 'disqualif', 'fake')) return "One rule: real replies only. A real stranger has to write back. No impersonation, no lying, no pre-existing relationship, no mass-blasting. Break any → disqualified."
+  if (has('rule', 'cheat', 'allowed', 'disqualif', 'fake')) return "One rule: real replies only. Someone who doesn’t already know you has to write back. No impersonation, no lying, no pre-existing relationship, no mass-blasting. Break any → disqualified."
   if (has('judg', 'score', 'rubric', 'how do you decide')) return "Two steps: (1) a pass/fail gate — real reply, no rule broken; (2) a 100-point rubric per track. Highest per track wins; strongest overall takes the grand prize."
   if (has('enter', 'how do i', 'submit', 'join', 'sign up', 'apply')) return "Send a cold email → get a real reply → submit the form with a screenshot of the reply before Jul 7. Hit Enter (top-left) to start."
   if (has('deadline', 'date', 'when', 'timeline', 'launch', 'close', 'over')) return "Timeline:\n• Jun 24 — launch\n• Jun 30 — registration closes\n• Jul 7 — submissions close\n• Jul 10 — winners announced"
@@ -266,7 +266,7 @@ const TRACK_TEASER_COPY = {
   unreachable: { body: 'Pick someone who almost never replies — a founder, an exec, a name everyone knows — and get them to write back.', tag: 'Get the reply no one gets.' },
   subject:     { body: 'Write a subject line so good they have to open it. The reply you earn is credited to those few words.', tag: 'Win on the open.' },
   twoliner:    { body: 'Two sentences or less. No room to ramble — every word has to pull its weight and still land a reply.', tag: 'Say less, get more.' },
-  ask:         { body: 'Land a real "yes" from a stranger — a job, an intro, money, a favor. The bigger the ask, the bigger the win.', tag: 'Ask big, win big.' },
+  ask:         { body: 'Land a real "yes" from someone who could open a door — a job, an intro, money, a favor. The bigger the ask, the bigger the win.', tag: 'Ask big, win big.' },
 }
 
 // ---- wallet.google-style pinned scroll hero ----
@@ -548,7 +548,7 @@ const FORMS_ICON = (
 // Shared "how to enter" steps
 const ENTER_STEPS = [
   { n: 1, icon: 'how_to_reg',       title: 'Register',                 text: 'Fill the form below. We save your details and email you a confirmation.' },
-  { n: 2, icon: 'send',             title: 'Send cold emails',          text: 'Pick a track. Write to real strangers. No templates, no spray — send as many as you want.' },
+  { n: 2, icon: 'send',             title: 'Send cold emails',          text: 'Pick a track. Write to people who have every reason to ignore you — founders, execs, the ones you look up to. No templates, no spray — send as many as you want.' },
   { n: 3, icon: 'mark_email_read',  title: 'Submit the ones that reply', text: 'Only emails that get a real reply count. Attach a screenshot/PDF of any thread that landed a response and submit it.' },
 ]
 
@@ -650,7 +650,7 @@ function ViewEnter({ onEnter }) {
 
           <div className="gclass-card gclass-attach">
             <h3 className="gclass-h3">Funnel 2 — Your submission</h3>
-            <p>When a real stranger replies, attach a screenshot/PDF of the thread and submit your entry.</p>
+            <p>When they reply, attach a screenshot/PDF of the thread and submit your entry.</p>
             <button className="gclass-attach-btn" onClick={onEnter}><I.M name="attach_file" size={18} /> Open submission</button>
           </div>
         </main>
@@ -1642,7 +1642,7 @@ function ViewRule({ onEnter }) {
   // Each note: id, color, title, and a render() reused in both the card and the expanded modal.
   const NOTES = [
     { id: 'rule', color: 'yellow', title: 'The Rule', render: () => (<>
-      <p className="keep-lead">A cold email counts only if a real stranger genuinely wrote back.</p>
+      <p className="keep-lead">A cold email counts only if someone who doesn’t already know you genuinely wrote back.</p>
       <p className="keep-text">Every competition email must be sent during the event and BCC our official competition inbox for verification.</p>
       {checklist('rulechips', R.chips)}
       <p className="keep-support">Break any of these and your entry is disqualified.</p>
@@ -1681,9 +1681,9 @@ function ViewRule({ onEnter }) {
       <p className="keep-support">Judges may request additional verification if needed. Failure to provide proof may result in disqualification.</p>
     </>) },
     { id: 'fairplay', color: 'purple', title: 'Fair play', render: () => (<>
-      <p className="keep-text">The goal is to earn trust from a stranger — not leverage an existing relationship.</p>
+      <p className="keep-text">The goal is to earn trust from someone who doesn’t know you — not leverage an existing relationship.</p>
       {group('fairplay', 'Recipients cannot be', R.fairPlayNot)}
-      <p className="keep-support">If the recipient would reasonably recognize you, they are not a stranger.</p>
+      <p className="keep-support">If the recipient would reasonably recognize you, it doesn’t count.</p>
     </>) },
     { id: 'privacy', color: 'gray', title: 'Privacy', render: () => (<>
       <p className="keep-text">We understand that cold emails often contain sensitive information. Participants may blur:</p>
@@ -1691,12 +1691,12 @@ function ViewRule({ onEnter }) {
       <p className="keep-support">Judges may request original versions privately for verification. Any verification materials will be handled confidentially.</p>
     </>) },
     { id: 'spirit', color: 'dark', title: 'Win by writing.', render: () => (<>
-      <p className="keep-text">The rules cannot cover every loophole. If an entry technically follows the rules but clearly violates the spirit of fair competition, organizers may disqualify it. The purpose of this competition is simple: earn a genuine response from a genuine stranger.</p>
+      <p className="keep-text">The rules cannot cover every loophole. If an entry technically follows the rules but clearly violates the spirit of fair competition, organizers may disqualify it. The purpose of this competition is simple: earn a genuine response from someone who had no reason to give you one.</p>
       <p className="keep-quote">“Write a remarkable cold email. Don’t game the system.”</p>
     </>) },
     { id: 'final', color: 'pink', title: 'Write something worth replying to.', render: () => (<>
       <p className="keep-text">Not the funniest. Not the longest. Not the craziest.</p>
-      <p className="keep-text">Just the kind of email that makes a stranger stop what they’re doing and hit Reply.</p>
+      <p className="keep-text">Just the kind of email that makes someone who has never heard of you stop what they’re doing and hit Reply.</p>
     </>) },
   ]
 

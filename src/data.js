@@ -21,7 +21,7 @@ export const EMAILS = [
 
 A cold email competition to find the best cold emails on the planet — proven by who actually replied.
 
-This isn't about clever copy in a vacuum. It's about results. The only thing that counts is a real stranger writing back.
+This isn't about clever copy in a vacuum. It's about results. The only thing that counts is someone who had every reason to ignore you writing back anyway — a founder, an investor, someone you look up to.
 
 One email can change a life. Let's go get the reply.
 
@@ -32,10 +32,10 @@ One email can change a life. Let's go get the reply.
     id: 2, sender: HOST, email: HOST_EMAIL, to: YOU, folder: 'inbox', tab: 'primary', topic: 'rule',
     subject: 'The one rule: real replies only', tag: 'Read this', stars: 870, views: 3960, starred: true, read: false,
     date: 'Jun 24',
-    preview: 'A cold email counts only if a real stranger actually wrote back. Break any rule below and you are disqualified.',
+    preview: 'A cold email counts only if someone who doesn’t already know you actually wrote back. Break any rule below and you are disqualified.',
     body: `THE ONE RULE — real replies only.
 
-A cold email counts only if a real stranger actually wrote back.
+A cold email counts only if someone who doesn’t already know you actually wrote back.
 
 You are DISQUALIFIED for any of:
 • Impersonation
@@ -125,10 +125,10 @@ Prize: $500.`,
     id: 7, sender: HOST, email: HOST_EMAIL, to: YOU, folder: 'inbox', tab: 'primary', topic: 'ask',
     subject: 'Track 4 — The Ask', tag: 'Track', stars: 690, views: 3140, starred: false, read: false,
     date: 'Jun 24',
-    preview: 'A major "yes" from a stranger — a job, an intro, money, a favor. Biggest yes wins.',
+    preview: 'A major "yes" from someone who could change things for you — a job, an intro, money, a favor. Biggest yes wins.',
     body: `TRACK 4 — THE ASK
 
-The goal: a major "yes" from a stranger — a job, an intro, money, a favor.
+The goal: a major "yes" from someone who could change things for you — a job, an intro, money, a favor.
 
 How it's won: the biggest yes wins.
 
@@ -147,7 +147,7 @@ Prize: $500.`,
     preview: 'Submit the form with a screenshot of the reply before the July 7 deadline. That’s it.',
     body: `HOW TO ENTER
 
-1. Send your cold email (real stranger, real ask).
+1. Send your cold email (someone who doesn’t know you, real ask).
 2. Get a real reply.
 3. Submit the form with a screenshot of that reply — before the July 7 deadline.
 
@@ -196,7 +196,7 @@ A cash prize for each track, plus a bigger grand prize for the best cold email o
     body: `HOW JUDGING WORKS
 
 Step 1 — THE GATE (pass/fail). Every entry must clear this before it's scored:
-• A real reply from a real stranger
+• A real reply from someone who had no reason to answer
 • No impersonation, no lying, no pre-existing relationship, no mass-blasting
 Fail any → disqualified.
 
@@ -247,7 +247,7 @@ export const RULES_PAGE = {
   chips: ['No Impersonation', 'No Lying', 'No Existing Relationship', 'No Mass-Blasting', 'BCC Required'],
   whatCounts: [
     'A real person replied',
-    'The recipient was a stranger',
+    'The recipient didn’t already know you',
     'The email was sent during the competition',
     "You BCC'd our competition inbox",
     'You can provide proof',
@@ -330,7 +330,7 @@ export const SEND_WINDOW = { start: '2026-06-24', end: '2026-07-07' }
 // ============================================================
 export const TRACK_REMEMBER = {
   lead: 'Every track requires the same thing:',
-  bold: 'A real reply from a real stranger.',
+  bold: 'A real reply from someone who had no reason to reply.',
   body: 'No matter which category you enter, the foundation never changes.',
   tag: 'Get the reply.',
 }
@@ -447,7 +447,7 @@ export const TRACK_PAGES = {
     ],
   },
   ask: {
-    goal: 'Earn a **major "yes"** from a stranger.',
+    goal: 'Earn a **major "yes"** from someone who could open a door for you.',
     goalExtra: 'A job. An introduction. Funding. A meeting. A partnership. A favor. Something that matters.',
     howWon: ['The biggest yes wins.'],
     rewards: [
