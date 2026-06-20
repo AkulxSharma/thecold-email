@@ -2357,7 +2357,8 @@ html, body, #root {
 .gpay-card-grand { box-shadow: 0 4px 16px rgba(0,0,0,.32); }
 .gpay-card-top { display: flex; align-items: flex-start; justify-content: space-between; }
 .gpay-card-name { font: 600 16px 'Google Sans','Roboto',Arial,sans-serif; }
-.gpay-card-logo { width: 30px; height: 30px; object-fit: contain; opacity: .9; }
+.gpay-card-ico { display: inline-flex; align-items: center; justify-content: center; color: #fff; opacity: .95; }
+.gpay-card-ico svg { stroke: #fff; }
 .gpay-card-amt { font: 400 40px 'Google Sans','Roboto',Arial,sans-serif; margin-top: auto; }
 .gpay-card-sub { font-size: 13px; opacity: .9; margin-top: 2px; }
 
