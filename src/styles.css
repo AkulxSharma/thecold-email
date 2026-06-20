@@ -2561,6 +2561,7 @@ html, body, #root {
 .gdoc-mark-tri { font-size: 9pt; line-height: 1.7; }
 .gdoc-mark-dash { font-size: 13pt; line-height: 1.25; }
 .gdoc-mark-dot { color: #202124; font-size: 14pt; line-height: 1.2; }
+.rule-check li .gdoc-mark, .rule-x li .gdoc-mark { font-size: 15px; line-height: 1.4; width: 12px; text-align: center; }
 
 /* --- Scoring table --- */
 .gdoc-table {

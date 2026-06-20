@@ -1649,12 +1649,12 @@ function ViewRule({ onEnter }) {
     </>) },
     { id: 'counts', color: 'green', title: 'What counts?', render: () => (<>
       <p className="keep-text">Your entry qualifies only if all of the following are true.</p>
-      <ul className="rule-check keep-list">{R.whatCounts.map(c => <li key={c}><span className="gdoc-mark gdoc-mark-dot">•</span> {c}</li>)}</ul>
+      <ul className="rule-check keep-list">{R.whatCounts.map(c => <li key={c}><span className="gdoc-mark gdoc-mark-dot">•</span>{c}</li>)}</ul>
       <p className="keep-support">A reply can be short. A reply can be negative. A reply can simply be “No.” What matters is that a real person responded.</p>
     </>) },
     { id: 'doesnt', color: 'coral', title: 'What doesn’t count?', render: () => (<>
       <p className="keep-text">Not every response qualifies. These do not count as valid replies.</p>
-      <ul className="rule-x keep-list">{R.doesntCount.map(c => <li key={c}><span className="gdoc-mark gdoc-mark-dash">–</span> {c}</li>)}</ul>
+      <ul className="rule-x keep-list">{R.doesntCount.map(c => <li key={c}><span className="gdoc-mark gdoc-mark-dash">–</span>{c}</li>)}</ul>
       <p className="keep-support">If a human didn’t personally respond, it doesn’t count.</p>
     </>) },
     { id: 'bcc', color: 'blue', title: 'Every competition email must BCC us.', render: () => (<>
@@ -1670,9 +1670,9 @@ function ViewRule({ onEnter }) {
     </>) },
     { id: 'sending', color: 'teal', title: 'Sending rules', render: () => (<>
       <div className="keep-mini-head keep-yes">Allowed</div>
-      <ul className="rule-check keep-list">{R.allowed.map(a => <li key={a}><span className="gdoc-mark gdoc-mark-dot">•</span> {a}</li>)}</ul>
+      <ul className="rule-check keep-list">{R.allowed.map(a => <li key={a}><span className="gdoc-mark gdoc-mark-dot">•</span>{a}</li>)}</ul>
       <div className="keep-mini-head keep-no">Not allowed</div>
-      <ul className="rule-x keep-list">{R.notAllowed.map(a => <li key={a}><span className="gdoc-mark gdoc-mark-dash">–</span> {a}</li>)}</ul>
+      <ul className="rule-x keep-list">{R.notAllowed.map(a => <li key={a}><span className="gdoc-mark gdoc-mark-dash">–</span>{a}</li>)}</ul>
       <p className="keep-support">The competition judges outcomes, not workflows. The only thing that matters is that the outreach is genuine, honest, and earns a real reply.</p>
     </>) },
     { id: 'proof', color: 'orange', title: 'Proof', render: () => (<>
