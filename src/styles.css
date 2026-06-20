@@ -2450,15 +2450,15 @@ html, body, #root {
 .gdocs-tpl-sub { font: 400 12px 'Roboto',Arial,sans-serif; color: #5f6368; }
 
 /* mini document preview */
-.gdocs-mini { width: 100%; height: 100%; padding: 14px 12px; box-sizing: border-box; text-align: left; }
-.gdocs-mini-h1 { font: 700 9px 'Google Sans','Roboto',Arial,sans-serif; color: #202124; margin-bottom: 7px; line-height: 1.2; }
-.gdocs-mini-sub { font: 700 6px 'Roboto',Arial,sans-serif; color: #1a73e8; margin: 6px 0 4px; }
-.gdocs-mini-line { height: 3px; background: #e8eaed; border-radius: 2px; margin-bottom: 4px; }
-.gdocs-mini-line.short { width: 60%; }
+.gdocs-mini { width: 100%; height: 100%; padding: 14px 12px; box-sizing: border-box; text-align: left; overflow: hidden; }
+.gdocs-mini-h1 { font: 700 9px 'Arial',sans-serif; color: #202124; margin-bottom: 7px; line-height: 1.2; text-align: center; }
+.gdocs-mini-sub { font: 500 6px 'Arial',sans-serif; color: #1155cc; margin: 6px 0 3px; text-decoration: underline; text-underline-offset: 1.5px; }
+.gdocs-mini-p { font: 400 5.5px 'Arial',sans-serif; color: #3c4043; line-height: 1.5; margin: 0 0 3px; }
+.gdocs-mini-p u { text-underline-offset: 1px; }
 .gdocs-mini-lg { padding: 18px 16px; }
 .gdocs-mini-lg .gdocs-mini-h1 { font-size: 13px; margin-bottom: 10px; }
-.gdocs-mini-lg .gdocs-mini-sub { font-size: 8px; }
-.gdocs-mini-lg .gdocs-mini-line { height: 4px; margin-bottom: 6px; }
+.gdocs-mini-lg .gdocs-mini-sub { font-size: 8px; margin: 9px 0 4px; }
+.gdocs-mini-lg .gdocs-mini-p { font-size: 7.5px; margin-bottom: 4px; }
 
 /* recent documents */
 .gdocs-recent { max-width: 1040px; margin: 0 auto; padding: 22px 24px 40px; }

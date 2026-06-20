@@ -1552,17 +1552,20 @@ const DOCS_ICON = (
 function ViewTracksHome({ goto, onEnter }) {
   const topics = ['unreachable', 'subject', 'twoliner', 'ask']
   const dates = ['Opened 9:22 PM', 'Jun 19, 2026', 'Jun 17, 2026', 'Jun 17, 2026']
-  const mini = (t, lg) => (
-    <div className={`gdocs-mini${lg ? ' gdocs-mini-lg' : ''}`}>
-      <div className="gdocs-mini-h1">{TOPIC_NAMES[t]}</div>
-      <div className="gdocs-mini-sub">The Goal</div>
-      <div className="gdocs-mini-line" /><div className="gdocs-mini-line" /><div className="gdocs-mini-line short" />
-      {lg && <>
+  const mini = (t, lg) => {
+    const d = TRACK_PAGES[t]
+    return (
+      <div className={`gdocs-mini${lg ? ' gdocs-mini-lg' : ''}`}>
+        <div className="gdocs-mini-h1">{TOPIC_NAMES[t]}</div>
+        <div className="gdocs-mini-sub">The Goal</div>
+        <p className="gdocs-mini-p"><RT>{d.goal}</RT></p>
+        {lg && d.goalExtra && <p className="gdocs-mini-p"><RT>{d.goalExtra}</RT></p>}
         <div className="gdocs-mini-sub">How It's Won</div>
-        <div className="gdocs-mini-line" /><div className="gdocs-mini-line short" />
-      </>}
-    </div>
-  )
+        <p className="gdocs-mini-p"><RT>{d.howWon[0]}</RT></p>
+        {lg && d.howWon[1] && <p className="gdocs-mini-p"><RT>{d.howWon[1]}</RT></p>}
+      </div>
+    )
+  }
   return (
     <div className="view-panel gdocs-home">
       {/* Template gallery band */}
