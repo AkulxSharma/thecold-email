@@ -2371,7 +2371,7 @@ html, body, #root {
 /* Google-Calendar event detail popup (.gcev-*) — light, anchored at click point */
 .gcev-overlay { position: fixed; inset: 0; z-index: 1200; background: transparent; }
 @keyframes gcev-pop { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: scale(1); } }
-.gcev-card { position: fixed; width: 440px; max-width: calc(100vw - 24px); background: #fff; color: #3c4043; border-radius: 12px; padding: 8px 24px 24px; box-shadow: 0 8px 24px rgba(60,64,67,.28), 0 2px 6px rgba(60,64,67,.15); font-family: 'Roboto',Arial,sans-serif; animation: gcev-pop .15s cubic-bezier(.2,0,0,1); }
+.gcev-card { position: fixed; width: 440px; max-width: calc(100vw - 24px); background: #fff; color: #3c4043; border-radius: 28px; padding: 12px 24px 24px; box-shadow: 0 8px 24px rgba(60,64,67,.28), 0 2px 6px rgba(60,64,67,.15); font-family: 'Roboto',Arial,sans-serif; animation: gcev-pop .15s cubic-bezier(.2,0,0,1); }
 .gcev-actions { display: flex; justify-content: flex-end; gap: 6px; padding: 4px 0; }
 .gcev-ic { display: inline-flex; padding: 8px; border-radius: 50%; color: #5f6368; cursor: pointer; }
 .gcev-ic:hover { background: rgba(60,64,67,.08); }
