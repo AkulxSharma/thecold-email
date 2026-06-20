@@ -62,7 +62,7 @@ function Sidebar({ onCompose, view, setView, open }) {
     <div className={`sidebar${open ? '' : ' sidebar-collapsed'}`}>
       <div className="compose" onClick={onCompose}><I.Pencil /> Enter</div>
 
-      <NavItem icon={<I.M name="inbox" />}         label="Home"           count="7,493" active={view === 'overview'} onClick={() => setView('overview')} />
+      <NavItem icon={<I.M name="inbox" />}         label="Home"           count="$3000" active={view === 'overview'} onClick={() => setView('overview')} />
       <NavItem icon={<I.M name="star" />}          label="The Procedure"                      active={view === 'enter'}    onClick={() => setView('enter')} />
       <NavItem icon={<I.M name="calendar_month" />} label="Event Calendar"                    active={view === 'calendar'} onClick={() => setView('calendar')} />
       <NavItem icon={<I.M name="auto_awesome" />}  label="Best Emails"                    active={view === 'best'}     onClick={() => setView('best')} />
@@ -262,6 +262,12 @@ function shortDate(iso) {
 
 // The 4 tracks, in sidebar order — topic keys map to TRACK_ICONS + the track-* views
 const TRACK_TEASERS = ['unreachable', 'subject', 'twoliner', 'ask']
+const TRACK_TEASER_COPY = {
+  unreachable: { body: 'Pick someone who almost never replies — a founder, an exec, a name everyone knows — and get them to write back.', tag: 'Get the reply no one gets.' },
+  subject:     { body: 'Write a subject line so good they have to open it. The reply you earn is credited to those few words.', tag: 'Win on the open.' },
+  twoliner:    { body: 'Two sentences or less. No room to ramble — every word has to pull its weight and still land a reply.', tag: 'Say less, get more.' },
+  ask:         { body: 'Land a real "yes" from a stranger — a job, an intro, money, a favor. The bigger the ask, the bigger the win.', tag: 'Ask big, win big.' },
+}
 
 // ---- wallet.google-style pinned scroll hero ----
 const WAL_COLORS = ['#34A853', '#FBBC04', '#EA4335', '#4285F4'] // green, amber, red, blue (top→bottom)
@@ -386,13 +392,22 @@ function ViewOverview({ onEnter, goto }) {
         {/* 1 — HERO (wallet.google-style pinned scroll sequence) */}
         <WalletHero onEnter={onEnter} goto={goto} />
 
-        {/* Launch video — big & special placeholder */}
-        <section className="home-video">
-          <div className="home-video-frame">
-            <div className="home-video-play"><I.M name="play_arrow" size={40} /></div>
-            <div className="home-video-text">
-              <div className="home-video-title">Launch film</div>
-              <div className="home-video-sub">Drops June 24</div>
+        {/* Launch film — NotebookLM-style: centered title + 2-col (copy | media card) */}
+        <section className="home-film">
+          <h2 className="home-film-title">Watch how the world replies</h2>
+          <div className="home-film-row">
+            <div className="home-film-copy">
+              <span className="home-film-icon"><I.M name="movie" size={28} /></span>
+              <h3 className="home-film-heading">The launch film</h3>
+              <p className="home-film-body">
+                The film that kicks off the competition drops June 24 — one cold
+                email, one real reply, and the people who pulled it off. Watch it,
+                then go get a reply of your own.
+              </p>
+            </div>
+            <div className="home-film-media">
+              <div className="home-video-play"><I.M name="play_arrow" size={40} /></div>
+              <span className="home-film-badge">Drops June 24</span>
             </div>
           </div>
         </section>
@@ -421,14 +436,16 @@ function ViewOverview({ onEnter, goto }) {
           </div>
         </section>
 
-        {/* 4 — TRACK TEASER (icons → track pages, no descriptions) */}
+        {/* 4 — TRACK TEASER — NotebookLM-style columns (icon · heading · body · italic tagline) */}
         <section className="home-tracks">
-          <div className="home-section-kicker">Four ways to win</div>
-          <div className="home-track-grid">
+          <h2 className="home-tracks-title">Four ways to get the reply</h2>
+          <div className="home-track-cols">
             {TRACK_TEASERS.map(topic => (
-              <button className="home-track" key={topic} onClick={() => goto(`track-${topic}`)}>
-                <span className="home-track-icon">{TRACK_ICONS[topic]}</span>
-                <span className="home-track-name">{TOPIC_NAMES[topic]}</span>
+              <button className="home-track-col" key={topic} onClick={() => goto(`track-${topic}`)}>
+                <span className="home-track-col-icon">{TRACK_ICONS[topic]}</span>
+                <h3 className="home-track-col-name">{TOPIC_NAMES[topic]}</h3>
+                <p className="home-track-col-body">{TRACK_TEASER_COPY[topic].body}</p>
+                <span className="home-track-col-tag">{TRACK_TEASER_COPY[topic].tag}</span>
               </button>
             ))}
           </div>
@@ -528,7 +545,7 @@ const FORMS_ICON = (
   </svg>
 )
 
-// Shared "how to enter" steps — reused by all three variants
+// Shared "how to enter" steps
 const ENTER_STEPS = [
   { n: 1, icon: 'how_to_reg',       title: 'Register',                 text: 'Fill the form below. We save your details and email you a confirmation.' },
   { n: 2, icon: 'send',             title: 'Send cold emails',          text: 'Pick a track. Write to real strangers. No templates, no spray — send as many as you want.' },
@@ -536,8 +553,6 @@ const ENTER_STEPS = [
 ]
 
 function ViewEnter({ onEnter }) {
-  const [variant, setVariant] = useState('sites')   // sites | slides | classroom
-  const [slide, setSlide] = useState(0)
   const [submitted, setSubmitted] = useState(false)
 
   const renderInput = (qq) => {
@@ -589,153 +604,9 @@ function ViewEnter({ onEnter }) {
     </div>
   )
 
-  const switcher = (
-    <div className="enter-switch">
-      {[['sites', 'Sites'], ['slides', 'Slides'], ['classroom', 'Classroom']].map(([k, l]) => (
-        <button key={k} className={'enter-switch-btn' + (variant === k ? ' on' : '')} onClick={() => setVariant(k)}>{l}</button>
-      ))}
-    </div>
-  )
-
-  // ---------------- VARIANT 1: GOOGLE SITES ----------------
-  if (variant === 'sites') {
-    return (
-      <div className="view-panel enter-canvas gsite">
-        {switcher}
-        <div className="gsite-topbar">
-          <span className="gsite-logo"><I.M name="public" size={20} /></span>
-          <span className="gsite-name">thecold.email</span>
-          <nav className="gsite-nav"><a className="on">How to Enter</a><a>Tracks</a><a>Prizes</a></nav>
-          <button className="gsite-publish">Publish</button>
-        </div>
-
-        <header className="gsite-hero">
-          <div className="gsite-hero-in">
-            <p className="gsite-kicker">THE PROCEDURE</p>
-            <h1 className="gsite-h1">How to Enter</h1>
-            <p className="gsite-sub">{ENTER_FORM.desc}</p>
-            <button className="gsite-cta" onClick={onEnter}>Enter the competition</button>
-          </div>
-        </header>
-
-        <section className="gsite-sec">
-          <h2 className="gsite-h2">Three steps</h2>
-          <div className="gsite-steps">
-            {ENTER_STEPS.map(s => (
-              <div className="gsite-step" key={s.n}>
-                <span className="gsite-step-ico"><I.M name={s.icon} size={28} /></span>
-                <span className="gsite-step-n">Step {s.n}</span>
-                <h3>{s.title}</h3>
-                <p>{s.text}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="gsite-sec gsite-form-sec">
-          <h2 className="gsite-h2">Funnel 1 — Register</h2>
-          {submitted ? <Done cls="enter-done-light" /> : (
-            <>
-              <FieldList />
-              <button className="gsite-cta" onClick={() => setSubmitted(true)}>Submit registration</button>
-            </>
-          )}
-        </section>
-
-        <section className="gsite-sec gsite-f2">
-          <h2 className="gsite-h2">Funnel 2 — Submit your entry</h2>
-          <p className="gsite-lead">Once a real stranger replies, attach a screenshot or PDF of the full email thread, pick your track, and submit. Opens the submission compose.</p>
-          <button className="gsite-cta gsite-cta-alt" onClick={onEnter}>Open submission</button>
-        </section>
-
-        <footer className="gsite-foot">thecold.email · Made with Sites</footer>
-      </div>
-    )
-  }
-
-  // ---------------- VARIANT 2: GOOGLE SLIDES ----------------
-  if (variant === 'slides') {
-    const SLIDES = [
-      { kind: 'title' },
-      ...ENTER_STEPS.map(s => ({ kind: 'step', s })),
-      { kind: 'form' },
-      { kind: 'f2' },
-    ]
-    const slideLabel = (sl) => sl.kind === 'title' ? 'How to Enter'
-      : sl.kind === 'step' ? `Step ${sl.s.n}`
-      : sl.kind === 'form' ? 'Register' : 'Submit'
-
-    const renderSlide = (sl) => {
-      if (sl.kind === 'title') return (
-        <div className="gslide-title">
-          <p className="gslide-kicker">THE PROCEDURE</p>
-          <h1>How to Enter</h1>
-          <p className="gslide-sub">{ENTER_FORM.desc}</p>
-        </div>
-      )
-      if (sl.kind === 'step') return (
-        <div className="gslide-step">
-          <span className="gslide-step-ico"><I.M name={sl.s.icon} size={44} /></span>
-          <p className="gslide-step-n">Step {sl.s.n}</p>
-          <h1>{sl.s.title}</h1>
-          <p className="gslide-sub">{sl.s.text}</p>
-        </div>
-      )
-      if (sl.kind === 'form') return (
-        <div className="gslide-form">
-          <h1>Funnel 1 — Register</h1>
-          {submitted ? <Done cls="enter-done-light" /> : (
-            <>
-              <FieldList />
-              <button className="gsite-cta" onClick={() => setSubmitted(true)}>Submit registration</button>
-            </>
-          )}
-        </div>
-      )
-      return (
-        <div className="gslide-title">
-          <p className="gslide-kicker">FUNNEL 2</p>
-          <h1>Submit your entry</h1>
-          <p className="gslide-sub">Got a real reply? Attach a screenshot/PDF of the thread, pick your track, submit.</p>
-          <button className="gsite-cta gsite-cta-alt" onClick={onEnter}>Open submission</button>
-        </div>
-      )
-    }
-
-    return (
-      <div className="view-panel enter-canvas gslide">
-        {switcher}
-        <div className="gslide-top">
-          <span className="gslide-logo"><I.M name="slideshow" size={20} /></span>
-          <span className="gslide-name">The Procedure</span>
-          <span className="gslide-present"><I.M name="play_arrow" size={18} /> Present</span>
-        </div>
-        <div className="gslide-work">
-          <div className="gslide-rail">
-            {SLIDES.map((sl, i) => (
-              <div className={'gslide-thumb' + (i === slide ? ' on' : '')} key={i} onClick={() => setSlide(i)}>
-                <span className="gslide-thumb-n">{i + 1}</span>
-                <div className="gslide-thumb-canvas"><span>{slideLabel(sl)}</span></div>
-              </div>
-            ))}
-          </div>
-          <div className="gslide-stage">
-            <div className="gslide-deck">{renderSlide(SLIDES[slide])}</div>
-            <div className="gslide-bar">
-              <button onClick={() => setSlide(Math.max(0, slide - 1))} disabled={slide === 0}><I.M name="chevron_left" size={22} /></button>
-              <span>{slide + 1} / {SLIDES.length}</span>
-              <button onClick={() => setSlide(Math.min(SLIDES.length - 1, slide + 1))} disabled={slide === SLIDES.length - 1}><I.M name="chevron_right" size={22} /></button>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  // ---------------- VARIANT 3: GOOGLE CLASSROOM ----------------
+  // ---------------- GOOGLE CLASSROOM — "The Procedure" ----------------
   return (
     <div className="view-panel enter-canvas gclass">
-      {switcher}
       <div className="gclass-banner">
         <div className="gclass-banner-in">
           <p className="gclass-section">thecold.email</p>
