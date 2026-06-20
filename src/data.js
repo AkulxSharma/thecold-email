@@ -325,6 +325,165 @@ export const DEADLINES = [
 // Send window rendered as a faint band on the calendar
 export const SEND_WINDOW = { start: '2026-06-24', end: '2026-07-07' }
 
+// ============================================================
+// Full content for the 4 track / judging pages (rendered by ViewTrack)
+// ============================================================
+export const TRACK_REMEMBER = {
+  lead: 'Every track requires the same thing:',
+  bold: 'A real reply from a real stranger.',
+  body: 'No matter which category you enter, the foundation never changes.',
+  tag: 'Get the reply.',
+}
+
+export const TRACK_PAGES = {
+  unreachable: {
+    goal: 'Get a reply from someone who almost never replies.',
+    goalExtra: 'Think founders, CEOs, investors, politicians, public intellectuals, celebrities, or anyone whose inbox is flooded every day.',
+    howWon: [
+      "The hardest target to reach wins.",
+      'This track rewards difficulty above all else.',
+      'A genuine reply from a truly unreachable person can beat a longer reply from someone easier to contact.',
+    ],
+    rewards: [
+      'Most people send cold emails to people they think might reply.',
+      'This track is for the opposite.',
+      'The people who seem impossible.',
+      'The people everyone wants a response from.',
+      'The people whose inboxes are buried under thousands of emails.',
+      "The challenge isn't writing the email.",
+      'The challenge is earning attention where attention is almost impossible to earn.',
+    ],
+    judges: [
+      'Difficulty of the target',
+      'Genuine engagement in the reply',
+      'Quality of the email',
+      'Creativity of approach',
+      'Evidence that the person is genuinely difficult to reach',
+    ],
+    strong: [
+      'A reply from a world-class founder.',
+      'A reply from a major investor.',
+      'A reply from a public figure.',
+      'A thoughtful response from someone known for rarely engaging.',
+      'A response that shows real attention rather than a quick brush-off.',
+    ],
+    mistakes: [
+      'Assuming fame automatically wins.',
+      'Targeting someone who is actually easy to reach.',
+      'Focusing on the recipient instead of the email.',
+      'Submitting a reply with no real engagement.',
+    ],
+    scoring: [
+      { label: 'Difficulty of the target — how unreachable they are', pts: 50 },
+      { label: 'Depth of the reply — real engagement, not a brush-off', pts: 30 },
+      { label: 'Craft of the email', pts: 20 },
+    ],
+  },
+  subject: {
+    goal: 'Earn a reply because of the subject line.',
+    howWon: [
+      'The strongest subject-line craft wins.',
+      'The reply proves the email was opened.',
+      'The subject line proves why.',
+    ],
+    rewards: [
+      "Most cold emails fail before they're even read.",
+      'The subject line is the first impression.',
+      'This track rewards the subject line that creates curiosity, earns attention, and convinces someone to open an email they would normally ignore.',
+    ],
+    judges: ['Curiosity', 'Originality', 'Clarity', 'Memorability', 'Honest persuasion'],
+    strong: [
+      'Subject lines that instantly spark interest.',
+      'Subject lines that feel personal.',
+      'Subject lines that create curiosity without deception.',
+      'Subject lines that make the recipient want to know more.',
+    ],
+    mistakes: [
+      'Clickbait.',
+      'Fake urgency.',
+      'Misleading claims.',
+      'Generic templates.',
+      'Tricks that earn opens but not trust.',
+    ],
+    scoring: [
+      { label: 'Subject-line hook & craft', pts: 60 },
+      { label: 'That it earned a genuine reply', pts: 25 },
+      { label: 'Honesty — no clickbait lie', pts: 15 },
+    ],
+  },
+  twoliner: {
+    goal: 'Get a reply using two sentences or fewer.',
+    howWon: ['The most result from the fewest words wins.'],
+    rewards: [
+      'Anyone can write a long email.',
+      'Very few people can make every word count.',
+      'This track rewards extreme clarity, precision, and restraint.',
+      "The challenge isn't saying more.",
+      "It's saying less.",
+    ],
+    judges: [
+      'Brevity',
+      'Clarity',
+      'Strength of result',
+      'Efficient communication',
+      'Strong writing under constraints',
+    ],
+    strong: [
+      'A meaningful reply from a short email.',
+      'A major opportunity earned with minimal words.',
+      'A direct ask that gets a direct response.',
+      'An email where every sentence carries weight.',
+    ],
+    mistakes: [
+      'Hiding multiple sentences behind commas.',
+      'Formatting tricks.',
+      'Sacrificing clarity for brevity.',
+      'Being short without being effective.',
+    ],
+    scoring: [
+      { label: 'Result earned vs. how few words used', pts: 50 },
+      { label: 'Craft & clarity', pts: 30 },
+      { label: 'Brevity — one sentence beats two', pts: 20 },
+    ],
+  },
+  ask: {
+    goal: 'Earn a major "yes" from a stranger.',
+    goalExtra: 'A job. An introduction. Funding. A meeting. A partnership. A favor. Something that matters.',
+    howWon: ['The biggest yes wins.'],
+    rewards: [
+      'Cold email is ultimately about creating opportunities.',
+      'This track rewards ambitious asks that successfully earn meaningful outcomes.',
+      'The bigger the opportunity.',
+      'The stronger the entry.',
+    ],
+    judges: [
+      'Size of the yes',
+      'Value of the outcome',
+      'Difficulty of obtaining it',
+      'Proof that it happened',
+      'Quality of the email',
+    ],
+    strong: [
+      'Landing an interview.',
+      'Securing an introduction.',
+      'Getting a meeting with a hard-to-reach person.',
+      'Receiving funding or sponsorship.',
+      'Earning a partnership opportunity.',
+    ],
+    mistakes: [
+      'Small requests with small outcomes.',
+      'Weak proof.',
+      'Outcomes that were already likely to happen.',
+      'Confusing a reply with a meaningful yes.',
+    ],
+    scoring: [
+      { label: 'Size of the "yes" — how big, valuable, or unlikely', pts: 60 },
+      { label: 'Proof the yes was real', pts: 20 },
+      { label: 'Craft of the email', pts: 20 },
+    ],
+  },
+}
+
 // -------------------------------------------------------
 // EVENTS — single source of truth for the week-view calendar
 // date: 'YYYY-MM-DD'  |  allDay: true → all-day row
@@ -359,22 +518,36 @@ export const EVENTS = [
 // Best Email Ever — PLACEHOLDER examples (Akul will replace with real entries)
 export const BEST_EMAILS = [
   {
-    from: 'Alex Chen',
-    fromEmail: 'alex@example.com',
-    stars: 612, views: 2840, tag: 'The Unreachable', date: 'Jul 7, 2026',
-    subject: '[PLACEHOLDER] Re: Quick question about your research',
-    body: `Hi Professor Williams,
+    from: 'Richard Zheng',
+    fromEmail: 'richardzphotoz@gmail.com',
+    avatar: '/best/richard.jpg',
+    replyAvatar: '/best/cuban.jpg',
+    to: 'mcuban',
+    stars: 612, views: 2840, tag: 'The Unreachable', date: 'May 9, 2024',
+    subject: 'MCF AI Bootcamp Alumni reaching out instead of studying',
+    body: `Hey Mark,
 
-I read your 2019 paper on attention mechanisms and noticed a gap in the ablation study — specifically around positional encoding at longer context lengths.
+I'm currently a high school student who uses AI a LOT and went to your bootcamp a while back.
 
-I've run some experiments that might fill that gap. Would you be open to a 15-minute call?
+My experience with your foundation inspired me to delve deeper into how nonprofits and philanthropy operate. That's when I started my company, UNHRD, where we catalog transactions and initiatives on-chain using Ethereum for foundations and nonprofits.
 
-— Alex`,
-    reply: `Alex,
+So there's
 
-Good catch. I've been meaning to revisit that section. Yes, let's talk — does Thursday at 2pm ET work?
+1. Reduced administrative costs and overhead
+2. Enhanced trust among stakeholders
+3. Tamper-proof records that are private yet verifiable
+4. Accelerated global reach and collaboration
 
-— Prof. Williams`,
+We're in beta, backed by Arbitrum, and partnered with brands like Forbes on their web3 initiatives.
+
+I'd love to have you on our cap table and receive some of your advice!
+
+I'll get back to studying,
+Richard`,
+    replyFrom: 'Mark Cuban',
+    replyEmail: 'mcuban@gmail.com',
+    replyDate: 'May 9, 2024',
+    reply: `What is the utility of it`,
   },
   {
     from: 'Jordan Rivera',

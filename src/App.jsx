@@ -1,5 +1,5 @@
 import { useState, useRef, useLayoutEffect, useEffect } from 'react'
-import { EMAILS, TOPIC_NAMES, DEADLINES, SEND_WINDOW, BEST_EMAILS, EVENTS, MEMES, RULES_PAGE } from './data.js'
+import { EMAILS, TOPIC_NAMES, DEADLINES, SEND_WINDOW, BEST_EMAILS, EVENTS, MEMES, RULES_PAGE, TRACK_PAGES, TRACK_REMEMBER } from './data.js'
 import * as I from './icons.jsx'
 
 const GMAIL_LOGO = '/logo.png'
@@ -76,6 +76,7 @@ function Sidebar({ onCompose, view, setView, open }) {
       <div className="section-head"><I.CaretDown /> THE EVENT</div>
       <NavItem icon={<I.M name="rule" />}        label="The Rule"   active={view === 'rule'}    onClick={() => setView('rule')} />
       <NavItem icon={<I.M name="emoji_events" />} label="Prizes"     active={view === 'prizes'}  onClick={() => setView('prizes')} />
+      <NavItem icon={<I.M name="account_balance_wallet" />} label="Prizes (Pay)" active={view === 'prizes-pay'} onClick={() => setView('prizes-pay')} />
       <NavItem icon={<I.M name="balance" />}      label="Judging"    active={view === 'judging'} onClick={() => setView('judging')} />
     </div>
   )
@@ -308,16 +309,8 @@ function WalletHero({ onEnter, goto }) {
 
   const cards = TRACK_TEASERS.slice(0, 4)
 
-  // floating pill nav — reuses goto() to real views
-  const pill = (
-    <nav className="walhero-pill">
-      <button onClick={() => goto('track-unreachable')}>Tracks</button>
-      <button onClick={() => goto('prizes')}>Prizes</button>
-      <button onClick={() => goto('rule')}>Rules</button>
-      <button onClick={() => goto('calendar')}>Calendar</button>
-      <button onClick={() => goto('best')}>Best</button>
-    </nav>
-  )
+  // floating pill nav removed per request
+  const pill = null
 
   // ----- reduced motion: static STATE A only -----
   if (reduced) {
@@ -326,8 +319,7 @@ function WalletHero({ onEnter, goto }) {
         {pill}
         <div className="walhero-headline">
           <h1 className="walhero-title">The world replies to those who know how to write.</h1>
-          <p className="walhero-sub">A cold email competition to find the best cold emails on the planet — proven by who actually replied.</p>
-          <button className="lp-cta" onClick={onEnter}>Enter the competition</button>
+          <p className="walhero-sub">Win up to <strong>$3,000</strong> for one great cold email — proven by who actually replied.</p>
         </div>
         <div className="walhero-static-cards">
           {cards.map((topic, i) => (
@@ -343,26 +335,13 @@ function WalletHero({ onEnter, goto }) {
   }
 
   // ----- animated states -----
-  const rise     = _ease(_seg(p, 0.00, 0.30))
-  const compress = _ease(_seg(p, 0.30, 0.58))
-  const shrink   = _ease(_seg(p, 0.55, 0.82))
-  const exit     = _ease(_seg(p, 0.85, 1.00))
-  const hHide    = _ease(_seg(p, 0.02, 0.30))
-  const logoOp   = _ease(_seg(p, 0.78, 0.92))
-  const cardFade = _ease(_seg(p, 0.80, 0.92))
+  const hHide = _ease(_seg(p, 0.04, 0.34))   // headline rises + fades out first
+  const rise  = _ease(_seg(p, 0.12, 0.82))   // cards rise into the stacked deck, then hold
 
   const headStyle = {
     opacity: 1 - hHide,
     transform: `translate(-50%, calc(-50% - ${hHide * 160}px))`,
     pointerEvents: hHide > 0.5 ? 'none' : 'auto',
-  }
-  const deckStyle = {
-    transform: `translateY(${-exit * vh * 0.55}px)`,
-    opacity: 1 - exit,
-  }
-  const logoStyle = {
-    opacity: logoOp * (1 - exit),
-    transform: `translate(-50%, -50%) scale(${_lerp(0.5, 1, logoOp)})`,
   }
 
   return (
@@ -372,26 +351,19 @@ function WalletHero({ onEnter, goto }) {
 
         <div className="walhero-headline" style={headStyle}>
           <h1 className="walhero-title">The world replies to those who know how to write.</h1>
-          <p className="walhero-sub">A cold email competition to find the best cold emails on the planet — proven by who actually replied.</p>
-          <button className="lp-cta" onClick={onEnter}>Enter the competition</button>
+          <p className="walhero-sub">Win up to <strong>$3,000</strong> for one great cold email — proven by who actually replied.</p>
         </div>
 
-        <div className="walhero-deck" style={deckStyle}>
+        <div className="walhero-deck">
           {cards.map((topic, i) => {
-            const startOff = vh * 0.50 + i * 14
-            const fanOff   = (i - 1.5) * 76
-            const compOff  = (i - 1.5) * 12
-            let offY = _lerp(startOff, fanOff, rise)
-            offY = _lerp(offY, compOff, compress)
-            offY = _lerp(offY, 0, shrink)
-            let scale = _lerp(0.9, 1.0, rise)
-            scale = _lerp(scale, 0.86, compress)
-            scale = _lerp(scale, 0.4, shrink)
-            const rot = _lerp((i - 1.5) * 5, 0, rise)
+            const startOff = vh * 0.16 + i * 14
+            const fanOff   = (i - 1.5) * 78
+            const offY  = _lerp(startOff, fanOff, rise)
+            const scale = _lerp(0.9, 1.0, rise)
+            const rot   = _lerp((i - 1.5) * 5, 0, rise)
             const style = {
               '--wc': WAL_COLORS[i],
               zIndex: 10 - i,
-              opacity: 1 - cardFade,
               transform: `translate(-50%, calc(-50% + ${offY}px)) scale(${scale}) rotate(${rot}deg)`,
             }
             return (
@@ -402,12 +374,7 @@ function WalletHero({ onEnter, goto }) {
               </button>
             )
           })}
-          <img className="walhero-logo" src="/logo.png" alt="" style={logoStyle} />
         </div>
-
-        <button className="walhero-enter-pill" onClick={onEnter}>
-          Enter <I.M name="arrow_forward" size={16} />
-        </button>
       </div>
     </section>
   )
@@ -881,35 +848,82 @@ function ViewBest() {
     const initials = em.from.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
     const color = AVATAR_COLORS[open % AVATAR_COLORS.length]
     return (
-      <div className="view-panel">
-        <div className="view-header bx-thread-head">
-          <span className="bx-back" title="Back to inbox" onClick={() => setOpen(null)}><I.M name="arrow_back" size={20} /></span>
-          <h2 className="view-title">{em.subject}</h2>
+      <div className="view-panel gm-panel">
+        {/* Dark Gmail toolbar */}
+        <div className="gm-topbar">
+          <div className="gm-topbar-left">
+            <span className="gm-tic" title="Back" onClick={() => setOpen(null)}><I.M name="arrow_back" size={22} /></span>
+            <span className="gm-tsep" />
+            <span className="gm-tic" title="Archive"><I.M name="archive" size={20} /></span>
+            <span className="gm-tic" title="Report spam"><I.M name="report" size={20} /></span>
+            <span className="gm-tic" title="Delete"><I.M name="delete" size={20} /></span>
+            <span className="gm-tsep-bar" />
+            <span className="gm-tic" title="Mark as unread"><I.M name="mark_email_unread" size={20} /></span>
+            <span className="gm-tic" title="Move to"><I.M name="drive_file_move" size={20} /></span>
+            <span className="gm-tic" title="More"><I.M name="more_vert" size={20} /></span>
+          </div>
+          <div className="gm-topbar-right">
+            <span className="gm-count">3 of 38,105</span>
+            <span className="gm-tic" title="Newer"><I.M name="chevron_left" size={22} /></span>
+            <span className="gm-tic" title="Older"><I.M name="chevron_right" size={22} /></span>
+            <span className="gm-tic" title="Keyboard"><I.M name="keyboard" size={20} /><I.M name="arrow_drop_down" size={16} /></span>
+          </div>
         </div>
-        <div className="view-body">
-          <div className="best-thread">
-            <div className="msg best-msg">
-              <div className="msg-avatar" style={{ background: color }}>{initials}</div>
-              <div className="msg-main">
-                <div className="msg-head">
-                  <span className="msg-from">{em.from}</span>
-                  <span className="msg-email">&lt;{em.fromEmail}&gt;</span>
-                  <span className="msg-date">Example entry</span>
+        <div className="gm-thread">
+          {/* Subject bar */}
+          <div className="gm-subject-bar">
+            <div className="gm-subject-left">
+              <h2 className="gm-subject">{em.subject}</h2>
+              <span className="gm-important" title="Important"><I.M name="label_important" size={18} /></span>
+              <span className="gm-label-chip">Inbox <I.M name="close" size={14} /></span>
+            </div>
+            <div className="gm-subject-right">
+              <span className="gm-ic" title="Collapse all"><I.M name="unfold_less" size={20} /></span>
+              <span className="gm-ic" title="Print all"><I.M name="print" size={20} /></span>
+              <span className="gm-ic" title="In new window"><I.M name="open_in_new" size={20} /></span>
+            </div>
+          </div>
+
+          {/* Messages */}
+          {[
+            { name: em.from, email: em.fromEmail, av: color, img: em.avatar,
+              to: em.to ? `to ${em.to}` : 'to judges', date: em.replyFrom ? em.date : 'Example entry', body: em.body },
+            { name: em.replyFrom || 'Recipient', email: em.replyEmail, av: '#5f6368', img: em.replyAvatar,
+              to: 'to me', date: em.replyDate || '✓ Real reply', body: em.reply },
+          ].map((m, i) => (
+            <div className="gm-msg" key={i}>
+              {m.img
+                ? <img className="gm-avatar gm-avatar-img" src={m.img} alt={m.name} />
+                : <div className="gm-avatar" style={{ background: m.av }}>
+                    {m.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
+                  </div>}
+              <div className="gm-msg-main">
+                <div className="gm-msg-top">
+                  <div className="gm-msg-who">
+                    <div className="gm-msg-l1">
+                      <span className="gm-from">{m.name}</span>
+                      {m.email && <span className="gm-email">&lt;{m.email}&gt;</span>}
+                    </div>
+                    <div className="gm-to">{m.to} <I.M name="arrow_drop_down" size={16} /></div>
+                  </div>
+                  <div className="gm-msg-actions">
+                    <span className="gm-date">{m.date}</span>
+                    <span className="gm-ic" title="Star"><I.M name="star_border" size={18} /></span>
+                    <span className="gm-ic" title="React"><I.M name="add_reaction" size={18} /></span>
+                    <span className="gm-ic" title="Reply"><I.M name="reply" size={18} /></span>
+                    <span className="gm-ic" title="More"><I.M name="more_vert" size={18} /></span>
+                  </div>
                 </div>
-                <div className="msg-to">To: judges@thecold.email</div>
-                <div className="msg-body">{em.body}</div>
+                <div className="gm-body">{m.body}</div>
               </div>
             </div>
-            <div className="msg best-msg best-reply">
-              <div className="msg-avatar" style={{ background: '#5f6368' }}>R</div>
-              <div className="msg-main">
-                <div className="msg-head">
-                  <span className="msg-from">Recipient</span>
-                  <span className="msg-date best-reply-tag">✓ Real reply</span>
-                </div>
-                <div className="msg-body">{em.reply}</div>
-              </div>
-            </div>
+          ))}
+
+          {/* Footer actions */}
+          <div className="gm-foot">
+            <button className="gm-foot-btn"><I.M name="reply" size={18} /> Reply</button>
+            <button className="gm-foot-btn"><I.M name="forward" size={18} /> Forward</button>
+            <button className="gm-foot-emoji" title="React"><I.M name="add_reaction" size={20} /></button>
           </div>
         </div>
       </div>
@@ -964,76 +978,369 @@ const TRACK_ICONS = {
 }
 
 function ViewTrack({ topic }) {
-  const email = EMAILS.find(e => e.topic === topic)
-  if (!email) return <div className="view-panel"><div className="view-body"><p>Track not found.</p></div></div>
+  const data = TRACK_PAGES[topic]
+  if (!data) return <div className="view-panel"><div className="view-body"><p>Track not found.</p></div></div>
 
-  // Parse the body into sections
-  // Body structure: TITLE\n\nGoal line\n\nHow it's won\n\nScoring\n\nPrize
-  const lines = email.body.split('\n')
-  const title = lines[0]
-  const rest  = lines.slice(2).join('\n') // skip blank line after title
+  // All 4 tracks render as a faithful Google Docs document.
+  return <ViewTrackDoc data={data} title={TOPIC_NAMES[topic]} />
+}
 
-  // Split on "Scoring" header
-  const scoringIdx = rest.indexOf('Scoring')
-  const prizeIdx   = rest.lastIndexOf('Prize:')
-
-  const goalBlock    = scoringIdx > -1 ? rest.slice(0, scoringIdx).trim() : rest
-  const scoringBlock = scoringIdx > -1 ? rest.slice(scoringIdx, prizeIdx > -1 ? prizeIdx : undefined).trim() : ''
-  const prizeBlock   = prizeIdx  > -1 ? rest.slice(prizeIdx).trim() : ''
-
-  // Parse scoring bullets
-  const scoringLines = scoringBlock.split('\n').filter(l => l.trim())
-  const scoringTitle = scoringLines[0] || ''
-  const scoringBullets = scoringLines.slice(1).filter(l => l.startsWith('•'))
-
-  // Parse goal/how paragraphs
-  const goalLines = goalBlock.split('\n').filter(l => l.trim())
-
+function ViewTrackUNUSED({ topic }) {
+  const data = TRACK_PAGES[topic]
   return (
     <div className="view-panel">
       <div className="view-header">
         <span className="view-header-icon">{TRACK_ICONS[topic]}</span>
-        <h2 className="view-title">{TOPIC_NAMES[topic] || title}</h2>
+        <h2 className="view-title">{TOPIC_NAMES[topic]}</h2>
         <span className="track-prize-badge">$500</span>
       </div>
-      <div className="view-body">
-        {/* Goal + How it's won */}
-        {goalLines.map((line, i) => (
-          <p key={i} className="track-para">{line}</p>
-        ))}
+      <div className="view-body trackp">
 
-        {/* Scoring rubric */}
-        {scoringBullets.length > 0 && (
+        {/* The Goal */}
+        <section className="trackp-sec">
+          <h3 className="trackp-h">The Goal</h3>
+          <p className="trackp-goal">{data.goal}</p>
+          {data.goalExtra && <p className="trackp-sub">{data.goalExtra}</p>}
+        </section>
+
+        {/* How It's Won */}
+        <section className="trackp-sec">
+          <h3 className="trackp-h">How It's Won</h3>
+          {data.howWon.map((l, i) => <p key={i} className="trackp-para">{l}</p>)}
+        </section>
+
+        {/* What This Track Rewards */}
+        <section className="trackp-sec">
+          <h3 className="trackp-h">What This Track Rewards</h3>
+          {data.rewards.map((l, i) => <p key={i} className="trackp-para">{l}</p>)}
+        </section>
+
+        {/* What Judges Look For */}
+        <section className="trackp-sec">
+          <h3 className="trackp-h">What Judges Look For</h3>
+          <ul className="trackp-list trackp-yes">
+            {data.judges.map((l, i) => <li key={i}>{l}</li>)}
+          </ul>
+        </section>
+
+        {/* Strong Entries */}
+        <section className="trackp-sec">
+          <h3 className="trackp-h">Strong Entries</h3>
+          <ul className="trackp-list trackp-dot">
+            {data.strong.map((l, i) => <li key={i}>{l}</li>)}
+          </ul>
+        </section>
+
+        {/* Common Mistakes */}
+        <section className="trackp-sec">
+          <h3 className="trackp-h">Common Mistakes</h3>
+          <ul className="trackp-list trackp-no">
+            {data.mistakes.map((l, i) => <li key={i}>{l}</li>)}
+          </ul>
+        </section>
+
+        {/* Scoring */}
+        <section className="trackp-sec">
+          <h3 className="trackp-h">Scoring</h3>
           <div className="track-rubric">
-            <div className="track-rubric-title">{scoringTitle}</div>
-            {scoringBullets.map((b, i) => {
-              // Parse "• Label (pts)" style
-              const match = b.match(/^•\s*(.+?)\s*\((\d+)\)$/)
-              const label = match ? match[1] : b.replace(/^•\s*/, '')
-              const pts   = match ? parseInt(match[2]) : null
-              return (
-                <div className="track-rubric-row" key={i}>
-                  <span className="track-rubric-label">{label}</span>
-                  {pts != null && (
-                    <span className="track-rubric-bar-wrap">
-                      <span className="track-rubric-bar" style={{ width: `${pts}%` }} />
-                      <span className="track-rubric-pts">{pts} pts</span>
-                    </span>
-                  )}
-                </div>
-              )
-            })}
+            {data.scoring.map((s, i) => (
+              <div className="track-rubric-row" key={i}>
+                <span className="track-rubric-label">{s.label}</span>
+                <span className="track-rubric-bar-wrap">
+                  <span className="track-rubric-bar" style={{ width: `${s.pts}%` }} />
+                  <span className="track-rubric-pts">{s.pts} pts</span>
+                </span>
+              </div>
+            ))}
           </div>
-        )}
+        </section>
 
-        {/* Prize line */}
-        {prizeBlock && (
-          <div className="track-prize-line">{prizeBlock.replace('Prize:', 'Prize:')}</div>
-        )}
+        {/* Prize */}
+        <section className="trackp-sec trackp-prize-sec">
+          <h3 className="trackp-h">Prize</h3>
+          <div className="trackp-prize">$500</div>
+        </section>
 
         {/* Grand prize note */}
         <div className="track-grand-note">
-          Every entry is also automatically in the running for the <strong>★ Best Cold Email ($1,000 grand prize)</strong>.
+          Every qualifying entry is also automatically considered for the <strong>★ Best Cold Email ($1,000 grand prize)</strong>.
+        </div>
+
+        {/* Remember — blue info box (every track) */}
+        <div className="trackp-remember">
+          <div className="trackp-remember-title"><I.M name="info" size={18} /> Remember</div>
+          <p className="trackp-remember-lead">{TRACK_REMEMBER.lead}</p>
+          <p className="trackp-remember-bold">{TRACK_REMEMBER.bold}</p>
+          <p className="trackp-remember-body">{TRACK_REMEMBER.body}</p>
+          <p className="trackp-remember-tag">{TRACK_REMEMBER.tag}</p>
+        </div>
+
+      </div>
+    </div>
+  )
+}
+
+// ---------------- VIEW: BEST SUBJECT LINE (Google Finance) ----------------
+// Renders the subject-line track styled as a faithful Google Finance quote page.
+function ViewTrackFinance({ data }) {
+  const ranges = ['1D', '5D', '1M', '6M', 'YTD', '1Y', '5Y', 'MAX']
+  // Decorative upward-trending series -> SVG area + line path (Finance blue).
+  const series = [38, 41, 39, 44, 43, 49, 47, 55, 60, 58, 66, 71, 69, 78, 82, 80, 88, 92, 90, 100]
+  const W = 720, H = 240, PAD = 8
+  const max = 108, min = 28
+  const pts = series.map((v, i) => {
+    const x = PAD + (i * (W - PAD * 2)) / (series.length - 1)
+    const y = H - PAD - ((v - min) / (max - min)) * (H - PAD * 2)
+    return [x, y]
+  })
+  const linePath = pts.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ')
+  const areaPath = `${linePath} L${pts[pts.length - 1][0].toFixed(1)} ${H} L${pts[0][0].toFixed(1)} ${H} Z`
+  const lastY = pts[pts.length - 1][1]
+  const lastX = pts[pts.length - 1][0]
+
+  // Key stats: scoring rubric rows + on-theme metrics.
+  const stats = [
+    ...data.scoring.map(s => ({ label: s.label, value: `${s.pts} pts`, bar: s.pts })),
+    { label: 'Prize', value: '$500' },
+    { label: 'Grand prize', value: '$1,000' },
+    { label: 'Replies counted', value: 'Real only' },
+    { label: 'Judging criteria', value: data.judges.join(' · ') },
+  ]
+
+  return (
+    <div className="view-panel gfin-canvas">
+      <div className="gfin-wrap">
+
+        {/* Quote header */}
+        <div className="gfin-head">
+          <div className="gfin-name-row">
+            <h1 className="gfin-name">Best Subject Line</h1>
+            <span className="gfin-ticker">SUBJ · TCE</span>
+          </div>
+          <div className="gfin-price-row">
+            <span className="gfin-price">100.00</span>
+            <span className="gfin-unit">pts</span>
+            <span className="gfin-change gfin-up">
+              <I.M name="arrow_drop_up" size={22} />+14.40 (+16.81%)
+            </span>
+          </div>
+          <div className="gfin-subline">Closed · Track · Best Subject Line · in USD ($500 prize)</div>
+        </div>
+
+        {/* Range tabs */}
+        <div className="gfin-ranges">
+          {ranges.map(r => (
+            <button key={r} className={`gfin-range${r === '1Y' ? ' gfin-range-active' : ''}`} type="button">{r}</button>
+          ))}
+        </div>
+
+        {/* Chart */}
+        <div className="gfin-chart">
+          <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="gfin-svg" role="img" aria-label="Subject line score trend">
+            <defs>
+              <linearGradient id="gfinFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#1a73e8" stopOpacity="0.22" />
+                <stop offset="100%" stopColor="#1a73e8" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <line className="gfin-baseline" x1="0" y1={H - PAD} x2={W} y2={H - PAD} />
+            <path d={areaPath} fill="url(#gfinFill)" />
+            <path d={linePath} fill="none" stroke="#1a73e8" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+            <circle cx={lastX} cy={lastY} r="3.5" fill="#1a73e8" />
+          </svg>
+        </div>
+
+        {/* Key stats / rubric */}
+        <section className="gfin-sec">
+          <h2 className="gfin-sec-h">Key stats</h2>
+          <div className="gfin-stats">
+            {stats.map((s, i) => (
+              <div className="gfin-stat-row" key={i}>
+                <span className="gfin-stat-label">{s.label}</span>
+                <span className="gfin-stat-val">
+                  {s.bar != null && (
+                    <span className="gfin-stat-bar-wrap">
+                      <span className="gfin-stat-bar" style={{ width: `${s.bar}%` }} />
+                    </span>
+                  )}
+                  {s.value}
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* About */}
+        <section className="gfin-sec">
+          <h2 className="gfin-sec-h">About</h2>
+          <p className="gfin-about gfin-about-lead">{data.goal}</p>
+          {data.rewards.map((l, i) => <p key={`r${i}`} className="gfin-about">{l}</p>)}
+          <div className="gfin-about-facts">
+            {data.howWon.map((l, i) => (
+              <div className="gfin-fact" key={`h${i}`}>
+                <I.M name="check_circle" size={16} />
+                <span>{l}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* News / related: Strong entries */}
+        <section className="gfin-sec">
+          <h2 className="gfin-sec-h">Strong entries</h2>
+          <div className="gfin-news">
+            {data.strong.map((l, i) => (
+              <div className="gfin-news-row" key={i}>
+                <div className="gfin-news-meta">Judging note · Subject craft</div>
+                <div className="gfin-news-head">{l}</div>
+                <div className="gfin-news-spark"><I.M name="trending_up" size={20} /></div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Common mistakes */}
+        <section className="gfin-sec">
+          <h2 className="gfin-sec-h">Common mistakes</h2>
+          <ul className="gfin-mistakes">
+            {data.mistakes.map((l, i) => (
+              <li key={i}><I.M name="cancel" size={16} /><span>{l}</span></li>
+            ))}
+          </ul>
+        </section>
+
+        {/* Remember callout */}
+        <div className="gfin-remember">
+          <div className="gfin-remember-lead">{TRACK_REMEMBER.lead}</div>
+          <div className="gfin-remember-bold">{TRACK_REMEMBER.bold}</div>
+          <div className="gfin-remember-body">{TRACK_REMEMBER.body}</div>
+          <div className="gfin-remember-tag">{TRACK_REMEMBER.tag}</div>
+        </div>
+
+        <div className="gfin-disclaimer">
+          Scores are illustrative. Every qualifying entry is also considered for the ★ Best Cold Email ($1,000 grand prize).
+        </div>
+
+      </div>
+    </div>
+  )
+}
+
+// ---------------- VIEW: THE UNREACHABLE (Google Docs) ----------------
+// Renders the unreachable track styled as a faithful Google Docs document.
+function ViewTrackDoc({ data, title }) {
+  const menus = ['File', 'Edit', 'View', 'Insert', 'Format', 'Tools', 'Extensions', 'Help']
+  return (
+    <div className="view-panel gdoc-canvas">
+      <div className="gdoc-chrome">
+      {/* Title bar */}
+      <div className="gdoc-titlebar">
+        <span className="gdoc-doc-icon" aria-label="Google Docs">
+          <svg width="22" height="28" viewBox="0 0 48 64" xmlns="http://www.w3.org/2000/svg">
+            <path d="M29 0H6C2.69 0 0 2.69 0 6v52c0 3.31 2.69 6 6 6h36c3.31 0 6-2.69 6-6V19L29 0z" fill="#4285F4"/>
+            <path d="M29 0v13c0 3.31 2.69 6 6 6h13L29 0z" fill="#A1C2FA"/>
+            <rect x="12" y="30" width="24" height="3.4" rx="1.7" fill="#fff"/>
+            <rect x="12" y="38.5" width="24" height="3.4" rx="1.7" fill="#fff"/>
+            <rect x="12" y="47" width="16" height="3.4" rx="1.7" fill="#fff"/>
+          </svg>
+        </span>
+        <div className="gdoc-title-block">
+          <div className="gdoc-title-row">
+            <span className="gdoc-docname">{title}</span>
+            <span className="gdoc-star" title="Star"><I.M name="star_border" size={18} /></span>
+            <span className="gdoc-move" title="Move"><I.M name="drive_file_move" size={18} /></span>
+          </div>
+          <div className="gdoc-menubar">
+            {menus.map(m => <span className="gdoc-menu" key={m}>{m}</span>)}
+          </div>
+        </div>
+      </div>
+
+      {/* Toolbar */}
+      <div className="gdoc-toolbar">
+        <span className="gdoc-tb-btn" title="Undo"><I.M name="undo" size={20} /></span>
+        <span className="gdoc-tb-btn" title="Redo"><I.M name="redo" size={20} /></span>
+        <span className="gdoc-tb-btn" title="Print"><I.M name="print" size={20} /></span>
+        <span className="gdoc-tb-btn" title="Spelling"><I.M name="spellcheck" size={20} /></span>
+        <span className="gdoc-tb-sep" />
+        <span className="gdoc-tb-zoom">100%<I.M name="arrow_drop_down" size={18} /></span>
+        <span className="gdoc-tb-sep" />
+        <span className="gdoc-tb-style">Normal text<I.M name="arrow_drop_down" size={18} /></span>
+        <span className="gdoc-tb-sep" />
+        <span className="gdoc-tb-font">Arial<I.M name="arrow_drop_down" size={18} /></span>
+        <span className="gdoc-tb-sep" />
+        <span className="gdoc-tb-step">−</span>
+        <span className="gdoc-tb-size">11</span>
+        <span className="gdoc-tb-step">+</span>
+        <span className="gdoc-tb-sep" />
+        <span className="gdoc-tb-btn gdoc-tb-bold" title="Bold">B</span>
+        <span className="gdoc-tb-btn gdoc-tb-italic" title="Italic">I</span>
+        <span className="gdoc-tb-btn gdoc-tb-underline" title="Underline">U</span>
+        <span className="gdoc-tb-btn gdoc-tb-color" title="Text color">A<span className="gdoc-tb-color-bar" /></span>
+        <span className="gdoc-tb-sep" />
+        <span className="gdoc-tb-btn" title="Link"><I.M name="link" size={20} /></span>
+        <span className="gdoc-tb-btn" title="Comment"><I.M name="add_comment" size={20} /></span>
+        <span className="gdoc-tb-sep" />
+        <span className="gdoc-tb-btn" title="Align left"><I.M name="format_align_left" size={20} /></span>
+        <span className="gdoc-tb-btn" title="Bulleted list"><I.M name="format_list_bulleted" size={20} /></span>
+        <span className="gdoc-tb-btn" title="Numbered list"><I.M name="format_list_numbered" size={20} /></span>
+        <span className="gdoc-tb-btn" title="Indent"><I.M name="format_indent_increase" size={20} /></span>
+      </div>
+      </div>{/* /gdoc-chrome */}
+
+      {/* The page */}
+      <div className="gdoc-page-wrap">
+        <div className="gdoc-page">
+          <h1 className="gdoc-h1">{title}</h1>
+
+          <h2 className="gdoc-h2">The Goal</h2>
+          <p className="gdoc-p">{data.goal}</p>
+          {data.goalExtra && <p className="gdoc-p">{data.goalExtra}</p>}
+
+          <h2 className="gdoc-h2">How It's Won</h2>
+          {data.howWon.map((l, i) => <p className="gdoc-p" key={i}>{l}</p>)}
+
+          <h2 className="gdoc-h2">What This Track Rewards</h2>
+          {data.rewards.map((l, i) => <p className="gdoc-p" key={i}>{l}</p>)}
+
+          <h2 className="gdoc-h2">What Judges Look For</h2>
+          <ul className="gdoc-list gdoc-list-check">
+            {data.judges.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-yes">✓</span><span>{l}</span></li>)}
+          </ul>
+
+          <h2 className="gdoc-h2">Strong Entries</h2>
+          <ul className="gdoc-list gdoc-list-dot">
+            {data.strong.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-dot">•</span><span>{l}</span></li>)}
+          </ul>
+
+          <h2 className="gdoc-h2">Common Mistakes</h2>
+          <ul className="gdoc-list gdoc-list-cross">
+            {data.mistakes.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-no">✕</span><span>{l}</span></li>)}
+          </ul>
+
+          <h2 className="gdoc-h2">Scoring</h2>
+          <table className="gdoc-table">
+            <thead>
+              <tr><th>Criteria</th><th className="gdoc-table-pts">Points</th></tr>
+            </thead>
+            <tbody>
+              {data.scoring.map((s, i) => (
+                <tr key={i}><td>{s.label}</td><td className="gdoc-table-pts">{s.pts}</td></tr>
+              ))}
+            </tbody>
+          </table>
+
+          <h2 className="gdoc-h2">Prize</h2>
+          <p className="gdoc-p"><strong>$500</strong> for the winning entry. Every qualifying entry is also automatically considered for the ★ Best Cold Email ($1,000 grand prize).</p>
+
+          {/* Remember callout */}
+          <div className="gdoc-callout">
+            <div className="gdoc-callout-title">Remember</div>
+            <p className="gdoc-callout-lead">{TRACK_REMEMBER.lead}</p>
+            <p className="gdoc-callout-bold">{TRACK_REMEMBER.bold}</p>
+            <p className="gdoc-callout-body">{TRACK_REMEMBER.body}</p>
+            <p className="gdoc-callout-tag">{TRACK_REMEMBER.tag}</p>
+          </div>
         </div>
       </div>
     </div>
@@ -1056,7 +1363,7 @@ function ViewRule({ onEnter }) {
     { id: 'rule', color: 'yellow', title: 'The Rule', render: () => (<>
       <p className="keep-lead">A cold email counts only if a real stranger genuinely wrote back.</p>
       <p className="keep-text">Every competition email must be sent during the event and BCC our official competition inbox for verification.</p>
-      <ul className="rule-tags keep-tags">{R.chips.map(c => <li key={c}>{c}</li>)}</ul>
+      {checklist('rulechips', R.chips)}
       <p className="keep-support">Break any of these and your entry is disqualified.</p>
     </>) },
     { id: 'counts', color: 'green', title: 'What counts?', render: () => (<>
@@ -1118,7 +1425,10 @@ function ViewRule({ onEnter }) {
   const noteRefs = useRef(new Map())
   const boardRef = useRef(null)
   const animOn = useRef(false)
-  const [checked, setChecked] = useState(() => new Set(RULES_PAGE.fairPlayNot.map(t => `fairplay|${t}`)))  // pre-checked
+  const [checked, setChecked] = useState(() => new Set([   // pre-checked by default
+    ...RULES_PAGE.fairPlayNot.map(t => `fairplay|${t}`),
+    ...RULES_PAGE.chips.filter(t => !/bcc/i.test(t)).map(t => `rulechips|${t}`),
+  ]))
   const [collapsed, setCollapsed] = useState(() => new Set())  // collapsed groups
   const toggleCheck = k => setChecked(p => { const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n })
   const toggleCollapse = k => setCollapsed(p => { const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n })
@@ -1204,9 +1514,9 @@ function ViewRule({ onEnter }) {
       <div className="keep-composer" onClick={onEnter}>
         <span className="keep-composer-ph">Take a note…</span>
         <div className="keep-composer-icons">
-          <I.M name="check_box" size={20} />
-          <I.M name="brush" size={20} />
-          <I.M name="image" size={20} />
+          <I.M name="check_box" size={22} />
+          <I.M name="brush" size={22} />
+          <I.M name="image" size={22} />
         </div>
       </div>
 
@@ -1227,7 +1537,6 @@ function ViewRule({ onEnter }) {
               onDragEnd={e => { dragId.current = null; e.currentTarget.classList.remove('keep-dragging') }}
               onClick={() => setExpanded(n.id)}
             >
-              <span className="keep-note-select" onClick={e => e.stopPropagation()} title="Select note"><I.M name="check_circle" size={24} /></span>
               <span className="keep-note-pin" onClick={e => e.stopPropagation()} title="Pin note"><I.M name="keep" size={20} /></span>
               <div className="keep-note-title">{n.title}</div>
               {n.render()}
@@ -1272,34 +1581,173 @@ function ViewRule({ onEnter }) {
   )
 }
 
-// ---------------- VIEW: PRIZES ----------------
+// ---------------- VIEW: PRIZES (Google Sheets) ----------------
 function ViewPrizes() {
-  const rows = [
-    { label: '★ The Best Cold Email', note: 'grand prize', amount: '$1,000', grand: true },
-    { label: 'The Unreachable',       note: 'Track 1',     amount: '$500' },
-    { label: 'Best Subject Line',     note: 'Track 2',     amount: '$500' },
-    { label: 'The Two-Liner',         note: 'Track 3',     amount: '$500' },
-    { label: 'The Ask',               note: 'Track 4',     amount: '$500' },
+  const menus = ['File', 'Edit', 'View', 'Insert', 'Format', 'Data', 'Tools', 'Extensions', 'Help']
+  const cols = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))  // A..Z
+  const ROWS = 100
+  // row index (1-based) → { col: value, ...flags }
+  const data = {
+    1: { A: 'Category', B: 'Prize (USD)', C: 'Notes', head: true },
+    2: { A: '★ The Best Cold Email', B: '$1,000', C: 'Grand prize — best overall', grand: true },
+    3: { A: 'The Unreachable', B: '$500', C: 'Track 1' },
+    4: { A: 'Best Subject Line', B: '$500', C: 'Track 2' },
+    5: { A: 'The Two-Liner', B: '$500', C: 'Track 3' },
+    6: { A: 'The Ask', B: '$500', C: 'Track 4' },
+    8: { A: 'Total', B: '$3,000', C: '4 tracks + grand prize', total: true },
+  }
+  return (
+    <div className="view-panel gsheet-canvas">
+      <div className="gsheet-chrome">
+        {/* Title bar */}
+        <div className="gsheet-titlebar">
+          <span className="gsheet-doc-icon" aria-label="Google Sheets">
+            <svg width="22" height="28" viewBox="0 0 48 64" xmlns="http://www.w3.org/2000/svg">
+              <path d="M29 0H6C2.69 0 0 2.69 0 6v52c0 3.31 2.69 6 6 6h36c3.31 0 6-2.69 6-6V19L29 0z" fill="#188038"/>
+              <path d="M29 0v13c0 3.31 2.69 6 6 6h13L29 0z" fill="#8ed1b1"/>
+              <path d="M12 28h24v20H12V28zm3 3v3.5h7V31h-7zm10 0v3.5h8V31h-8zM15 37v3.5h7V37h-7zm10 0v3.5h8V37h-8zM15 43v3h7v-3h-7zm10 0v3h8v-3h-8z" fill="#fff"/>
+            </svg>
+          </span>
+          <div className="gsheet-title-block">
+            <div className="gsheet-title-row">
+              <span className="gsheet-docname">Prizes</span>
+              <span className="gdoc-star" title="Star"><I.M name="star_border" size={18} /></span>
+              <span className="gdoc-move" title="Move"><I.M name="drive_file_move" size={18} /></span>
+            </div>
+            <div className="gdoc-menubar">
+              {menus.map(m => <span className="gdoc-menu" key={m}>{m}</span>)}
+            </div>
+          </div>
+        </div>
+
+        {/* Toolbar */}
+        <div className="gdoc-toolbar gsheet-toolbar">
+          <span className="gdoc-tb-btn" title="Undo"><I.M name="undo" size={20} /></span>
+          <span className="gdoc-tb-btn" title="Redo"><I.M name="redo" size={20} /></span>
+          <span className="gdoc-tb-btn" title="Print"><I.M name="print" size={20} /></span>
+          <span className="gdoc-tb-sep" />
+          <span className="gdoc-tb-zoom">100%<I.M name="arrow_drop_down" size={18} /></span>
+          <span className="gdoc-tb-sep" />
+          <span className="gdoc-tb-btn" title="Currency">$</span>
+          <span className="gdoc-tb-btn" title="Percent">%</span>
+          <span className="gdoc-tb-btn" title="Decrease decimals">.0</span>
+          <span className="gdoc-tb-btn" title="Increase decimals">.00</span>
+          <span className="gdoc-tb-sep" />
+          <span className="gdoc-tb-font">Default<I.M name="arrow_drop_down" size={18} /></span>
+          <span className="gdoc-tb-sep" />
+          <span className="gdoc-tb-step">−</span>
+          <span className="gdoc-tb-size">10</span>
+          <span className="gdoc-tb-step">+</span>
+          <span className="gdoc-tb-sep" />
+          <span className="gdoc-tb-btn gdoc-tb-bold" title="Bold">B</span>
+          <span className="gdoc-tb-btn gdoc-tb-italic" title="Italic">I</span>
+          <span className="gdoc-tb-btn gdoc-tb-color" title="Text color">A<span className="gdoc-tb-color-bar" /></span>
+          <span className="gdoc-tb-sep" />
+          <span className="gdoc-tb-btn" title="Merge cells"><I.M name="cell_merge" size={20} /></span>
+          <span className="gdoc-tb-btn" title="Functions"><I.M name="functions" size={20} /></span>
+        </div>
+
+        {/* Formula bar */}
+        <div className="gsheet-fbar">
+          <span className="gsheet-namebox">B8 <I.M name="arrow_drop_down" size={16} /></span>
+          <span className="gsheet-fx">fx</span>
+          <span className="gsheet-formula">=SUM(B2:B6)</span>
+        </div>
+
+        {/* Column header row */}
+      </div>
+
+      {/* Scrollable grid (horizontal + vertical) — sticky column header + row numbers */}
+      <div className="gsheet-scroll">
+        <div className="gsheet-colhead">
+          <span className="gsheet-corner" />
+          {cols.map(c => <span className="gsheet-colh" key={c}>{c}</span>)}
+        </div>
+        <div className="gsheet-grid">
+          {Array.from({ length: ROWS }, (_, ri) => {
+            const r = ri + 1
+            const row = data[r] || {}
+            const cls = row.head ? ' gs-head' : row.total ? ' gs-total' : row.grand ? ' gs-grand' : ''
+            return (
+              <div className="gsheet-row" key={r}>
+                <span className="gsheet-rownum">{r}</span>
+                {cols.map(c => {
+                  const sel = r === 8 && c === 'B'
+                  return (
+                    <span className={`gsheet-cell${cls}${sel ? ' gs-sel' : ''}${c === 'B' ? ' gs-num' : ''}`} key={c}>
+                      {row[c] || ''}
+                    </span>
+                  )
+                })}
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ---------------- VIEW: PRIZES (Google Pay) ----------------
+function ViewPrizesPay() {
+  const passes = [
+    { name: 'The Best Cold Email', sub: 'Grand prize · best overall', amount: '$1,000', grand: true,
+      c1: '#202124', c2: '#3c4043' },
+    { name: 'The Unreachable',  sub: 'Track 1', amount: '$500', c1: '#1e8e3e', c2: '#34a853' },
+    { name: 'Best Subject Line', sub: 'Track 2', amount: '$500', c1: '#f9ab00', c2: '#fbbc04' },
+    { name: 'The Two-Liner',    sub: 'Track 3', amount: '$500', c1: '#d93025', c2: '#ea4335' },
+    { name: 'The Ask',          sub: 'Track 4', amount: '$500', c1: '#1a73e8', c2: '#4285f4' },
   ]
   return (
-    <div className="view-panel">
-      <div className="view-header">
-        <h2 className="view-title">$3,000 in prizes</h2>
-      </div>
-      <div className="view-body">
-        <div className="lp-rows">
-          {rows.map((r, i) => (
-            <div key={i} className={`lp-row${r.grand ? ' lp-row-grand' : ''}`}>
-              <span>{r.label} <em>{r.note}</em></span>
-              <span className="amt">{r.amount}</span>
-            </div>
-          ))}
+    <div className="view-panel gpay-canvas">
+      {/* Balance hero */}
+      <div className="gpay-balance">
+        <div className="gpay-balance-label">Prize pool</div>
+        <div className="gpay-balance-amt">$3,000</div>
+        <div className="gpay-balance-sub">Win up to $1,000 for one great cold email</div>
+        <div className="gpay-actions">
+          <button className="gpay-act"><span className="gpay-act-ic"><I.M name="bolt" size={22} /></span>Enter</button>
+          <button className="gpay-act"><span className="gpay-act-ic"><I.M name="emoji_events" size={22} /></span>Tracks</button>
+          <button className="gpay-act"><span className="gpay-act-ic"><I.M name="receipt_long" size={22} /></span>Rules</button>
         </div>
-        <p style={{ marginTop: 20, fontSize: 13, color: '#5f6368', lineHeight: 1.6 }}>
-          A cash prize for each track, plus a bigger grand prize for the best cold email overall.
-          Every entry — regardless of track — is automatically in the running for the grand prize.
-        </p>
       </div>
+
+      {/* Card renderer reused by all 3 trial layouts */}
+      {(() => {
+        const card = (p, i, extraCls = '') => (
+          <div className={`gpay-card${p.grand ? ' gpay-card-grand' : ''}${extraCls}`} key={i}
+            style={{ background: `linear-gradient(135deg, ${p.c1}, ${p.c2})` }}>
+            <div className="gpay-card-top">
+              <span className="gpay-card-name">{p.grand ? '★ ' : ''}{p.name}</span>
+              <img className="gpay-card-logo" src="/logo.png" alt="" />
+            </div>
+            <div className="gpay-card-amt">{p.amount}</div>
+            <div className="gpay-card-sub">{p.sub}</div>
+          </div>
+        )
+        return (
+          <>
+            {/* OPTION 1 — stacked like a real Wallet */}
+            <div className="gpay-section-h">Option 1 — Stacked (real Wallet)</div>
+            <div className="gpay-stack">
+              {passes.map((p, i) => card(p, i, ' gpay-stack-card'))}
+            </div>
+
+            {/* OPTION 2 — wrap to a grid */}
+            <div className="gpay-section-h">Option 2 — Grid (all visible)</div>
+            <div className="gpay-grid">
+              {passes.map((p, i) => card(p, i, ' gpay-grid-card'))}
+            </div>
+
+            {/* OPTION 3 — horizontal scroll, full-height (no cut-off) */}
+            <div className="gpay-section-h">Option 3 — Scroll row (full height)</div>
+            <div className="gpay-cards">
+              {passes.map((p, i) => card(p, i))}
+            </div>
+          </>
+        )
+      })()}
+
     </div>
   )
 }
@@ -1359,6 +1807,7 @@ function MainPanel({ view, onEnter, goto }) {
     case 'track-ask':         return <ViewTrack topic="ask" />
     case 'rule':              return <ViewRule onEnter={onEnter} />
     case 'prizes':            return <ViewPrizes />
+    case 'prizes-pay':        return <ViewPrizesPay />
     case 'judging':           return <ViewJudging />
     default:                  return <ViewOverview onEnter={onEnter} goto={goto} />
   }
