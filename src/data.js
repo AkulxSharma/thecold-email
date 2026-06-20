@@ -519,7 +519,7 @@ export const EVENTS = [
 // type: short | email | url | dropdown | radio | checkbox | paragraph
 export const ENTER_FORM = {
   title: 'Enter the Competition',
-  desc: 'Funnel 1 — Registration. Tell us who you are and why you’re in. One real cold email. One real reply — that’s the whole game.',
+  desc: 'Funnel 1 — Registration. Tell us who you are and why you’re in. Send as many cold emails as you like — you only submit the ones that get a real reply.',
   questions: [
     { q: 'Full name',              type: 'short',     required: true },
     { q: 'Email',                  type: 'email',     required: true },

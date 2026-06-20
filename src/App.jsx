@@ -531,8 +531,8 @@ const FORMS_ICON = (
 // Shared "how to enter" steps — reused by all three variants
 const ENTER_STEPS = [
   { n: 1, icon: 'how_to_reg',       title: 'Register',                 text: 'Fill the form below. We save your details and email you a confirmation.' },
-  { n: 2, icon: 'send',             title: 'Send one real cold email', text: 'Pick a track. Write to a real stranger. No templates, no spray.' },
-  { n: 3, icon: 'mark_email_read',  title: 'Get a reply & submit',     text: 'When they reply, attach a screenshot/PDF of the thread and submit your entry.' },
+  { n: 2, icon: 'send',             title: 'Send cold emails',          text: 'Pick a track. Write to real strangers. No templates, no spray — send as many as you want.' },
+  { n: 3, icon: 'mark_email_read',  title: 'Submit the ones that reply', text: 'Only emails that get a real reply count. Attach a screenshot/PDF of any thread that landed a response and submit it.' },
 ]
 
 function ViewEnter({ onEnter }) {
