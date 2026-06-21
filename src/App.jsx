@@ -1,10 +1,55 @@
 import { useState, useRef, useLayoutEffect, useEffect } from 'react'
+import { Routes, Route, Navigate, useNavigate, useParams, useLocation } from 'react-router-dom'
 import { EMAILS, TOPIC_NAMES, DEADLINES, SEND_WINDOW, BEST_EMAILS, EVENTS, MEMES, RULES_PAGE, TRACK_PAGES, TRACK_REMEMBER, ENTER_FORM } from './data.js'
 import * as I from './icons.jsx'
 
 const GMAIL_LOGO = '/logo.png'
+
+// ================================================================
+// BACKEND — Google Form embed (Akul will supply the URLs)
+// Capture/confirmation runs through two Google Forms. Until the URLs land,
+// the UI uses local validation + toast/confirmation so it's fully testable.
+// ================================================================
+const REGISTRATION_FORM_URL = '' // TODO: Akul's Google Form — Funnel 1 (registration)
+const SUBMISSION_FORM_URL = ''   // TODO: Akul's Google Form — Funnel 2 (submission)
+
+// Shared field validators (used by both funnels)
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const URL_RE = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/\S*)?$/i
+
 // Track content pulled from the single source of truth (data.js)
 const TRACKS = ['unreachable', 'subject', 'twoliner', 'ask'].map(t => EMAILS.find(e => e.topic === t))
+
+// ================================================================
+// ROUTING — single source of truth
+// ================================================================
+// URL slug <-> internal track topic key (used by TRACK_PAGES / TOPIC_NAMES)
+const TOPIC_TO_SLUG = {
+  unreachable: 'unreachable',
+  subject:     'best-subject-line',
+  twoliner:    'two-liner',
+  ask:         'the-ask',
+}
+const SLUG_TO_TOPIC = Object.fromEntries(Object.entries(TOPIC_TO_SLUG).map(([t, s]) => [s, t]))
+
+// Internal view key (used by every existing goto()/setView() call site) -> URL path.
+// Track keys are derived from TOPIC_TO_SLUG so the slug map stays the only source of truth.
+const VIEW_TO_PATH = {
+  overview:      '/',
+  enter:         '/the-procedure',
+  calendar:      '/calendar',
+  best:          '/best-emails',
+  winners:       '/winners',
+  'tracks-home': '/tracks',
+  rule:          '/rules',
+  prizes:        '/prize-pool',
+  about:         '/about',
+  ...Object.fromEntries(Object.entries(TOPIC_TO_SLUG).map(([t, s]) => [`track-${t}`, `/tracks/${s}`])),
+}
+// Map an internal view key (e.g. 'prizes', 'track-unreachable') to its URL path.
+function viewToPath(view) {
+  return VIEW_TO_PATH[view] || '/'
+}
 
 // ---------------- TOP BAR ----------------
 function TopBar({ onMenu, onLogo, onJemini }) {
@@ -57,25 +102,28 @@ function NavItem({ icon, label, count, active, onClick, cls = '' }) {
   )
 }
 
-function Sidebar({ onCompose, view, setView, open }) {
+function Sidebar({ onCompose, goto, pathname, open }) {
+  // Highlight derives from the URL. Home is active for both '/' and '/home'.
+  const isActive = (view) =>
+    view === 'overview' ? (pathname === '/' || pathname === '/home') : pathname === viewToPath(view)
   return (
     <div className={`sidebar${open ? '' : ' sidebar-collapsed'}`}>
       <div className="compose" onClick={onCompose}><I.Pencil /> Enter</div>
 
-      <NavItem icon={<I.M name="inbox" />}         label="Home"           count="2047" active={view === 'overview'} onClick={() => setView('overview')} />
-      <NavItem icon={<I.M name="star" />}          label="The Procedure"                      active={view === 'enter'}    onClick={() => setView('enter')} />
-      <NavItem icon={<I.M name="calendar_month" />} label="Event Calendar"                    active={view === 'calendar'} onClick={() => setView('calendar')} />
-      <NavItem icon={<I.M name="auto_awesome" />}  label="Best Emails"                    active={view === 'best'}     onClick={() => setView('best')} />
+      <NavItem icon={<I.M name="inbox" />}         label="Home"           count="2047" active={isActive('overview')} onClick={() => goto('overview')} />
+      <NavItem icon={<I.M name="star" />}          label="The Procedure"                      active={isActive('enter')}    onClick={() => goto('enter')} />
+      <NavItem icon={<I.M name="calendar_month" />} label="Event Calendar"                    active={isActive('calendar')} onClick={() => goto('calendar')} />
+      <NavItem icon={<I.M name="auto_awesome" />}  label="Best Emails"                    active={isActive('best')}     onClick={() => goto('best')} />
 
-      <div className={`section-head section-head-btn${view === 'tracks-home' ? ' active' : ''}`} onClick={() => setView('tracks-home')}><I.CaretDown /> TRACKS</div>
-      <NavItem icon={<I.Plane size={20} />}  label="The Unreachable"    active={view === 'track-unreachable'} onClick={() => setView('track-unreachable')} />
-      <NavItem icon={<I.SparkPen size={20} />} label="Best Subject Line"  active={view === 'track-subject'}     onClick={() => setView('track-subject')} />
-      <NavItem icon={<I.M name="short_text" />} label="The Two-Liner"      active={view === 'track-twoliner'}    onClick={() => setView('track-twoliner')} />
-      <NavItem icon={<I.M name="help" />} label="The Ask"            active={view === 'track-ask'}         onClick={() => setView('track-ask')} />
+      <div className={`section-head section-head-btn${isActive('tracks-home') ? ' active' : ''}`} onClick={() => goto('tracks-home')}><I.CaretDown /> TRACKS</div>
+      <NavItem icon={<I.Plane size={20} />}  label="The Unreachable"    active={isActive('track-unreachable')} onClick={() => goto('track-unreachable')} />
+      <NavItem icon={<I.SparkPen size={20} />} label="Best Subject Line"  active={isActive('track-subject')}     onClick={() => goto('track-subject')} />
+      <NavItem icon={<I.M name="short_text" />} label="The Two-Liner"      active={isActive('track-twoliner')}    onClick={() => goto('track-twoliner')} />
+      <NavItem icon={<I.M name="help" />} label="The Ask"            active={isActive('track-ask')}         onClick={() => goto('track-ask')} />
 
       <div className="section-head"><I.CaretDown /> THE EVENT</div>
-      <NavItem icon={<I.M name="rule" />}        label="The Rule"   active={view === 'rule'}    onClick={() => setView('rule')} />
-      <NavItem icon={<I.M name="emoji_events" />} label="Prizes"     active={view === 'prizes'}  onClick={() => setView('prizes')} />
+      <NavItem icon={<I.M name="rule" />}        label="The Rule"   active={isActive('rule')}    onClick={() => goto('rule')} />
+      <NavItem icon={<I.M name="emoji_events" />} label="Prizes"     active={isActive('prizes')}  onClick={() => goto('prizes')} />
     </div>
   )
 }
@@ -85,6 +133,8 @@ const TRACK_OPTIONS = ['The Best Cold Email (overall)', 'The Unreachable', 'Best
 function ComposeWindow({ onClose, onSend }) {
   const [track, setTrack] = useState(TRACK_OPTIONS[0])
   const [email, setEmail] = useState('')
+  const [targetName, setTargetName] = useState('')
+  const [targetEmail, setTargetEmail] = useState('')
   const [subject, setSubject] = useState('')
   const [body, setBody] = useState('')
   const [files, setFiles] = useState([])
@@ -101,26 +151,40 @@ function ComposeWindow({ onClose, onSend }) {
         </div>
       </div>
 
+      {/* Entrant + target identity — always visible (these never collapse) */}
       <div className="cw-field">
-        <span className="cw-label">From</span>
-        <input value={email} onChange={e => setEmail(e.target.value)} placeholder="your email" />
+        <span className="cw-label">Enter Your Email</span>
+        <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" />
+      </div>
+      <div className="cw-field">
+        <span className="cw-label">Target Name</span>
+        <input value={targetName} onChange={e => setTargetName(e.target.value)} placeholder="Name of Person Emailed" />
+      </div>
+      <div className="cw-field">
+        <span className="cw-label">Target Email</span>
+        <input type="email" value={targetEmail} onChange={e => setTargetEmail(e.target.value)} placeholder="Email Address of the Target" />
       </div>
       <div className="cw-field">
         <span className="cw-label">To</span>
         <input value="judges@thecold.email" readOnly tabIndex={-1} style={{ color: '#5e5e5e' }} />
-        <span className="cw-ccbcc">Cc&nbsp;&nbsp;Bcc</span>
       </div>
-      <div className="cw-field">
-        <span className="cw-label">Track</span>
-        <select value={track} onChange={e => setTrack(e.target.value)} className="cw-select">
-          {TRACK_OPTIONS.map(t => <option key={t}>{t}</option>)}
-        </select>
+
+      {/* Track selection — custom-styled select */}
+      <div className="cw-track">
+        <span className="cw-track-label">Track Selection</span>
+        <div className="cw-track-control">
+          <select value={track} onChange={e => setTrack(e.target.value)} className="cw-track-select">
+            {TRACK_OPTIONS.map(t => <option key={t}>{t}</option>)}
+          </select>
+          <span className="cw-track-caret"><I.M name="expand_more" size={20} /></span>
+        </div>
       </div>
+
       <div className="cw-field cw-field-plain">
         <input className="cw-subject" value={subject} onChange={e => setSubject(e.target.value)} placeholder="Subject" />
       </div>
       <div className="cw-body">
-        <textarea value={body} onChange={e => setBody(e.target.value)} placeholder="Paste the cold email you sent (and the reply, if you like)..." />
+        <textarea value={body} onChange={e => setBody(e.target.value)} placeholder="Attach screenshot / PDF of the entire Email thread using the 'Attach Files' Button below. Feel free to add any side notes/info you want the judges to have." />
       </div>
 
       {files.length > 0 && (
@@ -136,39 +200,17 @@ function ComposeWindow({ onClose, onSend }) {
       )}
       <input ref={fileRef} type="file" multiple accept="image/*,.pdf" style={{ display: 'none' }} onChange={e => { addFiles(e.target.files); e.target.value = '' }} />
 
-      {/* Formatting toolbar (decorative — matches Gmail) */}
-      <div className="cw-toolbar">
-        <span className="cw-tb-font">Sans Serif <I.M name="arrow_drop_down" size={18} /></span>
-        <span className="cw-tb-div" />
-        <span className="cw-tb-ic"><I.M name="format_size" size={18} /></span>
-        <span className="cw-tb-div" />
-        <span className="cw-tb-ic"><I.M name="format_bold" size={18} /></span>
-        <span className="cw-tb-ic"><I.M name="format_italic" size={18} /></span>
-        <span className="cw-tb-ic"><I.M name="format_underlined" size={18} /></span>
-        <span className="cw-tb-ic"><I.M name="format_color_text" size={18} /></span>
-        <span className="cw-tb-div" />
-        <span className="cw-tb-ic"><I.M name="format_align_left" size={18} /></span>
-        <span className="cw-tb-ic"><I.M name="format_list_numbered" size={18} /></span>
-        <span className="cw-tb-ic"><I.M name="format_list_bulleted" size={18} /></span>
-        <span className="cw-tb-ic"><I.M name="format_indent_decrease" size={18} /></span>
-        <span className="cw-tb-ic"><I.M name="format_indent_increase" size={18} /></span>
-        <span className="cw-tb-ic"><I.M name="format_quote" size={18} /></span>
-        <span className="cw-tb-ic"><I.M name="more_vert" size={18} /></span>
-      </div>
-
-      {/* Send row */}
+      {/* Submit row */}
       <div className="cw-actions">
-        <button className="cw-send" onClick={() => onSend({ track, email, subject, body, files })}>
-          Send<span className="cw-send-caret"><I.M name="arrow_drop_down" size={20} /></span>
+        <button className="cw-send" onClick={() => onSend({ track, email, targetName, targetEmail, subject, body, files })}>
+          Submit
         </button>
         <div className="cw-act-icons">
-          <span className="cw-act-ic"><I.M name="format_color_text" size={20} /></span>
-          <span className="cw-act-ic" title="Attach files" onClick={() => fileRef.current && fileRef.current.click()}><I.M name="attach_file" size={20} /></span>
+          <span className="cw-act-ic cw-attach-cta" title="Attach Files" onClick={() => fileRef.current && fileRef.current.click()}><I.M name="attach_file" size={20} /></span>
           <span className="cw-act-ic"><I.M name="link" size={20} /></span>
           <span className="cw-act-ic"><I.M name="mood" size={20} /></span>
           <span className="cw-act-ic"><I.M name="add_to_drive" size={20} /></span>
           <span className="cw-act-ic"><I.M name="image" size={20} /></span>
-          <span className="cw-act-ic"><I.M name="schedule_send" size={20} /></span>
         </div>
         <span className="cw-trash" title="Discard" onClick={onClose}><I.M name="delete" size={20} /></span>
       </div>
@@ -384,6 +426,29 @@ function WalletHero({ onEnter, goto }) {
   )
 }
 
+// Manifesto block — reused on the home page and at /about (placeholder copy — DK supplies the real line)
+function Manifesto() {
+  return (
+    <section className="home-manifesto">
+      <blockquote className="home-manifesto-quote">
+        “The cold email is the last open door. Anyone can knock. Almost no one does it well.”
+      </blockquote>
+      <div className="home-manifesto-note">— manifesto placeholder, real copy TBD</div>
+    </section>
+  )
+}
+
+// ---------------- VIEW: ABOUT (standalone manifesto) ----------------
+function ViewAbout() {
+  return (
+    <div className="view-panel">
+      <div className="home">
+        <Manifesto />
+      </div>
+    </div>
+  )
+}
+
 function ViewOverview({ onEnter, goto }) {
   return (
     <div className="view-panel">
@@ -462,12 +527,7 @@ function ViewOverview({ onEnter, goto }) {
         </section>
 
         {/* 6 — MANIFESTO (placeholder copy — DK supplies the real line) */}
-        <section className="home-manifesto">
-          <blockquote className="home-manifesto-quote">
-            “The cold email is the last open door. Anyone can knock. Almost no one does it well.”
-          </blockquote>
-          <div className="home-manifesto-note">— manifesto placeholder, real copy TBD</div>
-        </section>
+        <Manifesto />
 
         {/* 7 — FOOTER */}
         <footer className="home-footer">
@@ -554,14 +614,56 @@ const ENTER_STEPS = [
 
 function ViewEnter({ onEnter }) {
   const [submitted, setSubmitted] = useState(false)
+  const [values, setValues] = useState({})
+  const [errors, setErrors] = useState({})
+
+  const setField = (name, v) => {
+    setValues(p => ({ ...p, [name]: v }))
+    setErrors(p => (p[name] ? { ...p, [name]: undefined } : p))
+  }
+  const toggleCheck = (name, opt) => {
+    setValues(p => {
+      const cur = Array.isArray(p[name]) ? p[name] : []
+      const next = cur.includes(opt) ? cur.filter(o => o !== opt) : [...cur, opt]
+      return { ...p, [name]: next }
+    })
+    setErrors(p => (p[name] ? { ...p, [name]: undefined } : p))
+  }
+
+  // Per-field validation by data type. Required fields block submit;
+  // optional fields only block if their format is wrong (email / URL).
+  const validate = () => {
+    const e = {}
+    ENTER_FORM.questions.forEach(qq => {
+      const v = values[qq.name]
+      const empty = qq.type === 'checkbox' ? !(Array.isArray(v) && v.length) : !(v && String(v).trim())
+      if (qq.required && empty) { e[qq.name] = 'This field is required.'; return }
+      if (empty) return
+      if (qq.type === 'email' && !EMAIL_RE.test(String(v).trim())) e[qq.name] = 'Enter a valid email address.'
+      if (qq.type === 'url' && !URL_RE.test(String(v).trim())) e[qq.name] = 'Enter a valid link (e.g. https://…).'
+    })
+    return e
+  }
+
+  const handleSubmit = () => {
+    const e = validate()
+    setErrors(e)
+    if (Object.keys(e).length) return
+    // TODO(Akul): POST `values` to REGISTRATION_FORM_URL (Google Form) or
+    // redirect/embed for confirmation once the form URL is supplied.
+    setSubmitted(true)
+  }
 
   const renderInput = (qq) => {
+    const v = values[qq.name]
+    const err = errors[qq.name]
+    const cls = 'enter-input' + (err ? ' has-error' : '')
     switch (qq.type) {
-      case 'email':     return <input type="email" className="enter-input" placeholder="Your answer" />
-      case 'url':       return <input type="url"   className="enter-input" placeholder="https://" />
-      case 'paragraph': return <textarea className="enter-textarea" rows={3} placeholder="Your answer" />
+      case 'email':     return <input type="email" className={cls} placeholder={qq.ph || 'Your answer'} value={v || ''} onChange={e => setField(qq.name, e.target.value)} />
+      case 'url':       return <input type="url"   className={cls} placeholder={qq.ph || 'https://'} value={v || ''} onChange={e => setField(qq.name, e.target.value)} />
+      case 'paragraph': return <textarea className={'enter-textarea' + (err ? ' has-error' : '')} rows={3} placeholder={qq.ph || 'Your answer'} value={v || ''} onChange={e => setField(qq.name, e.target.value)} />
       case 'dropdown':  return (
-        <select className="enter-select" defaultValue="">
+        <select className={'enter-select' + (err ? ' has-error' : '')} value={v || ''} onChange={e => setField(qq.name, e.target.value)}>
           <option value="" disabled>Choose</option>
           {qq.options.map(o => <option key={o} value={o}>{o}</option>)}
         </select>
@@ -569,30 +671,54 @@ function ViewEnter({ onEnter }) {
       case 'radio':     return (
         <div className="enter-choices">
           {qq.options.map(o => (
-            <label className="enter-choice" key={o}><span className="enter-radio" /> {o}</label>
+            <label className="enter-choice" key={o} onClick={() => setField(qq.name, o)}>
+              <span className={'enter-radio' + (v === o ? ' checked' : '')} /> {o}
+            </label>
           ))}
         </div>
       )
       case 'checkbox':  return (
         <div className="enter-choices">
-          {qq.options.map(o => (
-            <label className="enter-choice" key={o}><span className="enter-checkbox" /> {o}</label>
-          ))}
+          {qq.options.map(o => {
+            const on = Array.isArray(v) && v.includes(o)
+            return (
+              <label className="enter-choice" key={o} onClick={() => toggleCheck(qq.name, o)}>
+                <span className={'enter-checkbox' + (on ? ' checked' : '')} /> {o}
+              </label>
+            )
+          })}
         </div>
       )
-      default:          return <input type="text" className="enter-input" placeholder="Your answer" />
+      default:          return <input type="text" className={cls} placeholder={qq.ph || 'Your answer'} value={v || ''} onChange={e => setField(qq.name, e.target.value)} />
     }
   }
 
+  const Field = ({ qq }) => (
+    <label className="enter-field">
+      <span className="enter-field-q">{qq.q}{qq.required && <span className="enter-req"> *</span>}</span>
+      {renderInput(qq)}
+      {errors[qq.name] && <span className="enter-error"><I.M name="error" size={15} /> {errors[qq.name]}</span>}
+    </label>
+  )
+
+  const required = ENTER_FORM.questions.filter(q => q.required)
+  const optional = ENTER_FORM.questions.filter(q => !q.required)
+
   const FieldList = () => (
-    <div className="enter-fields">
-      {ENTER_FORM.questions.map((qq, i) => (
-        <label className="enter-field" key={i}>
-          <span className="enter-field-q">{qq.q}{qq.required && <span className="enter-req"> *</span>}</span>
-          {renderInput(qq)}
-        </label>
-      ))}
-    </div>
+    <>
+      <div className="enter-section">
+        <div className="enter-section-head">About you</div>
+        <div className="enter-fields">
+          {required.map(qq => <Field key={qq.name} qq={qq} />)}
+        </div>
+      </div>
+      <div className="enter-section">
+        <div className="enter-section-head">Optional details <span className="enter-section-hint">— skip any of these</span></div>
+        <div className="enter-fields">
+          {optional.map(qq => <Field key={qq.name} qq={qq} />)}
+        </div>
+      </div>
+    </>
   )
 
   const Done = ({ cls }) => (
@@ -600,7 +726,7 @@ function ViewEnter({ onEnter }) {
       <I.M name="check_circle" size={40} />
       <h3>You’re registered.</h3>
       <p>We’ve emailed you a confirmation. Now go send one real cold email — then come back and submit the reply.</p>
-      <span className="enter-link" onClick={() => setSubmitted(false)}>Register someone else</span>
+      <span className="enter-link" onClick={() => { setSubmitted(false); setValues({}); setErrors({}) }}>Register someone else</span>
     </div>
   )
 
@@ -643,15 +769,18 @@ function ViewEnter({ onEnter }) {
             {submitted ? <Done cls="enter-done-light" /> : (
               <>
                 <FieldList />
-                <button className="gclass-btn" onClick={() => setSubmitted(true)}>Hand in registration</button>
+                <button className="gclass-btn" onClick={handleSubmit}>Hand in registration</button>
               </>
             )}
           </div>
 
           <div className="gclass-card gclass-attach">
             <h3 className="gclass-h3">Funnel 2 — Your submission</h3>
-            <p>When they reply, attach a screenshot/PDF of the thread and submit your entry.</p>
-            <button className="gclass-attach-btn" onClick={onEnter}><I.M name="attach_file" size={18} /> Open submission</button>
+            <p>When they reply, attach a screenshot/PDF of the thread and submit your entry through the submission window.</p>
+            <a className="gclass-submit-link" role="button" tabIndex={0} onClick={onEnter}
+               onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onEnter() } }}>
+              <I.M name="send" size={18} /> Open the submission window
+            </a>
           </div>
         </main>
       </div>
@@ -2020,30 +2149,19 @@ function ViewPrizes({ onEnter, goto }) {
 }
 
 // ================================================================
-// MAIN PANEL — renders the active view
+// TRACK ROUTE — resolves /tracks/:slug -> internal topic
 // ================================================================
-function MainPanel({ view, onEnter, goto }) {
-  switch (view) {
-    case 'overview':          return <ViewOverview onEnter={onEnter} goto={goto} />
-    case 'winners':           return <ViewWinners />
-    case 'spam':              return <ViewSpam />
-    case 'enter':             return <ViewEnter onEnter={onEnter} />
-    case 'calendar':          return <ViewCalendar />
-    case 'best':              return <ViewBest />
-    case 'tracks-home':       return <ViewTracksHome goto={goto} onEnter={onEnter} />
-    case 'track-unreachable': return <ViewTrack topic="unreachable" />
-    case 'track-subject':     return <ViewTrack topic="subject" />
-    case 'track-twoliner':    return <ViewTrack topic="twoliner" />
-    case 'track-ask':         return <ViewTrack topic="ask" />
-    case 'rule':              return <ViewRule onEnter={onEnter} />
-    case 'prizes':            return <ViewPrizes onEnter={onEnter} goto={goto} />
-    default:                  return <ViewOverview onEnter={onEnter} goto={goto} />
-  }
+function TrackRoute() {
+  const { slug } = useParams()
+  const topic = SLUG_TO_TOPIC[slug]
+  if (!topic) return <Navigate to="/tracks" replace />
+  return <ViewTrack topic={topic} />
 }
 
 // ---------------- APP ----------------
 export default function App() {
-  const [view, setView] = useState('overview')
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
   const [composeOpen, setComposeOpen] = useState(false)
   const [jeminiOpen, setJeminiOpen] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(() => typeof window === 'undefined' || window.innerWidth > 768)
@@ -2063,14 +2181,21 @@ export default function App() {
     toastTimer.current = setTimeout(() => setToast(''), 2600)
   }
 
-  const submitEntry = ({ email, files }) => {
-    if (!email) { showToast('Add your email first.'); return }
-    if (!files || !files.length) { showToast('Attach a screenshot of the reply (paperclip).'); return }
+  const submitEntry = ({ email, targetName, targetEmail, files }) => {
+    if (!email || !EMAIL_RE.test(email.trim())) { showToast('Enter a valid email for yourself first.'); return }
+    if (!targetName || !targetName.trim()) { showToast('Add the name of the person you emailed.'); return }
+    if (targetEmail && !EMAIL_RE.test(targetEmail.trim())) { showToast('That target email doesn’t look valid.'); return }
+    if (!files || !files.length) { showToast('Attach a screenshot/PDF of the thread (paperclip).'); return }
+    // TODO(Akul): POST these fields to SUBMISSION_FORM_URL (Google Form) or
+    // redirect/embed for confirmation once the form URL is supplied.
     setComposeOpen(false)
     showToast('Entry submitted. Good luck — go get the reply.')
   }
 
-  const goHome = () => setView('overview')
+  // Navigate by internal view key — preserves every existing goto()/setView() call site.
+  const goto = (view) => navigate(viewToPath(view))
+  const goHome = () => navigate('/')
+  const onEnter = () => setComposeOpen(true)
 
   return (
     <div onClick={() => jeminiOpen && setJeminiOpen(false)}>
@@ -2082,12 +2207,25 @@ export default function App() {
       <div className="app">
         <Sidebar
           onCompose={() => setComposeOpen(true)}
-          view={view}
-          setView={setView}
+          goto={goto}
+          pathname={pathname}
           open={sidebarOpen}
         />
         <div className="main">
-          <MainPanel view={view} onEnter={() => setComposeOpen(true)} goto={setView} />
+          <Routes>
+            <Route path="/"               element={<ViewOverview onEnter={onEnter} goto={goto} />} />
+            <Route path="/home"           element={<ViewOverview onEnter={onEnter} goto={goto} />} />
+            <Route path="/the-procedure"  element={<ViewEnter onEnter={onEnter} />} />
+            <Route path="/tracks"         element={<ViewTracksHome goto={goto} onEnter={onEnter} />} />
+            <Route path="/tracks/:slug"   element={<TrackRoute />} />
+            <Route path="/prize-pool"     element={<ViewPrizes onEnter={onEnter} goto={goto} />} />
+            <Route path="/calendar"       element={<ViewCalendar />} />
+            <Route path="/rules"          element={<ViewRule onEnter={onEnter} />} />
+            <Route path="/best-emails"    element={<ViewBest />} />
+            <Route path="/winners"        element={<ViewWinners />} />
+            <Route path="/about"          element={<ViewAbout />} />
+            <Route path="*"               element={<Navigate to="/" replace />} />
+          </Routes>
         </div>
       </div>
 

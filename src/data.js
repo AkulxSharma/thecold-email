@@ -517,20 +517,23 @@ export const EVENTS = [
 
 // ENTER / "The Procedure" — Funnel 1 registration form (Google Forms surface)
 // type: short | email | url | dropdown | radio | checkbox | paragraph
+// Each question carries a stable `name` (used as the controlled-state key in
+// ViewEnter) and a `ph` placeholder. `type` drives per-field validation:
+//   email → email regex · url → URL format · required → blocks submit.
 export const ENTER_FORM = {
   title: 'Enter the Competition',
   desc: 'Funnel 1 — Registration. Tell us who you are and why you’re in. Send as many cold emails as you like — you only submit the ones that get a real reply.',
   questions: [
-    { q: 'Full name',              type: 'short',     required: true },
-    { q: 'Email',                  type: 'email',     required: true },
-    { q: 'Country',                type: 'dropdown',  required: true, options: ['United States', 'United Kingdom', 'India', 'Canada', 'Australia', 'Other'] },
-    { q: 'Age band',               type: 'radio',     required: true, options: ['Under 18', '18–24', '25–34', '35–44', '45+'] },
-    { q: 'Company / Institution',  type: 'short',     required: false },
-    { q: 'Position / Role',        type: 'short',     required: false },
-    { q: 'Social link / handle',   type: 'url',       required: false },
-    { q: 'Your background',        type: 'checkbox',  required: false, options: ['Writing', 'Marketing', 'Sales', 'Builder'] },
-    { q: 'Why are you joining?',                 type: 'paragraph', required: true },
-    { q: 'What do you want from the event?',     type: 'paragraph', required: true },
+    { name: 'full_name',     q: 'Full name',                          type: 'short',     required: true,  ph: 'First and last name' },
+    { name: 'email',         q: 'Email',                              type: 'email',     required: true,  ph: 'you@example.com' },
+    { name: 'country',       q: 'Country',                            type: 'dropdown',  required: true, options: ['United States', 'United Kingdom', 'India', 'Canada', 'Australia', 'Other'] },
+    { name: 'age_band',      q: 'Age band',                           type: 'radio',     required: true, options: ['Under 18', '18–24', '25–34', '35–44', '45+'] },
+    { name: 'company',       q: 'Company / Institution',              type: 'short',     required: false, ph: 'Where you work or study' },
+    { name: 'position',      q: 'Position / Role',                    type: 'short',     required: false, ph: 'Your title or role' },
+    { name: 'social',        q: 'Social link / handle',               type: 'url',       required: false, ph: 'https://…' },
+    { name: 'background',    q: 'Your background',                    type: 'checkbox',  required: false, options: ['Writing', 'Marketing', 'Sales', 'Builder'] },
+    { name: 'why_joining',   q: 'Why are you joining?',               type: 'paragraph', required: true,  ph: 'Tell us what brought you here.' },
+    { name: 'what_you_want', q: 'What do you want from the event?',   type: 'paragraph', required: true,  ph: 'What would make this worth it for you?' },
   ],
 }
 
