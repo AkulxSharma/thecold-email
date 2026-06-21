@@ -2087,210 +2087,253 @@ function DocFrame({ title, canvasClass = '', pageClass = '', children }) {
 //               editText -> the little edit label beside the strike
 //               underline-> index into data.judges  (underline)
 //             (the yellow highlight on The Goal lead line is constant for all tracks)
-// Per-track decoration. Same marked-up-Google-Doc vocabulary on every page
-// (handwritten margin notes, highlighter swipes, arrows, a star, reviewer
-// comment bubbles, strike/underline/circle/squiggle edits) — but each track gets
-// its own accent color, highlighter palette, star glyph, note voice, and mark
-// placement so no two pages look copy-pasted. `accent` matches the track's brand
-// color (see TRACK thumbnails) and tints the star + arrows.
-// notes: [{ t: text, c: pen color, r: rotation° }]   hl: highlighter color keys (y/g/o/p)
-// marks: where the strike / underline-or-circle / squiggle land + the edit word.
+// Per-track decoration. Every page shares ONE marked-up-Google-Doc vocabulary
+// (handwritten margin notes, highlighter swipes, doodle arrows, stars, reviewer
+// comment bubbles, hand strike/underline/circle/squiggle edits, grouping
+// brackets, boxed tags) — but each track composes a DIFFERENT set in different
+// places, so the four read like four genuinely different brainstormed docs, not
+// recolours of one template. Each is given an "annotator personality":
+//   unreachable = war-room strategist (arrows + a grouping bracket)
+//   subject     = copywriter A/B-testing words (many inline circles + version tags)
+//   twoliner    = ruthless editor (strike-heavy, deliberately SPARSE)
+//   ask         = dealmaker (bold, double-underline, annotates the scoring table)
+//
+// title:  { type: 'circle'|'highlight'|'underline'|'box', color }
+// margin: overlay items placed in the gutters / off-sheet margin, each anchored
+//         to a section heading (offsetTop measured at runtime) + a dy nudge:
+//   { kind:'note',    anchor, dy, side:'L'|'R', x?, text, color, rot }
+//   { kind:'arrow',   anchor, dy, side, x?, color, variant:'curlL'|'curlR'|'up'|'down' }
+//   { kind:'doodle',  anchor, dy, side, x?, glyph, color, rot, size }
+//   { kind:'tag',     anchor, dy, side, x?, text, color }
+//   { kind:'bracket', from, to, dyTop?, dyBot?, side, x?, text, color }
+//   { kind:'comment', anchor, dy, av, name, text, color, reply?:{av,name,text,color} }
+// inline: marks that WRAP an existing content line (never alter its text):
+//   { section:'goal'|'won'|'rewards'|'judges'|'strong'|'mistakes'|'scoring', idx,
+//     type:'hl-y'|'hl-g'|'hl-o'|'hl-p'|'circ'|'squig'|'strike'|'underline'|'underline2', edit? }
 const TRACK_DECOR = {
+  // ---- Track 1: war-room strategist — arrows + a grouping bracket ----
   unreachable: {
-    accent: '#1e8e3e', star: '✶',
-    notes: [
-      { t: 'who can we reach??', c: '#d93025', r: -6 },
-      { t: 'this = the bar',     c: '#1e8e3e', r: 4 },
-      { t: 'too easy?',          c: '#e37400', r: 7 },
+    title: { type: 'circle', color: 'rgba(217,48,37,.55)' },
+    margin: [
+      { kind: 'note',  anchor: 'goal', dy: 70,  side: 'R', x: -92, text: 'who can we reach??', color: '#d93025', rot: -6 },
+      { kind: 'arrow', anchor: 'goal', dy: 112, side: 'R', x: -72, color: '#1e8e3e', variant: 'curlL' },
+      { kind: 'bracket', from: 'rewards', to: 'judges', dyTop: 66, dyBot: -22, side: 'L', x: -34, text: 'the core', color: '#1a73e8' },
+      { kind: 'doodle', anchor: 'judges', dy: 40, side: 'L', x: -64, glyph: '✶', color: '#1e8e3e', rot: -12, size: 30 },
+      { kind: 'note',  anchor: 'mistakes', dy: 50, side: 'R', x: -86, text: 'too easy?', color: '#e37400', rot: 7 },
+      { kind: 'comment', anchor: 'rewards', dy: 6, av: 'AR', name: 'Aria',   text: 'push the difficulty angle', color: '#1a73e8' },
+      { kind: 'comment', anchor: 'scoring', dy: 6, av: 'JD', name: 'Jordan', text: 'keep this — it is the core', color: '#1e8e3e' },
     ],
-    arrows: { a1: true, a2: true },
-    comments: [
-      { av: 'AR', name: 'Aria',   text: 'push the difficulty angle' },
-      { av: 'JD', name: 'Jordan', text: 'yes — keep this section' },
+    inline: [
+      { section: 'goal',     idx: 0, type: 'hl-y' },
+      { section: 'rewards',  idx: 1, type: 'strike', edit: 'tighten' },
+      { section: 'judges',   idx: 0, type: 'underline' },
+      { section: 'mistakes', idx: 0, type: 'squig' },
     ],
-    hl: { goal: 'y', wonIdx: 0, won: 'g', strongIdx: 0, strong: 'o' },
-    marks: { strikeIdx: 1, editText: 'tighten this', judgeIdx: 0, judgeType: 'underline', mistakeIdx: 0 },
   },
+  // ---- Track 2: copywriter — many inline circles + version tags, threaded comment ----
   subject: {
-    accent: '#f9ab00', star: '✦',
-    notes: [
-      { t: 'the HOOK',        c: '#f9ab00', r: -5 },
-      { t: 'A/B these',       c: '#1a73e8', r: 5 },
-      { t: '← what opens it', c: '#d93025', r: 6 },
+    title: { type: 'highlight', color: 'rgba(255,234,84,.8)' },
+    margin: [
+      { kind: 'note',  anchor: 'goal', dy: 68,  side: 'R', x: -84, text: 'the HOOK', color: '#f9ab00', rot: -5 },
+      { kind: 'arrow', anchor: 'goal', dy: 108, side: 'R', x: -70, color: '#f9ab00', variant: 'curlL' },
+      { kind: 'tag',   anchor: 'won', dy: 48, side: 'R', x: -78, text: 'v2?', color: '#1a73e8' },
+      { kind: 'doodle', anchor: 'strong', dy: -2, side: 'L', x: -66, glyph: '✦', color: '#f9ab00', rot: -12, size: 28 },
+      { kind: 'note',  anchor: 'strong', dy: 44, side: 'R', x: -90, text: 'more of this', color: '#1e8e3e', rot: 5 },
+      { kind: 'comment', anchor: 'judges', dy: 2, av: 'MK', name: 'Mara', text: 'A/B test this one?', color: '#1a73e8',
+        reply: { av: 'TP', name: 'Theo', text: 'no clickbait — good', color: '#1e8e3e' } },
     ],
-    arrows: { a1: true, a2: true },
-    comments: [
-      { av: 'MK', name: 'Mara', text: 'A/B test this one?' },
-      { av: 'TP', name: 'Theo', text: 'no clickbait — good' },
+    inline: [
+      { section: 'goal',     idx: 0, type: 'hl-o' },
+      { section: 'won',      idx: 2, type: 'circ' },
+      { section: 'judges',   idx: 0, type: 'circ' },
+      { section: 'judges',   idx: 1, type: 'circ' },
+      { section: 'strong',   idx: 2, type: 'hl-p' },
+      { section: 'mistakes', idx: 0, type: 'strike', edit: 'never' },
+      { section: 'mistakes', idx: 1, type: 'squig' },
     ],
-    hl: { goal: 'o', wonIdx: 2, won: 'y', strongIdx: 2, strong: 'p' },
-    marks: { strikeIdx: 1, editText: 'punch it up', judgeIdx: 1, judgeType: 'circ', mistakeIdx: 0 },
   },
+  // ---- Track 3: ruthless editor — strike-heavy, deliberately SPARSE (whitespace is the point) ----
   twoliner: {
-    accent: '#d93025', star: '✱',
-    notes: [
-      { t: 'every word counts', c: '#d93025', r: -5 },
-      { t: 'cut cut cut',       c: '#e37400', r: 5 },
-      { t: 'keep it tight',     c: '#1e8e3e', r: -7 },
+    title: { type: 'underline', color: '#d93025' },
+    margin: [
+      { kind: 'note',  anchor: 'goal', dy: 70,  side: 'R', x: -88, text: 'every word counts', color: '#d93025', rot: -5 },
+      { kind: 'arrow', anchor: 'goal', dy: 112, side: 'R', x: -72, color: '#d93025', variant: 'curlL' },
+      { kind: 'tag',   anchor: 'rewards', dy: 150, side: 'R', x: -82, text: '−2 lines', color: '#d93025' },
+      { kind: 'doodle', anchor: 'strong', dy: -2, side: 'L', x: -66, glyph: '✱', color: '#d93025', rot: -12, size: 28 },
+      { kind: 'comment', anchor: 'rewards', dy: 6, av: 'SL', name: 'Sam', text: 'one sentence > two', color: '#1a73e8' },
     ],
-    arrows: { a1: true, a2: false },
-    comments: [
-      { av: 'SL', name: 'Sam',   text: 'one sentence > two' },
-      { av: 'NV', name: 'Nadia', text: 'love the restraint' },
+    inline: [
+      { section: 'goal',    idx: 0, type: 'hl-y' },
+      { section: 'rewards', idx: 3, type: 'strike', edit: 'cut' },
+      { section: 'rewards', idx: 4, type: 'underline' },
     ],
-    hl: { goal: 'y', wonIdx: 0, won: 'o', strongIdx: 3, strong: 'g' },
-    marks: { strikeIdx: 3, editText: 'cut', judgeIdx: 0, judgeType: 'underline', mistakeIdx: 1 },
   },
+  // ---- Track 4: dealmaker — bold emphasis, double-underline, annotates the scoring table ----
   ask: {
-    accent: '#1a73e8', star: '★',
-    notes: [
-      { t: 'go BIG',            c: '#1a73e8', r: -6 },
-      { t: 'love the ambition', c: '#1e8e3e', r: 4 },
-      { t: 'proof?? →',         c: '#d93025', r: 7 },
+    title: { type: 'box', color: '#1a73e8' },
+    margin: [
+      { kind: 'note',  anchor: 'goal', dy: 70, side: 'R', x: -84, text: 'go BIG', color: '#1a73e8', rot: -6 },
+      { kind: 'arrow', anchor: 'won', dy: 26, side: 'R', x: -66, color: '#1a73e8', variant: 'up' },
+      { kind: 'note',  anchor: 'won', dy: 54, side: 'R', x: -96, text: 'raise the stakes', color: '#1e8e3e', rot: 4 },
+      { kind: 'doodle', anchor: 'judges', dy: 40, side: 'L', x: -64, glyph: '★', color: '#1a73e8', rot: -10, size: 28 },
+      { kind: 'tag',   anchor: 'strong', dy: 36, side: 'R', x: -80, text: 'proof!', color: '#d93025' },
+      { kind: 'note',  anchor: 'mistakes', dy: 50, side: 'R', x: -86, text: 'proof?? →', color: '#d93025', rot: 7 },
+      { kind: 'comment', anchor: 'judges', dy: 2, av: 'RV', name: 'Rey', text: 'make the ask bigger', color: '#1a73e8',
+        reply: { av: 'GB', name: 'Gabe', text: 'proof matters here', color: '#1e8e3e' } },
     ],
-    arrows: { a1: false, a2: true },
-    comments: [
-      { av: 'RV', name: 'Rey',  text: 'make the ask bigger' },
-      { av: 'GB', name: 'Gabe', text: 'proof matters here' },
+    inline: [
+      { section: 'goal',     idx: 0, type: 'hl-p' },
+      { section: 'won',      idx: 0, type: 'hl-y' },
+      { section: 'judges',   idx: 0, type: 'underline2' },
+      { section: 'strong',   idx: 0, type: 'hl-g' },
+      { section: 'scoring',  idx: 0, type: 'circ' },
+      { section: 'mistakes', idx: 0, type: 'squig' },
     ],
-    hl: { goal: 'p', wonIdx: 0, won: 'y', strongIdx: 0, strong: 'g' },
-    marks: { strikeIdx: 2, editText: 'bolder', judgeIdx: 0, judgeType: 'circ', mistakeIdx: 0 },
   },
 }
 const DEFAULT_DECOR = TRACK_DECOR.unreachable
 // clamp an index into [0, len-1]; returns -1 when there is no line at all
 const clampIdx = (i, len) => (len > 0 ? Math.min(Math.max(i, 0), len - 1) : -1)
 
+// section lengths used to clamp inline-mark indices onto a real line
+const sectionLen = (data, section) => ({
+  goal: 1, won: data.howWon.length, rewards: data.rewards.length,
+  judges: data.judges.length, strong: data.strong.length,
+  mistakes: data.mistakes.length, scoring: data.scoring.length,
+}[section] ?? 0)
+
 function TrackMarkedDoc({ data, title, topic }) {
   const decor = TRACK_DECOR[topic] || DEFAULT_DECOR
-  // Resolve mark indices against THIS track's array lengths so a track with fewer
-  // rewards/judges/howWon lines lands its marks on a real line (or skips it).
-  const hlGreenIdx   = clampIdx(decor.hl.wonIdx,       data.howWon.length)
-  const strikeIdx    = clampIdx(decor.marks.strikeIdx, data.rewards.length)
-  const underlineIdx = clampIdx(decor.marks.judgeIdx,  data.judges.length)
-  const strongIdx    = clampIdx(decor.hl.strongIdx,    data.strong.length)
-  const mistakeIdx   = clampIdx(decor.marks.mistakeIdx, data.mistakes.length)
-  // handwritten margin note: keep its gutter side (CSS class) but take pen color +
-  // tilt from this track's config, plus the measured top.
-  const noteStyle = (n, top) => ({ color: n.c, transform: `rotate(${n.r}deg)`, ...(top != null ? { top } : {}) })
-  // Refs: each decoration's ANCHOR is a real content element. We measure each
-  // anchor's offsetTop relative to the page sheet and position the decoration there,
-  // so when the body font changes (reflow) the notes/arrows/comments stay aligned.
-  const pageRef = useRef(null)       // the .gdoc-page content wrapper (offset parent)
-  const goalRef = useRef(null)       // anchors note-1 + arrow-1
-  const wonRef = useRef(null)        // anchors note-2 + arrow-2
-  const rewardsRef = useRef(null)    // anchors comment-1
-  const mistakesRef = useRef(null)   // anchors note-3
-  const scoringRef = useRef(null)    // anchors comment-2
-  const strongRef = useRef(null)     // anchors the left-gutter star doodle
-  // measured top (px) for each decoration, keyed by class
+  // Inline marks → lookup by `${section}:${idx}`. Indices are clamped to this
+  // track's real array length so a mark never targets a line that doesn't exist.
+  const inlineMap = new Map()
+  for (const m of decor.inline) {
+    const idx = clampIdx(m.idx, sectionLen(data, m.section))
+    if (idx >= 0) inlineMap.set(`${m.section}:${idx}`, m)
+  }
+  // Wrap one content line in its inline mark (if any) — never changes the text.
+  const renderLine = (section, idx, text) => {
+    const m = inlineMap.get(`${section}:${idx}`)
+    if (!m) return <RT>{text}</RT>
+    if (m.type === 'strike') return <><span className="mkd-strike"><RT>{text}</RT></span> <span className="mkd-edit">{m.edit}</span></>
+    const cls = m.type.startsWith('hl-') ? `mkd-hl mkd-${m.type}` : `mkd-${m.type}`
+    return <span className={cls}><RT>{text}</RT></span>
+  }
+
+  // Anchors: every section heading (and the title) registers its element so we
+  // can measure its offsetTop relative to .mkd-doc-inner and place margin
+  // decorations beside it — re-measured on any reflow (font change / resize).
+  const pageRef = useRef(null)
+  const anchors = useRef({})
+  const setAnchor = (k) => (el) => { anchors.current[k] = el }
   const [tops, setTops] = useState({})
 
   useLayoutEffect(() => {
     const page = pageRef.current
     if (!page) return
     const measure = () => {
-      // offsetTop is relative to .mkd-doc-inner (the positioned content box).
-      // Each decoration gets a per-element vertical offset (dy) so it sits in a
-      // clear spot NEAR — never on top of — the heading/line it annotates.
-      const topOf = (el, dy = 0) => (el ? el.offsetTop + dy : undefined)
-      setTops({
-        // "<- start here" + arrow: beside the yellow-highlighted Goal lead line
-        n1: topOf(goalRef.current, 70),
-        a1: topOf(goalRef.current, 112),
-        // "love this!!" + arrow: just above-right of the green-highlighted first
-        // "How It's Won" line — clears the heading entirely (heading is ~44px tall)
-        n2: topOf(wonRef.current, 50),
-        a2: topOf(wonRef.current, 58),
-        // "revisit??": beside the first Common Mistakes bullet
-        n3: topOf(mistakesRef.current, 50),
-        // hand-drawn star doodle: LEFT gutter beside the Strong Entries heading
-        s1: topOf(strongRef.current, -4),
-        // comment bubbles live in the right margin, aligned to their sections
-        c1: topOf(rewardsRef.current, 8),
-        c2: topOf(scoringRef.current, 8),
-      })
+      const next = {}
+      for (const k in anchors.current) {
+        const el = anchors.current[k]
+        next[k] = el ? el.offsetTop : null
+      }
+      setTops(next)
     }
     measure()
-    // re-measure on ANY reflow of the page content (font change, resize, etc.)
     const ro = new ResizeObserver(measure)
     ro.observe(page)
     window.addEventListener('resize', measure)
     return () => { ro.disconnect(); window.removeEventListener('resize', measure) }
-  }, [data, title])
+  }, [data, title, topic])
+
+  // Place one margin/overlay decoration from its anchor's measured top + dy.
+  const MarginItem = ({ m }) => {
+    if (m.kind === 'comment') {
+      const top = tops[m.anchor]
+      return (
+        <div className="mkd-cwrap" style={top != null ? { top: top + (m.dy || 0) } : undefined}>
+          <div className="mkd-bubble">
+            <span className="mkd-comment-av" style={{ background: m.color }}>{m.av}</span>
+            <div className="mkd-comment-body"><b>{m.name}</b><span>{m.text}</span></div>
+          </div>
+          {m.reply && (
+            <div className="mkd-bubble mkd-bubble-reply">
+              <span className="mkd-comment-av" style={{ background: m.reply.color }}>{m.reply.av}</span>
+              <div className="mkd-comment-body"><b>{m.reply.name}</b><span>{m.reply.text}</span></div>
+            </div>
+          )}
+        </div>
+      )
+    }
+    if (m.kind === 'bracket') {
+      const from = tops[m.from], to = tops[m.to]
+      if (from == null || to == null) return null
+      const top = from + (m.dyTop || 0)
+      const height = (to + (m.dyBot || 0)) - top
+      const sideStyle = m.side === 'L' ? { left: m.x ?? -34 } : { right: m.x ?? -34 }
+      return <div className="mkd-bracket" style={{ top, height, '--c': m.color, ...sideStyle }}><span className="mkd-bracket-note">{m.text}</span></div>
+    }
+    const top = tops[m.anchor]
+    if (top == null) return null
+    const base = { top: top + (m.dy || 0), ...(m.side === 'L' ? { left: m.x ?? -72 } : { right: m.x ?? -86 }) }
+    if (m.kind === 'note')   return <span className="mkd-note" style={{ ...base, color: m.color, transform: `rotate(${m.rot || 0}deg)` }}>{m.text}</span>
+    if (m.kind === 'tag')    return <span className="mkd-tag" style={{ ...base, '--c': m.color }}>{m.text}</span>
+    if (m.kind === 'doodle') return <span className="mkd-star" style={{ ...base, color: m.color, fontSize: `${m.size || 28}pt`, transform: `rotate(${m.rot ?? -12}deg)` }}>{m.glyph}</span>
+    if (m.kind === 'arrow')  return <HandArrow className={`mkd-arrow mkd-arrow-${m.variant || 'curlL'}`} style={{ ...base, color: m.color }} />
+    return null
+  }
+
+  const titleCls = decor.title.type === 'circle' ? 'mkd-circle' : `mkd-title-${decor.title.type}`
 
   return (
     <DocFrame title={title} canvasClass="mkd-canvas" pageClass="mkd-page">
       {() => (<div className="mkd-doc-inner" ref={pageRef}>
-          {/* margin notes + comment bubbles — generic set-dressing, not track copy.
-              Each gets its measured top (anchored to a real heading) so it tracks the
-              text on font change; handwriting fonts are forced back on so the body
-              font switch does not affect them. */}
-          <span className="mkd-note mkd-note-1" style={noteStyle(decor.notes[0], tops.n1)}>{decor.notes[0].t}</span>
-          <span className="mkd-note mkd-note-2" style={noteStyle(decor.notes[1], tops.n2)}>{decor.notes[1].t}</span>
-          <span className="mkd-note mkd-note-3" style={noteStyle(decor.notes[2], tops.n3)}>{decor.notes[2].t}</span>
-          <span className="mkd-star" style={{ left: -72, color: decor.accent, ...(tops.s1 != null ? { top: tops.s1 } : {}) }}>{decor.star}</span>
-          {decor.arrows.a1 && <HandArrow className="mkd-arrow mkd-arrow-1" style={{ color: decor.accent, ...(tops.a1 != null ? { top: tops.a1 } : {}) }} />}
-          {decor.arrows.a2 && <HandArrow className="mkd-arrow mkd-arrow-2" style={{ color: decor.accent, ...(tops.a2 != null ? { top: tops.a2 } : {}) }} />}
-          <div className="mkd-comment mkd-comment-1" style={tops.c1 != null ? { top: tops.c1 } : undefined}>
-            <span className="mkd-comment-av">{decor.comments[0].av}</span>
-            <div className="mkd-comment-body"><b>{decor.comments[0].name}</b><span>{decor.comments[0].text}</span></div>
-          </div>
-          <div className="mkd-comment mkd-comment-2" style={tops.c2 != null ? { top: tops.c2 } : undefined}>
-            <span className="mkd-comment-av mkd-comment-av2">{decor.comments[1].av}</span>
-            <div className="mkd-comment-body"><b>{decor.comments[1].name}</b><span>{decor.comments[1].text}</span></div>
-          </div>
+          {/* Decoration layer: each track declares its own set in TRACK_DECOR;
+              positioned by measured section anchors so they reflow with the text. */}
+          {decor.margin.map((m, i) => <MarginItem key={i} m={m} />)}
 
-          <h1 className="gdoc-h1 mkd-circle">{title}</h1>
+          <h1 className={`gdoc-h1 ${titleCls}`} style={{ '--c': decor.title.color }} ref={setAnchor('title')}>{title}</h1>
 
-          <h2 className="gdoc-h2" ref={goalRef}>The Goal</h2>
+          <h2 className="gdoc-h2" ref={setAnchor('goal')}>The Goal</h2>
           <div className="gdoc-goal">
-            <p className="gdoc-p gdoc-goal-lead"><span className={`mkd-hl mkd-hl-${decor.hl.goal}`}><RT>{data.goal}</RT></span></p>
+            <p className="gdoc-p gdoc-goal-lead">{renderLine('goal', 0, data.goal)}</p>
             {data.goalExtra && <p className="gdoc-p gdoc-goal-extra"><RT>{data.goalExtra}</RT></p>}
           </div>
 
-          <h2 className="gdoc-h2" ref={wonRef}>How It's Won</h2>
-          {data.howWon.map((l, i) => (
-            <p className="gdoc-p" key={i}>
-              {i === hlGreenIdx ? <span className={`mkd-hl mkd-hl-${decor.hl.won}`}><RT>{l}</RT></span> : <RT>{l}</RT>}
-            </p>
-          ))}
+          <h2 className="gdoc-h2" ref={setAnchor('won')}>How It's Won</h2>
+          {data.howWon.map((l, i) => <p className="gdoc-p" key={i}>{renderLine('won', i, l)}</p>)}
 
-          <h2 className="gdoc-h2" ref={rewardsRef}>What This Track Rewards</h2>
-          {data.rewards.map((l, i) => (
-            <p className="gdoc-p" key={i}>
-              {i === strikeIdx ? <><span className="mkd-strike"><RT>{l}</RT></span> <span className="mkd-edit">{decor.marks.editText}</span></> : <RT>{l}</RT>}
-            </p>
-          ))}
+          <h2 className="gdoc-h2" ref={setAnchor('rewards')}>What This Track Rewards</h2>
+          {data.rewards.map((l, i) => <p className="gdoc-p" key={i}>{renderLine('rewards', i, l)}</p>)}
 
-          <h2 className="gdoc-h2">What Judges Look For</h2>
+          <h2 className="gdoc-h2" ref={setAnchor('judges')}>What Judges Look For</h2>
           <ul className="gdoc-list">
-            {data.judges.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-tri">▸</span><span>{i === underlineIdx ? <span className={decor.marks.judgeType === 'circ' ? 'mkd-circ' : 'mkd-underline'}><RT>{l}</RT></span> : <RT>{l}</RT>}</span></li>)}
+            {data.judges.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-tri">▸</span><span>{renderLine('judges', i, l)}</span></li>)}
           </ul>
 
-          <h2 className="gdoc-h2" ref={strongRef}>Strong Entries</h2>
+          <h2 className="gdoc-h2" ref={setAnchor('strong')}>Strong Entries</h2>
           <ul className="gdoc-list">
-            {data.strong.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-dot">•</span><span>{i === strongIdx ? <span className={`mkd-hl mkd-hl-${decor.hl.strong}`}><RT>{l}</RT></span> : <RT>{l}</RT>}</span></li>)}
+            {data.strong.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-dot">•</span><span>{renderLine('strong', i, l)}</span></li>)}
           </ul>
 
-          <h2 className="gdoc-h2" ref={mistakesRef}>Common Mistakes</h2>
+          <h2 className="gdoc-h2" ref={setAnchor('mistakes')}>Common Mistakes</h2>
           <ul className="gdoc-list">
-            {data.mistakes.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-dot">•</span><span>{i === mistakeIdx ? <span className="mkd-squig"><RT>{l}</RT></span> : <RT>{l}</RT>}</span></li>)}
+            {data.mistakes.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-dot">•</span><span>{renderLine('mistakes', i, l)}</span></li>)}
           </ul>
 
-          <h2 className="gdoc-h2" ref={scoringRef}>Scoring</h2>
+          <h2 className="gdoc-h2" ref={setAnchor('scoring')}>Scoring</h2>
           <table className="gdoc-table">
             <thead>
               <tr><th>Criteria</th><th className="gdoc-table-pts">Points</th></tr>
             </thead>
             <tbody>
               {data.scoring.map((s, i) => (
-                <tr key={i}><td>{s.label}</td><td className="gdoc-table-pts">{s.pts}</td></tr>
+                <tr key={i}><td>{s.label}</td><td className="gdoc-table-pts">{inlineMap.has(`scoring:${i}`) ? <span className="mkd-circ">{s.pts}</span> : s.pts}</td></tr>
               ))}
             </tbody>
           </table>
 
-          <h2 className="gdoc-h2">Prize</h2>
+          <h2 className="gdoc-h2" ref={setAnchor('prize')}>Prize</h2>
           <div className="gdoc-prize">
             <span className="gdoc-prize-icon"><I.M name="emoji_events" size={22} /></span>
             <p className="gdoc-p gdoc-prize-text"><strong className="mkd-hl mkd-hl-y">$500</strong> for the winning entry. Every qualifying entry is also automatically considered for the Best Cold Email ($1,000 grand prize).</p>

@@ -3244,7 +3244,7 @@ html, body, #root {
 .mkd-circle { position: relative; display: block; }
 .mkd-circle::after { content: ''; position: absolute; left: 50%; top: 50%;
   width: 360px; height: 64px; transform: translate(-50%,-50%) rotate(-2deg);
-  border: 2.4px solid rgba(217,48,37,.55); border-radius: 50%;
+  border: 2.4px solid var(--c, rgba(217,48,37,.55)); border-radius: 50%;
   pointer-events: none; }
 /* margin notes (handwritten) */
 .mkd-note { position: absolute; font-family: 'Caveat', cursive; font-weight: 700;
@@ -3273,4 +3273,48 @@ html, body, #root {
 .mkd-comment-av2 { background: #1e8e3e; }
 .mkd-comment-body { display: flex; flex-direction: column; gap: 2px; font-size: 12px; color: #3c4043; }
 .mkd-comment-body b { font-size: 12px; }
-@media (max-width: 1180px) { .mkd-comment { display: none; } .mkd-circle::after { width: 280px; } }
+/* ---- per-track decoration primitives (unique compositions, shared style) ---- */
+/* title treatments: circle (above) / highlight / underline / box — one per track */
+.mkd-title-highlight, .mkd-title-underline, .mkd-title-box {
+  display: block; width: max-content; max-width: 100%;
+  margin-left: auto; margin-right: auto; position: relative;
+}
+.mkd-title-highlight { background-image: linear-gradient(180deg, transparent 14%, var(--c) 14%, var(--c) 84%, transparent 84%); padding: 0 12px; }
+.mkd-title-box { padding: 4px 22px; }
+.mkd-title-box::after { content: ''; position: absolute; inset: -2px -6px; pointer-events: none;
+  border: 2.4px solid var(--c); border-radius: 7px 11px 8px 10px / 10px 8px 11px 7px; transform: rotate(-1deg); }
+.mkd-title-underline::after { content: ''; position: absolute; left: -2px; right: -2px; bottom: 0; height: 6px;
+  background-repeat: repeat-x; background-size: 14px 6px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='6'%3E%3Cpath d='M0 4 Q3.5 0 7 4 T14 4' stroke='%23d93025' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); }
+
+/* double hand underline (drawn under text, never recolours the text) */
+.mkd-underline2 { --u: rgba(26,115,232,.65);
+  background-image: linear-gradient(var(--u) 0 0), linear-gradient(var(--u) 0 0);
+  background-size: 100% 1.6px; background-position: 0 1.02em, 0 1.2em; background-repeat: no-repeat; }
+
+/* grouping bracket spanning a list in a gutter ( "[" opening toward the text ) */
+.mkd-bracket { position: absolute; width: 12px; z-index: 3; pointer-events: none;
+  border: 2.5px solid var(--c); border-right: 0; border-radius: 8px 0 0 8px; }
+.mkd-bracket-note { position: absolute; top: 50%; right: calc(100% + 5px); left: auto; white-space: nowrap;
+  font-family: 'Caveat', cursive; font-weight: 700; font-size: 14pt; color: var(--c); transform: translateY(-50%) rotate(-5deg); }
+
+/* small boxed handwriting tag (e.g. "v2?", "proof!", "−2 lines") */
+.mkd-tag { position: absolute; z-index: 3; pointer-events: none; white-space: nowrap;
+  font-family: 'Caveat', cursive; font-weight: 700; font-size: 13pt; color: var(--c);
+  border: 1.6px solid var(--c); border-radius: 5px; padding: 0 7px;
+  background: rgba(255,255,255,.7); transform: rotate(-4deg); }
+
+/* doodle-arrow orientation variants */
+.mkd-arrow-curlL { transform: scaleX(-1) rotate(10deg); }
+.mkd-arrow-curlR { transform: rotate(8deg); }
+.mkd-arrow-up    { transform: rotate(-122deg); }
+.mkd-arrow-down  { transform: rotate(40deg); }
+
+/* threaded comment bubbles (Google-Docs style) in the off-sheet right margin */
+.mkd-cwrap { position: absolute; left: calc(100% + 108px); width: 172px; z-index: 4;
+  display: flex; flex-direction: column; gap: 8px; font-family: 'Roboto', sans-serif; }
+.mkd-bubble { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(60,64,67,.25); padding: 10px 12px; display: flex; gap: 8px; }
+.mkd-bubble-reply { margin-left: 22px; }
+
+@media (max-width: 1180px) { .mkd-comment, .mkd-cwrap { display: none; } .mkd-circle::after { width: 280px; } }
