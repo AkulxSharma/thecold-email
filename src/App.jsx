@@ -482,24 +482,18 @@ function WalletHero({ onEnter, goto }) {
   )
 }
 
-// Manifesto block — reused on the home page and at /about (placeholder copy — DK supplies the real line)
-function Manifesto() {
-  return (
-    <section className="home-manifesto">
-      <blockquote className="home-manifesto-quote">
-        “Every closed door has an inbox. The cold email is the one knock that still works, and almost no one dares to use it. The world is far more reachable than it looks. It opens for anyone willing to write to a stranger and ask. One email, sent to the right person at the right moment, can change the shape of a life. The world replies to those who dare to write.”
-      </blockquote>
-      <div className="home-manifesto-note">Working draft. The final manifesto is coming from the team.</div>
-    </section>
-  )
-}
-
 // ---------------- VIEW: ABOUT (standalone manifesto) ----------------
+// Plain-text placeholder page for now — real manifesto/design comes later.
 function ViewAbout() {
   return (
     <div className="view-panel">
-      <div className="home">
-        <Manifesto />
+      <div className="manifesto-page">
+        <h1>Manifesto</h1>
+        <p>Every closed door has an inbox. The cold email is the one knock that still works, and almost no one dares to use it.</p>
+        <p>The world is far more reachable than it looks. It opens for anyone willing to write to a stranger and ask.</p>
+        <p>One email, sent to the right person at the right moment, can change the shape of a life.</p>
+        <p>The world replies to those who dare to write.</p>
+        <p className="manifesto-page-note">Working draft. The final manifesto is coming from the team.</p>
       </div>
     </div>
   )
@@ -572,9 +566,6 @@ function ViewOverview({ onEnter, goto }) {
             See the breakdown <I.M name="arrow_forward" size={16} />
           </button>
         </section>
-
-        {/* 6 — MANIFESTO (placeholder copy — DK supplies the real line) */}
-        <Manifesto />
 
         {/* 7 — FOOTER */}
         <footer className="home-footer">

@@ -2034,21 +2034,23 @@ html, body, #root {
 .home-prize-btn.dark:hover { background: #0b4ec0; }
 
 /* 6 — MANIFESTO */
-.home .home-manifesto {
-  text-align: center;
-  padding: 80px 24px;
-  background: radial-gradient(120% 140% at 50% 0%, #1f2c47 0%, #0f1726 75%);
-  max-width: none;
+/* Manifesto — plain-text placeholder page (will be designed later) */
+.manifesto-page {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 56px 24px 80px;
+  font-family: 'Roboto', Arial, sans-serif;
+  color: #202124;
 }
-.home-manifesto-quote {
+.manifesto-page h1 {
   font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
-  font-size: 30px; font-weight: 500; line-height: 1.35;
-  color: #fff; max-width: 720px; margin: 0 auto;
-  letter-spacing: -.5px;
+  font-size: 28px; font-weight: 600; margin: 0 0 24px;
 }
-.home-manifesto-note {
-  margin-top: 18px; font-size: 12px; color: rgba(255,255,255,.5);
-  font-family: 'Roboto', Arial, sans-serif; letter-spacing: .5px;
+.manifesto-page p {
+  font-size: 16px; line-height: 1.6; margin: 0 0 16px;
+}
+.manifesto-page-note {
+  margin-top: 28px; font-size: 13px; color: #80868b;
 }
 
 /* 7 — FOOTER */
@@ -2081,7 +2083,6 @@ html, body, #root {
   .home-track-cols { grid-template-columns: repeat(2, 1fr); }
   .home-tagline { font-size: 34px; }
   .home-prize-big { font-size: 48px; }
-  .home-manifesto-quote { font-size: 23px; }
 }
 
 /* ============ THE RULE PAGE — Google Keep board ============ */
