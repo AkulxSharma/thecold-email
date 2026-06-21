@@ -2091,16 +2091,23 @@ function TrackMarkedDoc({ data, title }) {
     const page = pageRef.current
     if (!page) return
     const measure = () => {
-      // offsetTop is relative to .gdoc-page (it is position:relative via .mkd-page).
+      // offsetTop is relative to .mkd-doc-inner (the positioned content box).
+      // Each decoration gets a per-element vertical offset (dy) so it sits in a
+      // clear spot NEAR — never on top of — the heading/line it annotates.
       const topOf = (el, dy = 0) => (el ? el.offsetTop + dy : undefined)
       setTops({
-        n1: topOf(goalRef.current),
-        a1: topOf(goalRef.current),
-        n2: topOf(wonRef.current),
-        a2: topOf(wonRef.current, 4),
-        n3: topOf(mistakesRef.current),
-        c1: topOf(rewardsRef.current),
-        c2: topOf(scoringRef.current),
+        // "<- start here" + arrow: beside the yellow-highlighted Goal lead line
+        n1: topOf(goalRef.current, 78),
+        a1: topOf(goalRef.current, 74),
+        // "love this!!" + arrow: just above-right of the green-highlighted first
+        // "How It's Won" line — clears the heading entirely (heading is ~44px tall)
+        n2: topOf(wonRef.current, 50),
+        a2: topOf(wonRef.current, 58),
+        // "revisit??": beside the first Common Mistakes bullet
+        n3: topOf(mistakesRef.current, 50),
+        // comment bubbles live in the right margin, aligned to their sections
+        c1: topOf(rewardsRef.current, 8),
+        c2: topOf(scoringRef.current, 8),
       })
     }
     measure()

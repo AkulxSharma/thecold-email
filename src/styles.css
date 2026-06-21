@@ -3234,18 +3234,23 @@ html, body, #root {
 /* margin notes (handwritten) */
 .mkd-note { position: absolute; font-family: 'Caveat', cursive; font-weight: 700;
   font-size: 19pt; line-height: 1; color: #1a73e8; z-index: 3; pointer-events: none; }
-.mkd-note-1 { top: 150px; right: 20px; color: #d93025; transform: rotate(-6deg); }
-.mkd-note-2 { top: 296px; left: 20px; color: #1e8e3e; transform: rotate(5deg); }
-.mkd-note-3 { top: 470px; right: 24px; color: #e37400; transform: rotate(7deg); }
-.mkd-arrow { position: absolute; width: 78px; height: 48px; color: #d93025; z-index: 3; pointer-events: none; }
-.mkd-arrow-1 { top: 150px; right: 78px; transform: scaleX(-1) rotate(8deg); }
-.mkd-arrow-2 { top: 300px; left: 64px; transform: rotate(6deg); }
-/* google-docs comment bubbles in right margin */
-.mkd-comment { position: absolute; right: -210px; width: 188px; background: #fff;
+/* notes sit in the page's right/left gutters (the 96px inner padding) — beside,
+   never on top of, the text they annotate. `top` is set inline from the
+   measured anchor + per-note dy (see TrackMarkedDoc useLayoutEffect). */
+.mkd-note-1 { right: -84px; color: #d93025; transform: rotate(-6deg); }
+.mkd-note-2 { right: -86px; color: #1e8e3e; transform: rotate(5deg); }
+.mkd-note-3 { right: -82px; color: #e37400; transform: rotate(7deg); }
+.mkd-arrow { position: absolute; width: 72px; height: 44px; color: #d93025; z-index: 3; pointer-events: none; }
+/* arrow-1 curves from the "start here" note leftward into the Goal highlight */
+.mkd-arrow-1 { right: -10px; transform: scaleX(-1) rotate(10deg); }
+/* arrow-2 points from the "love this!!" note leftward at the green line */
+.mkd-arrow-2 { right: -2px; color: #1e8e3e; transform: scaleX(-1) rotate(14deg); }
+/* google-docs comment bubbles — fully OUTSIDE the page sheet in the right margin.
+   left is measured from .mkd-doc-inner's right edge (content 100%); the page has
+   96px of right padding, so 100% + 96px lands exactly on the sheet's right edge. */
+.mkd-comment { position: absolute; left: calc(100% + 108px); width: 168px; background: #fff;
   border: 1px solid #e0e0e0; border-radius: 8px; box-shadow: 0 1px 3px rgba(60,64,67,.25);
   padding: 10px 12px; display: flex; gap: 8px; z-index: 4; font-family: 'Roboto', sans-serif; }
-.mkd-comment-1 { top: 220px; }
-.mkd-comment-2 { top: 560px; }
 .mkd-comment-av { flex: 0 0 28px; width: 28px; height: 28px; border-radius: 50%;
   background: #1a73e8; color: #fff; font-size: 11px; font-weight: 700;
   display: flex; align-items: center; justify-content: center; }
