@@ -1671,7 +1671,7 @@ function ViewTrack({ topic }) {
   if (!data) return <div className="view-panel"><div className="view-body"><p>Track not found.</p></div></div>
 
   // Every track renders in the marked-up Google Doc style, using its own content.
-  return <ViewTrackDoc data={data} title={TOPIC_NAMES[topic]} />
+  return <ViewTrackDoc data={data} title={TOPIC_NAMES[topic]} topic={topic} />
 }
 
 function ViewTrackUNUSED({ topic }) {
@@ -1940,8 +1940,8 @@ function HandArrow({ className, style }) {
 // ===================== TRACK THEME DISPATCH =====================
 // Every track page renders in the marked-up Google Doc style; TrackMarkedDoc
 // pulls each track's own content from TRACK_PAGES[topic] (passed in as `data`).
-function ViewTrackDoc({ data, title }) {
-  return <TrackMarkedDoc data={data} title={title} />
+function ViewTrackDoc({ data, title, topic }) {
+  return <TrackMarkedDoc data={data} title={title} topic={topic} />
 }
 
 // ===================== SHARED GOOGLE DOCS FRAME =====================
@@ -2074,7 +2074,68 @@ function DocFrame({ title, canvasClass = '', pageClass = '', children }) {
 }
 
 // ===================== THEME 1: MARKED-UP GOOGLE DOC =====================
-function TrackMarkedDoc({ data, title }) {
+// Per-track decoration layer. The marked-doc THEME is shared, but each track gets
+// its own reviewer scribbles so the 4 pages read as distinct hand-marked docs.
+//   notes:    [n1, n2, n3] handwritten margin-note texts (gutter, anchored to
+//             goal / howWon / mistakes respectively)
+//   arrows:   which of the two hand arrows to draw ({a1, a2} booleans)
+//   comments: the two Google-Docs comment bubbles ({av, name, text})
+//   marks:    which line index gets each mark. Indices are clamped/guarded at
+//             render so a track with fewer lines never crashes:
+//               hlGreen  -> index into data.howWon  (green highlighter)
+//               strike   -> index into data.rewards (strikethrough + edit note)
+//               editText -> the little edit label beside the strike
+//               underline-> index into data.judges  (underline)
+//             (the yellow highlight on The Goal lead line is constant for all tracks)
+const TRACK_DECOR = {
+  unreachable: {
+    notes: ['<- start here', 'love this!!', 'revisit??'],
+    arrows: { a1: true, a2: true },
+    comments: [
+      { av: 'AR', name: 'Aria',   text: 'can we make this punchier?' },
+      { av: 'JD', name: 'Jordan', text: 'yes — keep this section' },
+    ],
+    marks: { hlGreen: 0, strike: 1, editText: 'tighten this', underline: 0 },
+  },
+  subject: {
+    notes: ['the hook!', 'test 2 versions', '<- this opens it'],
+    arrows: { a1: true, a2: true },
+    comments: [
+      { av: 'MK', name: 'Mara',  text: 'A/B this one?' },
+      { av: 'TP', name: 'Theo',  text: 'no clickbait — good' },
+    ],
+    marks: { hlGreen: 1, strike: 2, editText: 'punch this up', underline: 2 },
+  },
+  twoliner: {
+    notes: ['every word counts', 'cut this?', 'tight!'],
+    arrows: { a1: true, a2: false },
+    comments: [
+      { av: 'SL', name: 'Sam',   text: 'one sentence > two' },
+      { av: 'NV', name: 'Nadia', text: 'love the restraint' },
+    ],
+    marks: { hlGreen: 0, strike: 3, editText: 'cut', underline: 1 },
+  },
+  ask: {
+    notes: ['go big', 'bold ask ✓', 'raise the stakes'],
+    arrows: { a1: false, a2: true },
+    comments: [
+      { av: 'RV', name: 'Rey',   text: 'make the ask bigger' },
+      { av: 'GB', name: 'Gabe',  text: 'proof matters here' },
+    ],
+    marks: { hlGreen: 0, strike: 2, editText: 'bolder', underline: 3 },
+  },
+}
+const DEFAULT_DECOR = TRACK_DECOR.unreachable
+// clamp an index into [0, len-1]; returns -1 when there is no line at all
+const clampIdx = (i, len) => (len > 0 ? Math.min(Math.max(i, 0), len - 1) : -1)
+
+function TrackMarkedDoc({ data, title, topic }) {
+  const decor = TRACK_DECOR[topic] || DEFAULT_DECOR
+  // Resolve mark indices against THIS track's array lengths so a track with fewer
+  // rewards/judges/howWon lines lands its marks on a real line (or skips it).
+  const hlGreenIdx   = clampIdx(decor.marks.hlGreen,   data.howWon.length)
+  const strikeIdx    = clampIdx(decor.marks.strike,    data.rewards.length)
+  const underlineIdx = clampIdx(decor.marks.underline, data.judges.length)
   // Refs: each decoration's ANCHOR is a real content element. We measure each
   // anchor's offsetTop relative to the page sheet and position the decoration there,
   // so when the body font changes (reflow) the notes/arrows/comments stay aligned.
@@ -2125,18 +2186,18 @@ function TrackMarkedDoc({ data, title }) {
               Each gets its measured top (anchored to a real heading) so it tracks the
               text on font change; handwriting fonts are forced back on so the body
               font switch does not affect them. */}
-          <span className="mkd-note mkd-note-1" style={tops.n1 != null ? { top: tops.n1 } : undefined}>&lt;- start here</span>
-          <span className="mkd-note mkd-note-2" style={tops.n2 != null ? { top: tops.n2 } : undefined}>love this!!</span>
-          <span className="mkd-note mkd-note-3" style={tops.n3 != null ? { top: tops.n3 } : undefined}>revisit??</span>
-          <HandArrow className="mkd-arrow mkd-arrow-1" style={tops.a1 != null ? { top: tops.a1 } : undefined} />
-          <HandArrow className="mkd-arrow mkd-arrow-2" style={tops.a2 != null ? { top: tops.a2 } : undefined} />
+          <span className="mkd-note mkd-note-1" style={tops.n1 != null ? { top: tops.n1 } : undefined}>{decor.notes[0]}</span>
+          <span className="mkd-note mkd-note-2" style={tops.n2 != null ? { top: tops.n2 } : undefined}>{decor.notes[1]}</span>
+          <span className="mkd-note mkd-note-3" style={tops.n3 != null ? { top: tops.n3 } : undefined}>{decor.notes[2]}</span>
+          {decor.arrows.a1 && <HandArrow className="mkd-arrow mkd-arrow-1" style={tops.a1 != null ? { top: tops.a1 } : undefined} />}
+          {decor.arrows.a2 && <HandArrow className="mkd-arrow mkd-arrow-2" style={tops.a2 != null ? { top: tops.a2 } : undefined} />}
           <div className="mkd-comment mkd-comment-1" style={tops.c1 != null ? { top: tops.c1 } : undefined}>
-            <span className="mkd-comment-av">AR</span>
-            <div className="mkd-comment-body"><b>Aria</b><span>can we make this punchier?</span></div>
+            <span className="mkd-comment-av">{decor.comments[0].av}</span>
+            <div className="mkd-comment-body"><b>{decor.comments[0].name}</b><span>{decor.comments[0].text}</span></div>
           </div>
           <div className="mkd-comment mkd-comment-2" style={tops.c2 != null ? { top: tops.c2 } : undefined}>
-            <span className="mkd-comment-av mkd-comment-av2">JD</span>
-            <div className="mkd-comment-body"><b>Jordan</b><span>yes — keep this section</span></div>
+            <span className="mkd-comment-av mkd-comment-av2">{decor.comments[1].av}</span>
+            <div className="mkd-comment-body"><b>{decor.comments[1].name}</b><span>{decor.comments[1].text}</span></div>
           </div>
 
           <h1 className="gdoc-h1 mkd-circle">{title}</h1>
@@ -2150,20 +2211,20 @@ function TrackMarkedDoc({ data, title }) {
           <h2 className="gdoc-h2" ref={wonRef}>How It's Won</h2>
           {data.howWon.map((l, i) => (
             <p className="gdoc-p" key={i}>
-              {i === 0 ? <span className="mkd-hl mkd-hl-g"><RT>{l}</RT></span> : <RT>{l}</RT>}
+              {i === hlGreenIdx ? <span className="mkd-hl mkd-hl-g"><RT>{l}</RT></span> : <RT>{l}</RT>}
             </p>
           ))}
 
           <h2 className="gdoc-h2" ref={rewardsRef}>What This Track Rewards</h2>
           {data.rewards.map((l, i) => (
             <p className="gdoc-p" key={i}>
-              {i === 1 ? <><span className="mkd-strike"><RT>{l}</RT></span> <span className="mkd-edit">tighten this</span></> : <RT>{l}</RT>}
+              {i === strikeIdx ? <><span className="mkd-strike"><RT>{l}</RT></span> <span className="mkd-edit">{decor.marks.editText}</span></> : <RT>{l}</RT>}
             </p>
           ))}
 
           <h2 className="gdoc-h2">What Judges Look For</h2>
           <ul className="gdoc-list">
-            {data.judges.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-tri">▸</span><span>{i === 0 ? <span className="mkd-underline"><RT>{l}</RT></span> : <RT>{l}</RT>}</span></li>)}
+            {data.judges.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-tri">▸</span><span>{i === underlineIdx ? <span className="mkd-underline"><RT>{l}</RT></span> : <RT>{l}</RT>}</span></li>)}
           </ul>
 
           <h2 className="gdoc-h2">Strong Entries</h2>
