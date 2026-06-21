@@ -2159,8 +2159,8 @@ function TrackMarkedDoc({ data, title, topic }) {
       const topOf = (el, dy = 0) => (el ? el.offsetTop + dy : undefined)
       setTops({
         // "<- start here" + arrow: beside the yellow-highlighted Goal lead line
-        n1: topOf(goalRef.current, 78),
-        a1: topOf(goalRef.current, 74),
+        n1: topOf(goalRef.current, 70),
+        a1: topOf(goalRef.current, 112),
         // "love this!!" + arrow: just above-right of the green-highlighted first
         // "How It's Won" line — clears the heading entirely (heading is ~44px tall)
         n2: topOf(wonRef.current, 50),
