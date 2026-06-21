@@ -2084,7 +2084,7 @@ function TrackMarkedDoc({ data, title }) {
 
           <h2 className="gdoc-h2">Common Mistakes</h2>
           <ul className="gdoc-list">
-            {data.mistakes.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-dash">–</span><span><RT>{l}</RT></span></li>)}
+            {data.mistakes.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-dot">•</span><span><RT>{l}</RT></span></li>)}
           </ul>
 
           <h2 className="gdoc-h2">Scoring</h2>
