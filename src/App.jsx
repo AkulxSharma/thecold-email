@@ -1928,9 +1928,9 @@ function RT({ children }) {
 }
 
 // ---- shared decorative hand-drawn arrow (used by the marked-up doc page + thumbnail) ----
-function HandArrow({ className }) {
+function HandArrow({ className, style }) {
   return (
-    <svg className={className} viewBox="0 0 90 56" aria-hidden="true">
+    <svg className={className} style={style} viewBox="0 0 90 56" aria-hidden="true">
       <path d="M4 8 C 30 4, 64 14, 78 44" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" />
       <path d="M78 44 L 64 38 M78 44 L 82 28" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" />
     </svg>
@@ -1949,8 +1949,37 @@ function ViewTrackDoc({ data, title }) {
 // plus the centered white page sheet. ALL 4 track themes render inside this so the
 // top of every track page is identical Google Docs chrome; only the page content differs.
 // `canvasClass` / `pageClass` let each theme add its namespace to tint/shape its sheet.
+// Google-Docs-style font picker. Roboto is web-loaded (index.html); the rest are
+// web-safe system fonts so they always render. `stack` is the actual CSS font-family.
+const DOC_FONTS = [
+  { name: 'Arial', stack: "Arial, 'Roboto', sans-serif" },
+  { name: 'Roboto', stack: "'Roboto', Arial, sans-serif" },
+  { name: 'Times New Roman', stack: "'Times New Roman', Times, serif" },
+  { name: 'Georgia', stack: "Georgia, 'Times New Roman', serif" },
+  { name: 'Verdana', stack: "Verdana, Geneva, sans-serif" },
+  { name: 'Courier New', stack: "'Courier New', Courier, monospace" },
+]
+
 function DocFrame({ title, canvasClass = '', pageClass = '', children }) {
   const menus = ['File', 'Edit', 'View', 'Insert', 'Format', 'Tools', 'Extensions', 'Help']
+  const [font, setFont] = useState(DOC_FONTS[0])      // selected body font (default Arial)
+  const [fontOpen, setFontOpen] = useState(false)     // is the font dropdown open
+  const fontWrapRef = useRef(null)
+
+  // close the font menu when clicking anywhere outside it
+  useEffect(() => {
+    if (!fontOpen) return
+    const onDocClick = (e) => {
+      if (fontWrapRef.current && !fontWrapRef.current.contains(e.target)) setFontOpen(false)
+    }
+    document.addEventListener('mousedown', onDocClick)
+    return () => document.removeEventListener('mousedown', onDocClick)
+  }, [fontOpen])
+
+  // children that care about reflow (TrackMarkedDoc) receive the active font so they
+  // can re-measure their decorations; the font is also applied to the page wrapper.
+  const renderedChildren = typeof children === 'function' ? children(font.stack) : children
+
   return (
     <div className={`view-panel gdoc-canvas ${canvasClass}`.trim()}>
       <div className="gdoc-chrome">
@@ -1988,7 +2017,32 @@ function DocFrame({ title, canvasClass = '', pageClass = '', children }) {
         <span className="gdoc-tb-sep" />
         <span className="gdoc-tb-style">Normal text<I.M name="arrow_drop_down" size={18} /></span>
         <span className="gdoc-tb-sep" />
-        <span className="gdoc-tb-font">Arial<I.M name="arrow_drop_down" size={18} /></span>
+        <span className="gdoc-font-wrap" ref={fontWrapRef}>
+          <span
+            className="gdoc-tb-font"
+            title="Font"
+            onClick={() => setFontOpen(o => !o)}
+          >
+            {font.name}<I.M name="arrow_drop_down" size={18} />
+          </span>
+          {fontOpen && (
+            <div className="gdoc-font-menu" role="menu">
+              {DOC_FONTS.map(f => (
+                <div
+                  key={f.name}
+                  role="menuitemradio"
+                  aria-checked={f.name === font.name}
+                  className={`gdoc-font-item${f.name === font.name ? ' is-active' : ''}`}
+                  style={{ fontFamily: f.stack }}
+                  onClick={() => { setFont(f); setFontOpen(false) }}
+                >
+                  <I.M name="check" size={18} className="gdoc-font-check" />
+                  {f.name}
+                </div>
+              ))}
+            </div>
+          )}
+        </span>
         <span className="gdoc-tb-sep" />
         <span className="gdoc-tb-step">−</span>
         <span className="gdoc-tb-size">11</span>
@@ -2011,8 +2065,8 @@ function DocFrame({ title, canvasClass = '', pageClass = '', children }) {
 
       {/* The page */}
       <div className="gdoc-page-wrap">
-        <div className={`gdoc-page ${pageClass}`.trim()}>
-          {children}
+        <div className={`gdoc-page ${pageClass}`.trim()} style={{ fontFamily: font.stack }}>
+          {renderedChildren}
         </div>
       </div>
     </div>
@@ -2021,39 +2075,79 @@ function DocFrame({ title, canvasClass = '', pageClass = '', children }) {
 
 // ===================== THEME 1: MARKED-UP GOOGLE DOC =====================
 function TrackMarkedDoc({ data, title }) {
+  // Refs: each decoration's ANCHOR is a real content element. We measure each
+  // anchor's offsetTop relative to the page sheet and position the decoration there,
+  // so when the body font changes (reflow) the notes/arrows/comments stay aligned.
+  const pageRef = useRef(null)       // the .gdoc-page content wrapper (offset parent)
+  const goalRef = useRef(null)       // anchors note-1 + arrow-1
+  const wonRef = useRef(null)        // anchors note-2 + arrow-2
+  const rewardsRef = useRef(null)    // anchors comment-1
+  const mistakesRef = useRef(null)   // anchors note-3
+  const scoringRef = useRef(null)    // anchors comment-2
+  // measured top (px) for each decoration, keyed by class
+  const [tops, setTops] = useState({})
+
+  useLayoutEffect(() => {
+    const page = pageRef.current
+    if (!page) return
+    const measure = () => {
+      // offsetTop is relative to .gdoc-page (it is position:relative via .mkd-page).
+      const topOf = (el, dy = 0) => (el ? el.offsetTop + dy : undefined)
+      setTops({
+        n1: topOf(goalRef.current),
+        a1: topOf(goalRef.current),
+        n2: topOf(wonRef.current),
+        a2: topOf(wonRef.current, 4),
+        n3: topOf(mistakesRef.current),
+        c1: topOf(rewardsRef.current),
+        c2: topOf(scoringRef.current),
+      })
+    }
+    measure()
+    // re-measure on ANY reflow of the page content (font change, resize, etc.)
+    const ro = new ResizeObserver(measure)
+    ro.observe(page)
+    window.addEventListener('resize', measure)
+    return () => { ro.disconnect(); window.removeEventListener('resize', measure) }
+  }, [data, title])
+
   return (
     <DocFrame title={title} canvasClass="mkd-canvas" pageClass="mkd-page">
-          {/* margin notes + comment bubbles — generic set-dressing, not track copy */}
-          <span className="mkd-note mkd-note-1">&lt;- start here</span>
-          <span className="mkd-note mkd-note-2">love this!!</span>
-          <span className="mkd-note mkd-note-3">revisit??</span>
-          <HandArrow className="mkd-arrow mkd-arrow-1" />
-          <HandArrow className="mkd-arrow mkd-arrow-2" />
-          <div className="mkd-comment mkd-comment-1">
+      {() => (<div className="mkd-doc-inner" ref={pageRef}>
+          {/* margin notes + comment bubbles — generic set-dressing, not track copy.
+              Each gets its measured top (anchored to a real heading) so it tracks the
+              text on font change; handwriting fonts are forced back on so the body
+              font switch does not affect them. */}
+          <span className="mkd-note mkd-note-1" style={tops.n1 != null ? { top: tops.n1 } : undefined}>&lt;- start here</span>
+          <span className="mkd-note mkd-note-2" style={tops.n2 != null ? { top: tops.n2 } : undefined}>love this!!</span>
+          <span className="mkd-note mkd-note-3" style={tops.n3 != null ? { top: tops.n3 } : undefined}>revisit??</span>
+          <HandArrow className="mkd-arrow mkd-arrow-1" style={tops.a1 != null ? { top: tops.a1 } : undefined} />
+          <HandArrow className="mkd-arrow mkd-arrow-2" style={tops.a2 != null ? { top: tops.a2 } : undefined} />
+          <div className="mkd-comment mkd-comment-1" style={tops.c1 != null ? { top: tops.c1 } : undefined}>
             <span className="mkd-comment-av">AR</span>
             <div className="mkd-comment-body"><b>Aria</b><span>can we make this punchier?</span></div>
           </div>
-          <div className="mkd-comment mkd-comment-2">
+          <div className="mkd-comment mkd-comment-2" style={tops.c2 != null ? { top: tops.c2 } : undefined}>
             <span className="mkd-comment-av mkd-comment-av2">JD</span>
             <div className="mkd-comment-body"><b>Jordan</b><span>yes — keep this section</span></div>
           </div>
 
           <h1 className="gdoc-h1 mkd-circle">{title}</h1>
 
-          <h2 className="gdoc-h2">The Goal</h2>
+          <h2 className="gdoc-h2" ref={goalRef}>The Goal</h2>
           <div className="gdoc-goal">
             <p className="gdoc-p gdoc-goal-lead"><span className="mkd-hl mkd-hl-y"><RT>{data.goal}</RT></span></p>
             {data.goalExtra && <p className="gdoc-p gdoc-goal-extra"><RT>{data.goalExtra}</RT></p>}
           </div>
 
-          <h2 className="gdoc-h2">How It's Won</h2>
+          <h2 className="gdoc-h2" ref={wonRef}>How It's Won</h2>
           {data.howWon.map((l, i) => (
             <p className="gdoc-p" key={i}>
               {i === 0 ? <span className="mkd-hl mkd-hl-g"><RT>{l}</RT></span> : <RT>{l}</RT>}
             </p>
           ))}
 
-          <h2 className="gdoc-h2">What This Track Rewards</h2>
+          <h2 className="gdoc-h2" ref={rewardsRef}>What This Track Rewards</h2>
           {data.rewards.map((l, i) => (
             <p className="gdoc-p" key={i}>
               {i === 1 ? <><span className="mkd-strike"><RT>{l}</RT></span> <span className="mkd-edit">tighten this</span></> : <RT>{l}</RT>}
@@ -2070,12 +2164,12 @@ function TrackMarkedDoc({ data, title }) {
             {data.strong.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-dot">•</span><span><RT>{l}</RT></span></li>)}
           </ul>
 
-          <h2 className="gdoc-h2">Common Mistakes</h2>
+          <h2 className="gdoc-h2" ref={mistakesRef}>Common Mistakes</h2>
           <ul className="gdoc-list">
             {data.mistakes.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-dot">•</span><span><RT>{l}</RT></span></li>)}
           </ul>
 
-          <h2 className="gdoc-h2">Scoring</h2>
+          <h2 className="gdoc-h2" ref={scoringRef}>Scoring</h2>
           <table className="gdoc-table">
             <thead>
               <tr><th>Criteria</th><th className="gdoc-table-pts">Points</th></tr>
@@ -2092,6 +2186,7 @@ function TrackMarkedDoc({ data, title }) {
             <span className="gdoc-prize-icon"><I.M name="emoji_events" size={22} /></span>
             <p className="gdoc-p gdoc-prize-text"><strong className="mkd-hl mkd-hl-y">$500</strong> for the winning entry. Every qualifying entry is also automatically considered for the Best Cold Email ($1,000 grand prize).</p>
           </div>
+      </div>)}
     </DocFrame>
   )
 }
