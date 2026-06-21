@@ -1526,20 +1526,27 @@ html, body, #root {
   font-size: 13px;
   color: #5f6368;
 }
-.gcalw-view-pill {
-  font-size: 14px;
-  color: #3c4043;
+/* "Add to your calendar" — Google-style rounded pill in the calendar header */
+.gcal-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 18px;
   border: 1px solid #dadce0;
   border-radius: 999px;
-  padding: 8px 18px;
   background: #fff;
-  cursor: pointer;
+  color: #0b57d0;
   font-family: 'Google Sans', Arial, sans-serif;
+  font-size: 14px;
   font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
   user-select: none;
   transition: background .15s, box-shadow .15s;
 }
-.gcalw-view-pill:hover { background: #f8f9fa; box-shadow: 0 1px 2px rgba(60,64,67,.2); }
+.gcal-add-btn:hover { background: #f6faff; box-shadow: 0 1px 2px rgba(60,64,67,.2); }
+.gcal-add-btn .msym { font-size: 18px; }
 
 /* ---- Day column headers (pinned) ---- */
 .gcalw-header-row {
@@ -1816,6 +1823,14 @@ html, body, #root {
 
 /* Launch film — NotebookLM-style: centered title + 2-col (copy | media card) */
 .home-film { padding: 56px 24px 64px; }
+/* thin centered rule between the hero deck and the launch-film section */
+.home-film::before {
+  content: "";
+  display: block;
+  width: 72px; height: 1px;
+  background: #e3e8ef;
+  margin: 0 auto 44px;
+}
 .home-film-title {
   font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
   font-size: 42px; font-weight: 400; color: #202124;
@@ -1958,6 +1973,17 @@ html, body, #root {
   display: flex; flex-direction: column; align-items: flex-start;
   background: none; border: none; padding: 0; cursor: pointer; text-align: left;
   font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
+  position: relative;
+}
+/* thin vertical rules between the 4 track columns (4-col layout only) */
+@media (min-width: 721px) {
+  .home-track-col:not(:first-child)::before {
+    content: "";
+    position: absolute;
+    left: -20px; top: 2px; bottom: 2px;
+    width: 1px;
+    background: #eef0f3;
+  }
 }
 .home-track-col-icon { color: #0b57d0; display: flex; margin-bottom: 20px; }
 .home-track-col-icon .msym { font-size: 34px; }
@@ -2231,6 +2257,29 @@ html, body, #root {
   z-index: 30;
   will-change: transform, opacity;
 }
+/* section tag above the headline — a hand-built Gmail-label-style chip */
+.walhero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 22px;
+  padding: 6px 14px 6px 11px;
+  background: #fff;
+  border: 1px solid #e3e8ef;
+  border-radius: 999px;
+  font: 600 12px/1 'Roboto Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #3c4043;
+  box-shadow: 0 1px 2px rgba(60,64,67,.08);
+}
+.walhero-tag-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #0b57d0;
+  box-shadow: 0 0 0 3px rgba(11,87,208,.14);
+}
 .walhero-title {
   font: 700 56px/1.08 'Google Sans','Roboto',Arial,sans-serif;
   letter-spacing: -1px;
@@ -2381,7 +2430,7 @@ html, body, #root {
 /* =====================================================================
    PRIZES — Google Pay (.gpay-*)
    ===================================================================== */
-.gpay-canvas { background: #f9fbfd; padding: 0 !important; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100%; box-sizing: border-box; }
+.gpay-canvas { background: #fff; padding: 0 !important; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100%; box-sizing: border-box; }
 
 .gpay-balance { background: transparent; text-align: center; padding: 14px 20px 24px; }
 .gpay-balance-label { font-size: 20px; color: #5f6368; }

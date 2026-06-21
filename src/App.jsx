@@ -364,6 +364,7 @@ function WalletHero({ onEnter, goto }) {
       <section className="walhero walhero-static">
         {pill}
         <div className="walhero-headline">
+          <span className="walhero-tag"><span className="walhero-tag-dot" />The Cold Email Competition</span>
           <h1 className="walhero-title">The world replies to those who know how to write.</h1>
           <p className="walhero-sub">Win up to <strong>$3,000</strong> for one great cold email — proven by who actually replied.</p>
         </div>
@@ -396,6 +397,7 @@ function WalletHero({ onEnter, goto }) {
         {pill}
 
         <div className="walhero-headline" style={headStyle}>
+          <span className="walhero-tag"><span className="walhero-tag-dot" />The Cold Email Competition</span>
           <h1 className="walhero-title">The world replies to those who know how to write.</h1>
           <p className="walhero-sub">Win up to <strong>$3,000</strong> for one great cold email — proven by who actually replied.</p>
         </div>
@@ -923,6 +925,36 @@ function eventWhen(ev, tzLabel = 'local') {
   return local
 }
 
+// Build a Google Calendar "add event" template link for the whole competition
+// window — an all-day, multi-day event from Launch (Jun 24) through Submissions
+// close (Jul 7). GCal treats the end date as exclusive, so we add one day.
+// The four key dates (launch / reg close / submit / winners) go in the details.
+function gcalAddUrl() {
+  const ymd = s => s.replace(/-/g, '')
+  const find = re => (DEADLINES.find(d => re.test(d.label)) || {}).date
+  const launch   = find(/launch/i)      || '2026-06-24'
+  const regClose = find(/reg closes/i)   || '2026-06-30'
+  const submit   = find(/submit/i)       || '2026-07-07'
+  const winners  = find(/winners/i)      || '2026-07-10'
+  // End date is exclusive in Google Calendar, so push it one day past the submit deadline.
+  const [y, m, d] = submit.split('-').map(Number)
+  const endExcl = fmtYMD(addDays(new Date(y, m - 1, d), 1))
+  const nice = s => parseDate(s).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  const details =
+    `Launch & registrations open: ${nice(launch)}\n` +
+    `Registrations close: ${nice(regClose)}\n` +
+    `Submissions close: ${nice(submit)}\n` +
+    `Winners announced: ${nice(winners)}\n\n` +
+    `Get the reply. https://thecold.email`
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: 'thecold.email — The Cold Email Competition',
+    dates: `${ymd(launch)}/${ymd(endExcl)}`,
+    details,
+  })
+  return `https://calendar.google.com/calendar/render?${params.toString()}`
+}
+
 function ViewCalendar() {
   const [monDate, setMonDate] = useState(weekStart(DEFAULT_WEEK))
   const [sel, setSel] = useState(null)  // selected event → detail popup
@@ -1047,7 +1079,10 @@ function ViewCalendar() {
         </div>
         <div className="gcalw-nav-right">
           <span className="gcalw-event-count">{totalEvents} events</span>
-          <span className="gcalw-view-pill">Week ▾</span>
+          <a className="gcal-add-btn" href={gcalAddUrl()} target="_blank" rel="noopener noreferrer"
+             title="Add the competition dates to your own calendar">
+            <I.M name="calendar_add_on" size={18} /> Add to your calendar
+          </a>
         </div>
       </div>
 
