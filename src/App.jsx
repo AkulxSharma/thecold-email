@@ -1747,11 +1747,15 @@ function ViewTrackDoc({ data, title, topic }) {
   return <TrackMarkedDoc data={data} title={title} /> // 'unreachable' (default)
 }
 
-// ===================== THEME 1: MARKED-UP GOOGLE DOC =====================
-function TrackMarkedDoc({ data, title }) {
+// ===================== SHARED GOOGLE DOCS FRAME =====================
+// The Google Docs chrome (title bar + menu row + formatting toolbar, all sticky)
+// plus the centered white page sheet. ALL 4 track themes render inside this so the
+// top of every track page is identical Google Docs chrome; only the page content differs.
+// `canvasClass` / `pageClass` let each theme add its namespace to tint/shape its sheet.
+function DocFrame({ title, canvasClass = '', pageClass = '', children }) {
   const menus = ['File', 'Edit', 'View', 'Insert', 'Format', 'Tools', 'Extensions', 'Help']
   return (
-    <div className="view-panel gdoc-canvas mkd-canvas">
+    <div className={`view-panel gdoc-canvas ${canvasClass}`.trim()}>
       <div className="gdoc-chrome">
       {/* Title bar */}
       <div className="gdoc-titlebar">
@@ -1810,7 +1814,18 @@ function TrackMarkedDoc({ data, title }) {
 
       {/* The page */}
       <div className="gdoc-page-wrap">
-        <div className="gdoc-page mkd-page">
+        <div className={`gdoc-page ${pageClass}`.trim()}>
+          {children}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ===================== THEME 1: MARKED-UP GOOGLE DOC =====================
+function TrackMarkedDoc({ data, title }) {
+  return (
+    <DocFrame title={title} canvasClass="mkd-canvas" pageClass="mkd-page">
           {/* margin notes + comment bubbles — generic set-dressing, not track copy */}
           <span className="mkd-note mkd-note-1">&lt;- start here</span>
           <span className="mkd-note mkd-note-2">love this!!</span>
@@ -1880,9 +1895,7 @@ function TrackMarkedDoc({ data, title }) {
             <span className="gdoc-prize-icon"><I.M name="emoji_events" size={22} /></span>
             <p className="gdoc-p gdoc-prize-text"><strong className="mkd-hl mkd-hl-y">$500</strong> for the winning entry. Every qualifying entry is also automatically considered for the Best Cold Email ($1,000 grand prize).</p>
           </div>
-        </div>
-      </div>
-    </div>
+    </DocFrame>
   )
 }
 
@@ -1907,8 +1920,8 @@ function TrackWhiteboard({ data, title }) {
   const secs = trackSections(data)
   const penFor = (i) => ['wb-pen-blk', 'wb-pen-blu', 'wb-pen-red', 'wb-pen-grn'][i % 4]
   return (
-    <div className="view-panel wb-board">
-      <div className="wb-inner">
+    <DocFrame title={title} canvasClass="wb-canvas" pageClass="wb-page">
+      <div className="wb-surface">
         <div className="wb-title-wrap">
           <h1 className="wb-title">{title}</h1>
           <Squiggle className="wb-title-underline" />
@@ -1951,7 +1964,7 @@ function TrackWhiteboard({ data, title }) {
           </div>
         </div>
       </div>
-    </div>
+    </DocFrame>
   )
 }
 
@@ -1959,8 +1972,8 @@ function TrackWhiteboard({ data, title }) {
 function TrackNotebook({ data, title }) {
   const secs = trackSections(data)
   return (
-    <div className="view-panel nb-canvas">
-      <div className="nb-page">
+    <DocFrame title={title} canvasClass="nb-canvas" pageClass="nb-page">
+      <div className="nb-surface">
         <div className="nb-coffee" aria-hidden="true" />
         <div className="nb-tape" aria-hidden="true" />
         <h1 className="nb-title" style={{ transform: `rotate(${rot(1, 1.4)}deg)` }}>{title}</h1>
@@ -1999,7 +2012,7 @@ function TrackNotebook({ data, title }) {
           <p className="nb-p"><span className="nb-hl">{PRIZE_LINE()}</span></p>
         </section>
       </div>
-    </div>
+    </DocFrame>
   )
 }
 
@@ -2008,7 +2021,8 @@ function TrackCorkboard({ data, title }) {
   const secs = trackSections(data)
   const cardColor = (i) => ['ck-c-white', 'ck-c-yellow', 'ck-c-blue', 'ck-c-pink', 'ck-c-green', 'ck-c-white'][i % 6]
   return (
-    <div className="view-panel ck-board">
+    <DocFrame title={title} canvasClass="ck-canvas" pageClass="ck-page">
+      <div className="ck-surface">
       <div className="ck-card ck-title-card" style={{ transform: `rotate(${rot(0, 1.6)}deg)` }}>
         <span className="ck-pin" />
         <h1 className="ck-title">{title}</h1>
@@ -2046,7 +2060,8 @@ function TrackCorkboard({ data, title }) {
           <p className="ck-p">{PRIZE_LINE()}</p>
         </div>
       </div>
-    </div>
+      </div>
+    </DocFrame>
   )
 }
 
