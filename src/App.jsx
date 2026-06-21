@@ -2145,6 +2145,7 @@ function TrackMarkedDoc({ data, title, topic }) {
   const rewardsRef = useRef(null)    // anchors comment-1
   const mistakesRef = useRef(null)   // anchors note-3
   const scoringRef = useRef(null)    // anchors comment-2
+  const strongRef = useRef(null)     // anchors the left-gutter star doodle
   // measured top (px) for each decoration, keyed by class
   const [tops, setTops] = useState({})
 
@@ -2166,6 +2167,8 @@ function TrackMarkedDoc({ data, title, topic }) {
         a2: topOf(wonRef.current, 58),
         // "revisit??": beside the first Common Mistakes bullet
         n3: topOf(mistakesRef.current, 50),
+        // hand-drawn star doodle: LEFT gutter beside the Strong Entries heading
+        s1: topOf(strongRef.current, -4),
         // comment bubbles live in the right margin, aligned to their sections
         c1: topOf(rewardsRef.current, 8),
         c2: topOf(scoringRef.current, 8),
@@ -2189,6 +2192,7 @@ function TrackMarkedDoc({ data, title, topic }) {
           <span className="mkd-note mkd-note-1" style={tops.n1 != null ? { top: tops.n1 } : undefined}>{decor.notes[0]}</span>
           <span className="mkd-note mkd-note-2" style={tops.n2 != null ? { top: tops.n2 } : undefined}>{decor.notes[1]}</span>
           <span className="mkd-note mkd-note-3" style={tops.n3 != null ? { top: tops.n3 } : undefined}>{decor.notes[2]}</span>
+          <span className="mkd-star" style={tops.s1 != null ? { top: tops.s1, left: -72 } : undefined}>✶</span>
           {decor.arrows.a1 && <HandArrow className="mkd-arrow mkd-arrow-1" style={tops.a1 != null ? { top: tops.a1 } : undefined} />}
           {decor.arrows.a2 && <HandArrow className="mkd-arrow mkd-arrow-2" style={tops.a2 != null ? { top: tops.a2 } : undefined} />}
           <div className="mkd-comment mkd-comment-1" style={tops.c1 != null ? { top: tops.c1 } : undefined}>
@@ -2227,14 +2231,14 @@ function TrackMarkedDoc({ data, title, topic }) {
             {data.judges.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-tri">▸</span><span>{i === underlineIdx ? <span className="mkd-underline"><RT>{l}</RT></span> : <RT>{l}</RT>}</span></li>)}
           </ul>
 
-          <h2 className="gdoc-h2">Strong Entries</h2>
+          <h2 className="gdoc-h2" ref={strongRef}>Strong Entries</h2>
           <ul className="gdoc-list">
-            {data.strong.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-dot">•</span><span><RT>{l}</RT></span></li>)}
+            {data.strong.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-dot">•</span><span>{i === 0 ? <span className="mkd-hl mkd-hl-o"><RT>{l}</RT></span> : <RT>{l}</RT>}</span></li>)}
           </ul>
 
           <h2 className="gdoc-h2" ref={mistakesRef}>Common Mistakes</h2>
           <ul className="gdoc-list">
-            {data.mistakes.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-dot">•</span><span><RT>{l}</RT></span></li>)}
+            {data.mistakes.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-dot">•</span><span>{i === 0 ? <span className="mkd-squig"><RT>{l}</RT></span> : <RT>{l}</RT>}</span></li>)}
           </ul>
 
           <h2 className="gdoc-h2" ref={scoringRef}>Scoring</h2>
