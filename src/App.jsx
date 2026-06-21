@@ -638,6 +638,26 @@ const ENTER_STEPS = [
 ]
 
 function ViewEnter({ onEnter }) {
+  const [ui, setUi] = useState('maps') // 'maps' | 'classroom'
+  const [active, setActive] = useState(0) // active route stop in the Maps UI
+  const [panelW, setPanelW] = useState(420) // draggable width of the directions panel
+
+  const startDrag = (e) => {
+    e.preventDefault()
+    const startX = e.clientX
+    const startW = panelW
+    document.body.style.userSelect = 'none'
+    document.body.style.cursor = 'col-resize'
+    const move = (ev) => setPanelW(Math.min(680, Math.max(320, startW + (ev.clientX - startX))))
+    const up = () => {
+      document.body.style.userSelect = ''
+      document.body.style.cursor = ''
+      document.removeEventListener('mousemove', move)
+      document.removeEventListener('mouseup', up)
+    }
+    document.addEventListener('mousemove', move)
+    document.addEventListener('mouseup', up)
+  }
   const [submitted, setSubmitted] = useState(false)
   const [values, setValues] = useState({})
   const [errors, setErrors] = useState({})
@@ -724,8 +744,10 @@ function ViewEnter({ onEnter }) {
     }
   }
 
-  const Field = ({ qq }) => (
-    <label className="enter-field">
+  // Rendered via direct function calls (not <Field/>) so the form keeps input
+  // focus — inner components defined in a parent remount on every keystroke.
+  const Field = (qq) => (
+    <label className="enter-field" key={qq.name}>
       <span className="enter-field-q">{qq.q}{qq.required && <span className="enter-req"> *</span>}</span>
       {renderInput(qq)}
       {errors[qq.name] && <span className="enter-error"><I.M name="error" size={15} /> {errors[qq.name]}</span>}
@@ -740,19 +762,19 @@ function ViewEnter({ onEnter }) {
       <div className="enter-section">
         <div className="enter-section-head">About you</div>
         <div className="enter-fields">
-          {required.map(qq => <Field key={qq.name} qq={qq} />)}
+          {required.map(qq => Field(qq))}
         </div>
       </div>
       <div className="enter-section">
         <div className="enter-section-head">Optional details <span className="enter-section-hint">(skip any of these)</span></div>
         <div className="enter-fields">
-          {optional.map(qq => <Field key={qq.name} qq={qq} />)}
+          {optional.map(qq => Field(qq))}
         </div>
       </div>
     </>
   )
 
-  const Done = ({ cls }) => (
+  const Done = (cls) => (
     <div className={'enter-done ' + cls}>
       <I.M name="check_circle" size={40} />
       <h3>You’re registered.</h3>
@@ -766,14 +788,14 @@ function ViewEnter({ onEnter }) {
     </div>
   )
 
-  // ---------------- GOOGLE CLASSROOM — "The Procedure" ----------------
-  return (
-    <div className="view-panel enter-canvas gclass">
+  // ---------------- CLASSROOM SHELL ----------------
+  const Classroom = () => (
+    <div className="enter-canvas gclass">
       <div className="gclass-banner">
         <div className="gclass-banner-in">
           <p className="gclass-section">thecold.email</p>
           <h1 className="gclass-title">The Procedure</h1>
-          <p className="gclass-sub">How to enter · Funnel 1 → Funnel 2</p>
+          <p className="gclass-sub">How to enter · Register → Submit</p>
         </div>
       </div>
       <div className="gclass-body">
@@ -806,12 +828,12 @@ function ViewEnter({ onEnter }) {
                 <span className="gclass-step-badge">{submitted ? <I.M name="check" size={18} /> : 1}</span>
                 <div className="gclass-funnel-heading">
                   <span className="gclass-step-eyebrow">Step 1 of 2</span>
-                  <h3 className="gclass-h3">Funnel 1: Registration</h3>
+                  <h3 className="gclass-h3">Registration</h3>
                 </div>
               </div>
-              {submitted ? <Done cls="enter-done-light" /> : (
+              {submitted ? Done('enter-done-light') : (
                 <>
-                  <FieldList />
+                  {FieldList()}
                   <button className="gclass-btn" onClick={handleSubmit}>Hand in registration</button>
                 </>
               )}
@@ -827,7 +849,7 @@ function ViewEnter({ onEnter }) {
                 <span className="gclass-step-badge">2</span>
                 <div className="gclass-funnel-heading">
                   <span className="gclass-step-eyebrow">Step 2 of 2</span>
-                  <h3 className="gclass-h3">Funnel 2: Your submission</h3>
+                  <h3 className="gclass-h3">Your submission</h3>
                 </div>
               </div>
               <p>When they reply, attach a screenshot/PDF of the thread and submit your entry through the submission window.</p>
@@ -840,6 +862,193 @@ function ViewEnter({ onEnter }) {
           </div>
         </main>
       </div>
+    </div>
+  )
+
+  // ---------------- MAPS SHELL (full Google Maps clone) ----------------
+  // Map coordinates (0–100 viewBox) for the 3 route stops. Spread wide so the
+  // blue dot's glide between stops reads as a long, visible animation.
+  const STOPS = [
+    { x: 13, y: 15 }, // 1 · Register
+    { x: 50, y: 50 }, // 2 · Send cold emails
+    { x: 87, y: 86 }, // 3 · Submit (destination)
+  ]
+  const ROUTE_D = `M${STOPS[0].x} ${STOPS[0].y} C 22 30, 32 36, ${STOPS[1].x} ${STOPS[1].y} C 64 62, 76 70, ${STOPS[2].x} ${STOPS[2].y}`
+  const ETA = ['2 min', '1 min', 'Arrive']
+  const NAV_ICON = ['straight', 'turn_right', 'place']
+  const lastStop = STOPS.length - 1
+  const dot = STOPS[active]
+
+  const StepDetail = (i) => {
+    if (i === 0) {
+      return submitted ? Done('enter-done-light') : (
+        <>
+          {FieldList()}
+          <button className="gmaps-go" onClick={handleSubmit}>
+            <I.M name="send" size={16} /> Hand in registration
+          </button>
+        </>
+      )
+    }
+    if (i === 1) {
+      return <p className="gmaps-step-text">{ENTER_STEPS[1].text}</p>
+    }
+    return (
+      <>
+        <p className="gmaps-step-text">{ENTER_STEPS[2].text}</p>
+        <button className="gmaps-go" type="button" onClick={onEnter}
+          onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onEnter() } }}>
+          <I.M name="send" size={16} /> Open the submission window
+        </button>
+        <p className="gmaps-step-help">No email leaves your inbox here.</p>
+      </>
+    )
+  }
+
+  // Google Maps balloon marker — teardrop body + darker inner circle.
+  const MapPin = ({ size, fill, dark }) => (
+    <svg width={size} height={Math.round(size * 1.35)} viewBox="0 0 24 32" style={{ display: 'block' }}>
+      <path fill={fill} d="M12 0C5.37 0 0 5.37 0 12c0 7.7 9.9 18.6 11.05 19.83.51.55 1.39.55 1.9 0C14.1 30.6 24 19.7 24 12 24 5.37 18.63 0 12 0z" />
+      <circle cx="12" cy="12" r="4.3" fill={dark} />
+    </svg>
+  )
+
+  const Maps = () => (
+    <div className="enter-canvas gmaps">
+      <div className="gmaps-app">
+        {/* ---- LEFT: directions panel (drag the handle to resize) ---- */}
+        <div className="gmaps-panel" style={{ width: panelW }}>
+          <div className="gmaps-trip">
+            <div className="gmaps-trip-rail" aria-hidden="true">
+              <span className="gmaps-trip-o" />
+              <span className="gmaps-trip-line" />
+              <span className="gmaps-trip-d"><I.M name="place" size={18} /></span>
+            </div>
+            <div className="gmaps-trip-fields">
+              <div className="gmaps-field">Your inbox</div>
+              <div className="gmaps-field gmaps-field-d">In the competition</div>
+            </div>
+            <button className="gmaps-swap" title="Reverse" tabIndex={-1}><I.M name="swap_vert" size={18} /></button>
+          </div>
+
+          <div className="gmaps-modes">
+            <span className="gmaps-mode is-active" title="Best route"><I.M name="directions_car" size={20} /></span>
+            <span className="gmaps-mode" title="Transit"><I.M name="directions_transit" size={20} /></span>
+            <span className="gmaps-mode" title="Walk"><I.M name="directions_walk" size={20} /></span>
+            <span className="gmaps-mode" title="Cycle"><I.M name="directions_bike" size={20} /></span>
+            <span className="gmaps-mode" title="Flight"><I.M name="flight" size={20} /></span>
+          </div>
+
+          <div className="gmaps-route-card">
+            <div className="gmaps-route-info">
+              <div className="gmaps-route-time">~5 min <span className="gmaps-route-dist">3 stops</span></div>
+              <div className="gmaps-route-best">Fastest way in</div>
+            </div>
+            <button className="gmaps-start" onClick={() => (active >= lastStop ? onEnter() : setActive(active + 1))}>
+              <I.M name={active >= lastStop ? 'send' : 'navigation'} size={18} />
+              <span className="gmaps-start-text">
+                <span className="gmaps-start-eyebrow">{active >= lastStop ? "You've arrived" : "You're here"}</span>
+                <span className="gmaps-start-step">{active >= lastStop ? 'Open submission' : `Stop ${active + 1}: ${ENTER_STEPS[active].title}`}</span>
+              </span>
+            </button>
+          </div>
+
+          <div className="gmaps-via">via The Procedure</div>
+          <div className="gmaps-divider" />
+
+          <div className="gmaps-steplist">
+            {ENTER_STEPS.map((s, i) => {
+              const open = active === i
+              const done = i === 0 && submitted
+              return (
+                <div key={s.n} className={'gmaps-steprow' + (open ? ' is-open' : '') + (done ? ' is-done' : '')}>
+                  <button className="gmaps-step-head" onClick={() => setActive(i)} aria-expanded={open}>
+                    <span className="gmaps-step-nav"><I.M name={done ? 'check' : NAV_ICON[i]} size={20} /></span>
+                    <span className="gmaps-step-main">
+                      <span className="gmaps-step-title">{s.title}</span>
+                      <span className="gmaps-step-sub">Stop {s.n} · {ETA[i]}</span>
+                    </span>
+                    <span className="gmaps-step-chev"><I.M name={open ? 'expand_less' : 'expand_more'} size={20} /></span>
+                  </button>
+                  {open && <div className="gmaps-step-detail">{StepDetail(i)}</div>}
+                </div>
+              )
+            })}
+          </div>
+
+          <div className="gmaps-divider" />
+          <div className="gmaps-due">
+            <I.M name="schedule" size={16} /> Registration closes Jul 6 · Submit reply by Jul 7
+          </div>
+        </div>
+
+        {/* drag handle to resize the panel */}
+        <div className="gmaps-resizer" onMouseDown={startDrag} role="separator" aria-orientation="vertical" title="Drag to resize">
+          <span className="gmaps-resizer-grip" />
+        </div>
+
+        {/* ---- RIGHT: map canvas ---- */}
+        <div className="gmaps-map">
+          <div className="gmaps-land" aria-hidden="true">
+            <span className="gmaps-park gmaps-park-1" />
+            <span className="gmaps-park gmaps-park-2" />
+            <span className="gmaps-water" />
+            <span className="gmaps-road gmaps-road-1" />
+            <span className="gmaps-road gmaps-road-2" />
+            <span className="gmaps-road gmaps-road-3" />
+          </div>
+
+          <svg className="gmaps-route-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path d={ROUTE_D} className="gmaps-route-casing" vectorEffect="non-scaling-stroke" />
+            <path d={ROUTE_D} className="gmaps-route-line" vectorEffect="non-scaling-stroke" />
+          </svg>
+
+          {STOPS.map((p, i) => {
+            const isDest = i === lastStop
+            return (
+              <button
+                key={i}
+                className={'gmaps-mpin' + (active === i ? ' is-active' : '')}
+                style={{ left: p.x + '%', top: p.y + '%' }}
+                onClick={() => setActive(i)}
+              >
+                <MapPin size={isDest ? 42 : 34} fill={isDest ? '#ea4335' : '#1a73e8'} dark={isDest ? '#a50e0e' : '#0842a0'} />
+                <span className="gmaps-mpin-tip">{ENTER_STEPS[i].title}</span>
+              </button>
+            )
+          })}
+
+          {/* user "blue dot" — glides to the active stop */}
+          <span className="gmaps-bluedot" style={{ left: dot.x + '%', top: dot.y + '%' }}>
+            <span className="gmaps-bluedot-halo" />
+            <span className="gmaps-bluedot-core" />
+          </span>
+
+          <div className="gmaps-ctrl gmaps-zoom">
+            <button className="gmaps-ctrl-btn" tabIndex={-1}><I.M name="add" size={18} /></button>
+            <span className="gmaps-ctrl-sep" />
+            <button className="gmaps-ctrl-btn" tabIndex={-1}><I.M name="remove" size={18} /></button>
+          </div>
+          <button className="gmaps-myloc" title="Your location" onClick={() => setActive(0)}>
+            <I.M name="my_location" size={20} />
+          </button>
+          <div className="gmaps-attr">Map data ©2026 thecold.email</div>
+        </div>
+      </div>
+    </div>
+  )
+
+  return (
+    <div className="view-panel enter-shell">
+      <div className="enter-uinav">
+        <button className={'enter-uitab' + (ui === 'maps' ? ' is-active' : '')} onClick={() => setUi('maps')}>
+          <I.M name="map" size={18} /> Maps
+        </button>
+        <button className={'enter-uitab' + (ui === 'classroom' ? ' is-active' : '')} onClick={() => setUi('classroom')}>
+          <I.M name="school" size={18} /> Classroom
+        </button>
+      </div>
+      {ui === 'maps' ? Maps() : Classroom()}
     </div>
   )
 }

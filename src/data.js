@@ -515,14 +515,14 @@ export const EVENTS = [
   { date: '2026-07-10', start: '17:00', end: '18:00', title: 'Winners announced (live)',      color: 'green' },
 ]
 
-// ENTER / "The Procedure" — Funnel 1 registration form (Google Forms surface)
+// ENTER / "The Procedure" — Step 1 registration form (Google Forms surface)
 // type: short | email | url | dropdown | radio | checkbox | paragraph
 // Each question carries a stable `name` (used as the controlled-state key in
 // ViewEnter) and a `ph` placeholder. `type` drives per-field validation:
 //   email → email regex · url → URL format · required → blocks submit.
 export const ENTER_FORM = {
   title: 'Enter the Competition',
-  desc: 'Funnel 1: Registration. Tell us who you are and why you’re in. Send as many cold emails as you like. You only submit the ones that get a real reply.',
+  desc: 'Registration. Tell us who you are and why you’re in. Send as many cold emails as you like. You only submit the ones that get a real reply.',
   questions: [
     { name: 'full_name',     q: 'Full name',                          type: 'short',     required: true,  ph: 'First and last name' },
     { name: 'email',         q: 'Email',                              type: 'email',     required: true,  ph: 'you@example.com' },

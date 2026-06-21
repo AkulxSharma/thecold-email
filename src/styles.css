@@ -2266,14 +2266,19 @@ html, body, #root {
   z-index: 30;
   will-change: transform, opacity;
 }
+/* Typography copied from wallet.google hero (live computed styles):
+   h1 — Google Sans 700, 78px/86px, -1.56px (= -0.02em), #3c4043, centered.
+   sub — Google Sans Text 400, 20px/28px, normal spacing, #5f6368.
+   Size scaled responsively (caps near wallet's 78px) so our longer headline fits. */
 .walhero-title {
-  font: 700 56px/1.08 'Google Sans','Roboto',Arial,sans-serif;
-  letter-spacing: -1px;
-  color: #202124;
+  font: 700 clamp(40px, 6.4vw, 76px)/1.1 'Google Sans','Roboto',Arial,sans-serif;
+  letter-spacing: -0.02em;
+  color: #3c4043;
   margin: 0 0 18px;
 }
 .walhero-sub {
-  font: 400 19px/1.5 'Roboto',Arial,sans-serif;
+  font: 400 20px/1.4 'Google Sans Text','Google Sans','Roboto',Arial,sans-serif;
+  letter-spacing: normal;
   color: #5f6368;
   max-width: 620px;
   margin: 0 auto 28px;
@@ -2286,6 +2291,7 @@ html, body, #root {
   z-index: 20;
   will-change: transform, opacity;
   pointer-events: none;
+  transform: translateY(96px); /* pull the card deck down, away from the subtext */
 }
 .walhero-deck .wcard { pointer-events: auto; }
 
@@ -2380,6 +2386,7 @@ html, body, #root {
   flex-direction: column;
   gap: 16px;
   width: min(360px, 90%);
+  margin-top: 64px;
 }
 .walhero-static .wcard {
   position: static;
@@ -3018,6 +3025,123 @@ html, body, #root {
 .gclass-funnel-help { font: 400 13px 'Roboto', sans-serif; color: #5f6368; margin: 12px 0 0 !important; }
 
 /* ============================================================
+   PROCEDURE — UI switcher navbar (Maps <-> Classroom)
+   ============================================================ */
+.enter-shell { display: flex; flex-direction: column; }
+.enter-uinav { display: flex; gap: 6px; padding: 10px 16px; background: #fff; border-bottom: 1px solid #e0e0e0; position: sticky; top: 0; z-index: 5; }
+.enter-uitab { display: inline-flex; align-items: center; gap: 7px; background: transparent; border: 1px solid transparent; border-radius: 999px; padding: 7px 16px; font: 500 13px 'Google Sans', sans-serif; color: #5f6368; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+.enter-uitab:hover { background: #f1f3f4; }
+.enter-uitab.is-active { background: #e8f0fe; color: #1a73e8; border-color: #d2e3fc; }
+
+/* ============================================================
+   PROCEDURE — Google Maps clone (directions + live map)
+   Colors/spacing/type matched to maps.google.com
+   ============================================================ */
+.gmaps { background: #e8eaed; }
+.gmaps-app { display: flex; height: calc(100vh - 122px); min-height: 580px; }
+
+/* ---- LEFT: directions panel ---- */
+.gmaps-panel { width: 408px; flex-shrink: 0; background: #fff; overflow-y: auto; box-shadow: 0 0 0 1px rgba(0,0,0,.04), 2px 0 6px rgba(60,64,67,.15); z-index: 2; }
+.gmaps-panel::-webkit-scrollbar { width: 8px; }
+.gmaps-panel::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 8px; }
+
+.gmaps-trip { display: flex; align-items: center; gap: 12px; padding: 16px 16px 12px; }
+.gmaps-trip-rail { display: flex; flex-direction: column; align-items: center; width: 18px; flex-shrink: 0; }
+.gmaps-trip-o { width: 12px; height: 12px; border-radius: 50%; border: 2px solid #5f6368; }
+.gmaps-trip-line { width: 0; height: 22px; border-left: 2px dotted #bdc1c6; margin: 3px 0; }
+.gmaps-trip-d { color: #ea4335; display: flex; }
+.gmaps-trip-fields { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.gmaps-field { background: #f1f3f4; border: 1px solid transparent; border-radius: 8px; padding: 10px 14px; font: 400 14px 'Roboto', sans-serif; color: #3c4043; }
+.gmaps-field:hover { background: #e8eaed; }
+.gmaps-field-d { color: #202124; }
+.gmaps-swap { width: 34px; height: 34px; flex-shrink: 0; border: 0; background: transparent; border-radius: 50%; color: #5f6368; cursor: default; display: flex; align-items: center; justify-content: center; }
+
+.gmaps-modes { display: flex; align-items: center; justify-content: space-around; padding: 2px 8px; border-bottom: 1px solid #e8eaed; }
+.gmaps-mode { display: flex; align-items: center; justify-content: center; height: 46px; flex: 1; color: #5f6368; border-bottom: 3px solid transparent; cursor: default; }
+.gmaps-mode.is-active { color: #1a73e8; border-bottom-color: #1a73e8; }
+
+.gmaps-route-card { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 16px; }
+.gmaps-route-info { min-width: 0; }
+.gmaps-route-time { font: 400 22px 'Google Sans', 'Roboto', sans-serif; color: #202124; display: flex; align-items: baseline; gap: 8px; }
+.gmaps-route-dist { font: 400 14px 'Roboto', sans-serif; color: #5f6368; }
+.gmaps-route-best { font: 400 14px 'Roboto', sans-serif; color: #1e8e3e; margin-top: 2px; }
+.gmaps-start { display: inline-flex; align-items: center; gap: 10px; background: #1a73e8; color: #fff; border: 0; border-radius: 999px; padding: 9px 20px; text-align: left; cursor: pointer; transition: background .15s, box-shadow .15s; box-shadow: 0 1px 2px rgba(60,64,67,.3); }
+.gmaps-start-text { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+.gmaps-start-eyebrow { font: 400 10px 'Roboto', sans-serif; letter-spacing: .3px; opacity: .85; }
+.gmaps-start-step { font: 500 13px 'Google Sans', 'Roboto', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gmaps-start:hover { background: #1b66c9; box-shadow: 0 1px 3px rgba(60,64,67,.4); }
+
+.gmaps-via { font: 400 12px 'Roboto', sans-serif; color: #5f6368; padding: 0 16px 12px; }
+.gmaps-divider { height: 1px; background: #e8eaed; }
+
+.gmaps-steplist { padding: 4px 0; }
+.gmaps-steprow { border-bottom: 1px solid #f1f3f4; }
+.gmaps-step-head { display: flex; align-items: center; gap: 16px; width: 100%; background: transparent; border: 0; text-align: left; padding: 14px 16px; cursor: pointer; }
+.gmaps-step-head:hover { background: #f8f9fa; }
+.gmaps-steprow.is-open .gmaps-step-head { background: #e8f0fe; }
+.gmaps-step-nav { width: 26px; flex-shrink: 0; color: #5f6368; display: flex; justify-content: center; }
+.gmaps-steprow.is-open .gmaps-step-nav { color: #1a73e8; }
+.gmaps-steprow.is-done .gmaps-step-nav { color: #1e8e3e; }
+.gmaps-step-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.gmaps-step-title { font: 400 15px 'Roboto', sans-serif; color: #202124; }
+.gmaps-step-sub { font: 400 12px 'Roboto', sans-serif; color: #5f6368; }
+.gmaps-step-chev { color: #5f6368; display: flex; flex-shrink: 0; }
+.gmaps-step-detail { padding: 4px 16px 20px 58px; }
+.gmaps-step-text { font: 400 14px 'Roboto', sans-serif; color: #3c4043; line-height: 1.55; margin: 0 0 16px; }
+.gmaps-step-help { font: 400 13px 'Roboto', sans-serif; color: #5f6368; margin: 12px 0 0; }
+.gmaps-go { display: inline-flex; align-items: center; gap: 8px; background: #1a73e8; color: #fff; border: 0; border-radius: 8px; padding: 11px 22px; font: 500 14px 'Google Sans', 'Roboto', sans-serif; cursor: pointer; transition: background .15s, box-shadow .15s; }
+.gmaps-go:hover { background: #1b66c9; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+.gmaps-due { display: flex; align-items: center; gap: 10px; font: 400 13px 'Roboto', sans-serif; color: #5f6368; padding: 14px 16px; }
+
+/* ---- RIGHT: map canvas ---- */
+.gmaps-map { flex: 1; min-width: 0; position: relative; overflow: hidden; background: #e8eaed; }
+.gmaps-land { position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px);
+  background-size: 64px 64px, 64px 64px; }
+.gmaps-park { position: absolute; background: #ceead6; border-radius: 40% 60% 55% 45%; }
+.gmaps-park-1 { width: 38%; height: 30%; top: -6%; right: -4%; }
+.gmaps-park-2 { width: 26%; height: 26%; bottom: 4%; left: -6%; border-radius: 55% 45% 50% 50%; }
+.gmaps-water { position: absolute; width: 30%; height: 46%; right: -8%; bottom: -10%; background: #aadaff; border-radius: 45% 55% 50% 50% / 50%; }
+.gmaps-road { position: absolute; background: #fff; box-shadow: 0 0 0 1px #e3e4e6; }
+.gmaps-road-1 { width: 160%; height: 12px; top: 24%; left: -30%; transform: rotate(-18deg); }
+.gmaps-road-2 { width: 160%; height: 10px; top: 62%; left: -30%; transform: rotate(8deg); }
+.gmaps-road-3 { width: 12px; height: 150%; top: -25%; left: 46%; transform: rotate(12deg); }
+
+.gmaps-route-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.gmaps-route-casing { fill: none; stroke: #fff; stroke-width: 13; stroke-linecap: round; stroke-linejoin: round; }
+.gmaps-route-line { fill: none; stroke: #4285f4; stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* teardrop location pins — tip sits exactly on the route node */
+.gmaps-mpin { position: absolute; transform: translate(-50%, -100%); transform-origin: 50% 100%; background: transparent; border: 0; padding: 0; line-height: 0; cursor: pointer; z-index: 3; transition: transform .15s, filter .15s; filter: drop-shadow(0 3px 4px rgba(0,0,0,.35)); }
+.gmaps-mpin:hover { transform: translate(-50%, -100%) scale(1.12); z-index: 6; }
+.gmaps-mpin.is-active { transform: translate(-50%, -100%) scale(1.22); z-index: 6; filter: drop-shadow(0 6px 8px rgba(0,0,0,.4)); }
+.gmaps-mpin-tip { position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%); white-space: nowrap; background: #fff; color: #202124; font: 500 12px 'Roboto', sans-serif; line-height: 1.2; padding: 6px 11px; border-radius: 7px; box-shadow: 0 1px 5px rgba(0,0,0,.3); opacity: 0; pointer-events: none; transition: opacity .12s; }
+.gmaps-mpin-tip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top-color: #fff; }
+.gmaps-mpin:hover .gmaps-mpin-tip { opacity: 1; }
+
+/* drag-to-resize handle between panel and map */
+.gmaps-resizer { width: 8px; flex-shrink: 0; cursor: col-resize; background: transparent; position: relative; z-index: 3; display: flex; align-items: center; justify-content: center; }
+.gmaps-resizer:hover .gmaps-resizer-grip, .gmaps-resizer:active .gmaps-resizer-grip { background: #1a73e8; }
+.gmaps-resizer-grip { width: 4px; height: 44px; border-radius: 4px; background: #dadce0; transition: background .15s; }
+
+/* the classic Google "blue dot" — your location */
+.gmaps-bluedot { position: absolute; transform: translate(-50%, -50%); z-index: 4;
+  transition: left 1.1s cubic-bezier(.45,.05,.2,1), top 1.1s cubic-bezier(.45,.05,.2,1); pointer-events: none; }
+.gmaps-bluedot-core { display: block; width: 16px; height: 16px; border-radius: 50%; background: #4285f4; border: 3px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.35); }
+.gmaps-bluedot-halo { position: absolute; left: 50%; top: 50%; width: 46px; height: 46px; border-radius: 50%; background: rgba(66,133,244,.18); transform: translate(-50%, -50%); animation: gmaps-pulse 2s ease-out infinite; }
+@keyframes gmaps-pulse { 0% { transform: translate(-50%,-50%) scale(.5); opacity: .8; } 100% { transform: translate(-50%,-50%) scale(1); opacity: .2; } }
+
+.gmaps-ctrl { position: absolute; right: 14px; background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.3); display: flex; flex-direction: column; z-index: 5; }
+.gmaps-zoom { bottom: 96px; }
+.gmaps-ctrl-btn { width: 40px; height: 40px; border: 0; background: transparent; color: #5f6368; cursor: default; display: flex; align-items: center; justify-content: center; }
+.gmaps-ctrl-sep { height: 1px; background: #e8eaed; margin: 0 8px; }
+.gmaps-myloc { position: absolute; right: 14px; bottom: 44px; width: 40px; height: 40px; border: 0; border-radius: 8px; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.3); color: #5f6368; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5; }
+.gmaps-myloc:hover { color: #1a73e8; }
+.gmaps-attr { position: absolute; right: 8px; bottom: 6px; font: 400 10px 'Roboto', sans-serif; color: #70757a; background: rgba(255,255,255,.7); padding: 1px 6px; border-radius: 3px; z-index: 5; }
+
+/* ============================================================
    GLOBAL RESPONSIVE — tablet + mobile across every view
    ============================================================ */
 
@@ -3055,6 +3179,13 @@ html, body, #root {
   .gclass-side { width: auto; }
   .gclass-banner { margin: 12px 14px 0; padding: 26px 22px; }
   .gclass-title { font-size: 30px; }
+
+  /* enter — Maps */
+  .gmaps-app { flex-direction: column; height: auto; }
+  .gmaps-panel { width: auto !important; order: 2; box-shadow: none; }
+  .gmaps-resizer { display: none; }
+  .gmaps-map { order: 1; height: 320px; flex: none; }
+  .gmaps-zoom, .gmaps-myloc { display: none; }
 }
 
 /* -------- Phone (<= 600px) -------- */
