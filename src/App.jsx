@@ -2087,42 +2087,74 @@ function DocFrame({ title, canvasClass = '', pageClass = '', children }) {
 //               editText -> the little edit label beside the strike
 //               underline-> index into data.judges  (underline)
 //             (the yellow highlight on The Goal lead line is constant for all tracks)
+// Per-track decoration. Same marked-up-Google-Doc vocabulary on every page
+// (handwritten margin notes, highlighter swipes, arrows, a star, reviewer
+// comment bubbles, strike/underline/circle/squiggle edits) — but each track gets
+// its own accent color, highlighter palette, star glyph, note voice, and mark
+// placement so no two pages look copy-pasted. `accent` matches the track's brand
+// color (see TRACK thumbnails) and tints the star + arrows.
+// notes: [{ t: text, c: pen color, r: rotation° }]   hl: highlighter color keys (y/g/o/p)
+// marks: where the strike / underline-or-circle / squiggle land + the edit word.
 const TRACK_DECOR = {
   unreachable: {
-    notes: ['<- start here', 'love this!!', 'revisit??'],
+    accent: '#1e8e3e', star: '✶',
+    notes: [
+      { t: 'who can we reach??', c: '#d93025', r: -6 },
+      { t: 'this = the bar',     c: '#1e8e3e', r: 4 },
+      { t: 'too easy?',          c: '#e37400', r: 7 },
+    ],
     arrows: { a1: true, a2: true },
     comments: [
-      { av: 'AR', name: 'Aria',   text: 'can we make this punchier?' },
+      { av: 'AR', name: 'Aria',   text: 'push the difficulty angle' },
       { av: 'JD', name: 'Jordan', text: 'yes — keep this section' },
     ],
-    marks: { hlGreen: 0, strike: 1, editText: 'tighten this', underline: 0 },
+    hl: { goal: 'y', wonIdx: 0, won: 'g', strongIdx: 0, strong: 'o' },
+    marks: { strikeIdx: 1, editText: 'tighten this', judgeIdx: 0, judgeType: 'underline', mistakeIdx: 0 },
   },
   subject: {
-    notes: ['the hook!', 'test 2 versions', '<- this opens it'],
+    accent: '#f9ab00', star: '✦',
+    notes: [
+      { t: 'the HOOK',        c: '#f9ab00', r: -5 },
+      { t: 'A/B these',       c: '#1a73e8', r: 5 },
+      { t: '← what opens it', c: '#d93025', r: 6 },
+    ],
     arrows: { a1: true, a2: true },
     comments: [
-      { av: 'MK', name: 'Mara',  text: 'A/B this one?' },
-      { av: 'TP', name: 'Theo',  text: 'no clickbait — good' },
+      { av: 'MK', name: 'Mara', text: 'A/B test this one?' },
+      { av: 'TP', name: 'Theo', text: 'no clickbait — good' },
     ],
-    marks: { hlGreen: 1, strike: 2, editText: 'punch this up', underline: 2 },
+    hl: { goal: 'o', wonIdx: 2, won: 'y', strongIdx: 2, strong: 'p' },
+    marks: { strikeIdx: 1, editText: 'punch it up', judgeIdx: 1, judgeType: 'circ', mistakeIdx: 0 },
   },
   twoliner: {
-    notes: ['every word counts', 'cut this?', 'tight!'],
+    accent: '#d93025', star: '✱',
+    notes: [
+      { t: 'every word counts', c: '#d93025', r: -5 },
+      { t: 'cut cut cut',       c: '#e37400', r: 5 },
+      { t: 'keep it tight',     c: '#1e8e3e', r: -7 },
+    ],
     arrows: { a1: true, a2: false },
     comments: [
       { av: 'SL', name: 'Sam',   text: 'one sentence > two' },
       { av: 'NV', name: 'Nadia', text: 'love the restraint' },
     ],
-    marks: { hlGreen: 0, strike: 3, editText: 'cut', underline: 1 },
+    hl: { goal: 'y', wonIdx: 0, won: 'o', strongIdx: 3, strong: 'g' },
+    marks: { strikeIdx: 3, editText: 'cut', judgeIdx: 0, judgeType: 'underline', mistakeIdx: 1 },
   },
   ask: {
-    notes: ['go big', 'bold ask ✓', 'raise the stakes'],
+    accent: '#1a73e8', star: '★',
+    notes: [
+      { t: 'go BIG',            c: '#1a73e8', r: -6 },
+      { t: 'love the ambition', c: '#1e8e3e', r: 4 },
+      { t: 'proof?? →',         c: '#d93025', r: 7 },
+    ],
     arrows: { a1: false, a2: true },
     comments: [
-      { av: 'RV', name: 'Rey',   text: 'make the ask bigger' },
-      { av: 'GB', name: 'Gabe',  text: 'proof matters here' },
+      { av: 'RV', name: 'Rey',  text: 'make the ask bigger' },
+      { av: 'GB', name: 'Gabe', text: 'proof matters here' },
     ],
-    marks: { hlGreen: 0, strike: 2, editText: 'bolder', underline: 3 },
+    hl: { goal: 'p', wonIdx: 0, won: 'y', strongIdx: 0, strong: 'g' },
+    marks: { strikeIdx: 2, editText: 'bolder', judgeIdx: 0, judgeType: 'circ', mistakeIdx: 0 },
   },
 }
 const DEFAULT_DECOR = TRACK_DECOR.unreachable
@@ -2133,9 +2165,14 @@ function TrackMarkedDoc({ data, title, topic }) {
   const decor = TRACK_DECOR[topic] || DEFAULT_DECOR
   // Resolve mark indices against THIS track's array lengths so a track with fewer
   // rewards/judges/howWon lines lands its marks on a real line (or skips it).
-  const hlGreenIdx   = clampIdx(decor.marks.hlGreen,   data.howWon.length)
-  const strikeIdx    = clampIdx(decor.marks.strike,    data.rewards.length)
-  const underlineIdx = clampIdx(decor.marks.underline, data.judges.length)
+  const hlGreenIdx   = clampIdx(decor.hl.wonIdx,       data.howWon.length)
+  const strikeIdx    = clampIdx(decor.marks.strikeIdx, data.rewards.length)
+  const underlineIdx = clampIdx(decor.marks.judgeIdx,  data.judges.length)
+  const strongIdx    = clampIdx(decor.hl.strongIdx,    data.strong.length)
+  const mistakeIdx   = clampIdx(decor.marks.mistakeIdx, data.mistakes.length)
+  // handwritten margin note: keep its gutter side (CSS class) but take pen color +
+  // tilt from this track's config, plus the measured top.
+  const noteStyle = (n, top) => ({ color: n.c, transform: `rotate(${n.r}deg)`, ...(top != null ? { top } : {}) })
   // Refs: each decoration's ANCHOR is a real content element. We measure each
   // anchor's offsetTop relative to the page sheet and position the decoration there,
   // so when the body font changes (reflow) the notes/arrows/comments stay aligned.
@@ -2189,12 +2226,12 @@ function TrackMarkedDoc({ data, title, topic }) {
               Each gets its measured top (anchored to a real heading) so it tracks the
               text on font change; handwriting fonts are forced back on so the body
               font switch does not affect them. */}
-          <span className="mkd-note mkd-note-1" style={tops.n1 != null ? { top: tops.n1 } : undefined}>{decor.notes[0]}</span>
-          <span className="mkd-note mkd-note-2" style={tops.n2 != null ? { top: tops.n2 } : undefined}>{decor.notes[1]}</span>
-          <span className="mkd-note mkd-note-3" style={tops.n3 != null ? { top: tops.n3 } : undefined}>{decor.notes[2]}</span>
-          <span className="mkd-star" style={tops.s1 != null ? { top: tops.s1, left: -72 } : undefined}>✶</span>
-          {decor.arrows.a1 && <HandArrow className="mkd-arrow mkd-arrow-1" style={tops.a1 != null ? { top: tops.a1 } : undefined} />}
-          {decor.arrows.a2 && <HandArrow className="mkd-arrow mkd-arrow-2" style={tops.a2 != null ? { top: tops.a2 } : undefined} />}
+          <span className="mkd-note mkd-note-1" style={noteStyle(decor.notes[0], tops.n1)}>{decor.notes[0].t}</span>
+          <span className="mkd-note mkd-note-2" style={noteStyle(decor.notes[1], tops.n2)}>{decor.notes[1].t}</span>
+          <span className="mkd-note mkd-note-3" style={noteStyle(decor.notes[2], tops.n3)}>{decor.notes[2].t}</span>
+          <span className="mkd-star" style={{ left: -72, color: decor.accent, ...(tops.s1 != null ? { top: tops.s1 } : {}) }}>{decor.star}</span>
+          {decor.arrows.a1 && <HandArrow className="mkd-arrow mkd-arrow-1" style={{ color: decor.accent, ...(tops.a1 != null ? { top: tops.a1 } : {}) }} />}
+          {decor.arrows.a2 && <HandArrow className="mkd-arrow mkd-arrow-2" style={{ color: decor.accent, ...(tops.a2 != null ? { top: tops.a2 } : {}) }} />}
           <div className="mkd-comment mkd-comment-1" style={tops.c1 != null ? { top: tops.c1 } : undefined}>
             <span className="mkd-comment-av">{decor.comments[0].av}</span>
             <div className="mkd-comment-body"><b>{decor.comments[0].name}</b><span>{decor.comments[0].text}</span></div>
@@ -2208,14 +2245,14 @@ function TrackMarkedDoc({ data, title, topic }) {
 
           <h2 className="gdoc-h2" ref={goalRef}>The Goal</h2>
           <div className="gdoc-goal">
-            <p className="gdoc-p gdoc-goal-lead"><span className="mkd-hl mkd-hl-y"><RT>{data.goal}</RT></span></p>
+            <p className="gdoc-p gdoc-goal-lead"><span className={`mkd-hl mkd-hl-${decor.hl.goal}`}><RT>{data.goal}</RT></span></p>
             {data.goalExtra && <p className="gdoc-p gdoc-goal-extra"><RT>{data.goalExtra}</RT></p>}
           </div>
 
           <h2 className="gdoc-h2" ref={wonRef}>How It's Won</h2>
           {data.howWon.map((l, i) => (
             <p className="gdoc-p" key={i}>
-              {i === hlGreenIdx ? <span className="mkd-hl mkd-hl-g"><RT>{l}</RT></span> : <RT>{l}</RT>}
+              {i === hlGreenIdx ? <span className={`mkd-hl mkd-hl-${decor.hl.won}`}><RT>{l}</RT></span> : <RT>{l}</RT>}
             </p>
           ))}
 
@@ -2228,17 +2265,17 @@ function TrackMarkedDoc({ data, title, topic }) {
 
           <h2 className="gdoc-h2">What Judges Look For</h2>
           <ul className="gdoc-list">
-            {data.judges.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-tri">▸</span><span>{i === underlineIdx ? <span className="mkd-underline"><RT>{l}</RT></span> : <RT>{l}</RT>}</span></li>)}
+            {data.judges.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-tri">▸</span><span>{i === underlineIdx ? <span className={decor.marks.judgeType === 'circ' ? 'mkd-circ' : 'mkd-underline'}><RT>{l}</RT></span> : <RT>{l}</RT>}</span></li>)}
           </ul>
 
           <h2 className="gdoc-h2" ref={strongRef}>Strong Entries</h2>
           <ul className="gdoc-list">
-            {data.strong.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-dot">•</span><span>{i === 0 ? <span className="mkd-hl mkd-hl-o"><RT>{l}</RT></span> : <RT>{l}</RT>}</span></li>)}
+            {data.strong.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-dot">•</span><span>{i === strongIdx ? <span className={`mkd-hl mkd-hl-${decor.hl.strong}`}><RT>{l}</RT></span> : <RT>{l}</RT>}</span></li>)}
           </ul>
 
           <h2 className="gdoc-h2" ref={mistakesRef}>Common Mistakes</h2>
           <ul className="gdoc-list">
-            {data.mistakes.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-dot">•</span><span>{i === 0 ? <span className="mkd-squig"><RT>{l}</RT></span> : <RT>{l}</RT>}</span></li>)}
+            {data.mistakes.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-dot">•</span><span>{i === mistakeIdx ? <span className="mkd-squig"><RT>{l}</RT></span> : <RT>{l}</RT>}</span></li>)}
           </ul>
 
           <h2 className="gdoc-h2" ref={scoringRef}>Scoring</h2>
