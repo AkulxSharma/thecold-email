@@ -52,10 +52,20 @@ function viewToPath(view) {
 }
 
 // ---------------- TOP BAR ----------------
-function TopBar({ onMenu, onLogo, onJemini }) {
+function TopBar({ onMenu, onLogo, onJemini, navigate }) {
   const [q, setQ] = useState('')
   const [meme] = useState(() => MEMES[Math.floor(Math.random() * MEMES.length)])
   const [pfpOpen, setPfpOpen] = useState(false)
+  const [statusOpen, setStatusOpen] = useState(false)
+  const statusRef = useRef(null)
+  // Close the status menu on any outside click (lightest pattern: document listener).
+  useEffect(() => {
+    if (!statusOpen) return
+    const onDoc = (e) => { if (statusRef.current && !statusRef.current.contains(e.target)) setStatusOpen(false) }
+    document.addEventListener('mousedown', onDoc)
+    return () => document.removeEventListener('mousedown', onDoc)
+  }, [statusOpen])
+  const statusGo = (path) => { setStatusOpen(false); navigate(path) }
   return (
     <div className="topbar">
       <div className="icon-btn" title="Main menu" onClick={onMenu}><I.Menu /></div>
@@ -71,8 +81,21 @@ function TopBar({ onMenu, onLogo, onJemini }) {
       </div>
       <div className="top-right">
         <div className="jemini" onClick={e => { e.stopPropagation(); onJemini() }}><I.Spark /> Jemini</div>
-        <div className="icon-btn" title="Feedback"><I.Feedback /></div>
-        <div className="status-pill"><span className="status-dot" /> Active <I.CaretDown /></div>
+        <div className="icon-btn" title="Feedback" style={{ cursor: 'pointer' }} onClick={() => { window.location.href = 'mailto:judges@thecold.email?subject=Feedback%20on%20thecold.email' }}><I.Feedback /></div>
+        <div className="status-wrap" ref={statusRef}>
+          <div className={`status-pill${statusOpen ? ' open' : ''}`} onClick={() => setStatusOpen(o => !o)}>
+            <span className="status-dot" /> Active <I.CaretDown />
+          </div>
+          {statusOpen && (
+            <div className="status-menu">
+              <div className="status-menu-note"><span className="status-dot" /> Registration opens Jun 24</div>
+              <div className="status-menu-sep" />
+              <div className="status-menu-item" onClick={() => statusGo('/the-procedure')}>The Procedure</div>
+              <div className="status-menu-item" onClick={() => statusGo('/calendar')}>Event Calendar</div>
+              <div className="status-menu-item" onClick={() => statusGo('/prize-pool')}>Prize pool</div>
+            </div>
+          )}
+        </div>
         <div className="avatar-ring" title={`${meme.name}: click for the takeaway`} onClick={() => setPfpOpen(true)}>
           <img className="avatar-img" src={meme.img} alt={meme.name} onError={e => { e.currentTarget.style.display = 'none' }} />
         </div>
@@ -106,6 +129,12 @@ function Sidebar({ onCompose, goto, pathname, open }) {
   // Highlight derives from the URL. Home is active for both '/' and '/home'.
   const isActive = (view) =>
     view === 'overview' ? (pathname === '/' || pathname === '/home') : pathname === viewToPath(view)
+  const [collapsed, setCollapsed] = useState(() => new Set())  // collapsed section groups (default: both expanded)
+  const toggleCollapse = k => setCollapsed(p => { const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n })
+  // Caret rotates -90deg when its group is collapsed.
+  const caret = (k) => (
+    <span className="section-caret" style={{ transform: collapsed.has(k) ? 'rotate(-90deg)' : 'none' }}><I.CaretDown /></span>
+  )
   return (
     <div className={`sidebar${open ? '' : ' sidebar-collapsed'}`}>
       <div className="compose" onClick={onCompose}><I.Pencil /> Enter</div>
@@ -115,15 +144,23 @@ function Sidebar({ onCompose, goto, pathname, open }) {
       <NavItem icon={<I.M name="calendar_month" />} label="Event Calendar"                    active={isActive('calendar')} onClick={() => goto('calendar')} />
       <NavItem icon={<I.M name="auto_awesome" />}  label="Best Emails"                    active={isActive('best')}     onClick={() => goto('best')} />
 
-      <div className={`section-head section-head-btn${isActive('tracks-home') ? ' active' : ''}`} onClick={() => goto('tracks-home')}><I.CaretDown /> TRACKS</div>
-      <NavItem icon={<I.Plane size={20} />}  label="The Unreachable"    active={isActive('track-unreachable')} onClick={() => goto('track-unreachable')} />
-      <NavItem icon={<I.SparkPen size={20} />} label="Best Subject Line"  active={isActive('track-subject')}     onClick={() => goto('track-subject')} />
-      <NavItem icon={<I.M name="short_text" />} label="The Two-Liner"      active={isActive('track-twoliner')}    onClick={() => goto('track-twoliner')} />
-      <NavItem icon={<I.M name="help" />} label="The Ask"            active={isActive('track-ask')}         onClick={() => goto('track-ask')} />
+      <div className={`section-head section-head-btn${isActive('tracks-home') ? ' active' : ''}`} onClick={() => goto('tracks-home')}>
+        <span className="section-caret-btn" title="Collapse" onClick={e => { e.stopPropagation(); toggleCollapse('tracks') }}>{caret('tracks')}</span> TRACKS
+      </div>
+      {!collapsed.has('tracks') && (<>
+        <NavItem icon={<I.Plane size={20} />}  label="The Unreachable"    active={isActive('track-unreachable')} onClick={() => goto('track-unreachable')} />
+        <NavItem icon={<I.SparkPen size={20} />} label="Best Subject Line"  active={isActive('track-subject')}     onClick={() => goto('track-subject')} />
+        <NavItem icon={<I.M name="short_text" />} label="The Two-Liner"      active={isActive('track-twoliner')}    onClick={() => goto('track-twoliner')} />
+        <NavItem icon={<I.M name="help" />} label="The Ask"            active={isActive('track-ask')}         onClick={() => goto('track-ask')} />
+      </>)}
 
-      <div className="section-head"><I.CaretDown /> THE EVENT</div>
-      <NavItem icon={<I.M name="rule" />}        label="The Rule"   active={isActive('rule')}    onClick={() => goto('rule')} />
-      <NavItem icon={<I.M name="emoji_events" />} label="Prizes"     active={isActive('prizes')}  onClick={() => goto('prizes')} />
+      <div className="section-head section-head-btn" onClick={() => toggleCollapse('event')}>
+        <span className="section-caret-btn" title="Collapse">{caret('event')}</span> THE EVENT
+      </div>
+      {!collapsed.has('event') && (<>
+        <NavItem icon={<I.M name="rule" />}        label="The Rule"   active={isActive('rule')}    onClick={() => goto('rule')} />
+        <NavItem icon={<I.M name="emoji_events" />} label="Prizes"     active={isActive('prizes')}  onClick={() => goto('prizes')} />
+      </>)}
     </div>
   )
 }
@@ -287,6 +324,20 @@ function JeminiPanel({ onClose, open }) {
           </div>
         )}
       </div>
+
+      {/* compose row — typed follow-up questions */}
+      <div className="jp-compose">
+        <input
+          className="jp-input"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); send() } }}
+          placeholder="Ask about tracks, prizes, the rule…"
+        />
+        <button className="jp-send" title="Send" onClick={() => send()} disabled={!input.trim()}>
+          <I.M name="arrow_upward" size={20} />
+        </button>
+      </div>
     </div>
   )
 }
@@ -364,7 +415,6 @@ function WalletHero({ onEnter, goto }) {
       <section className="walhero walhero-static">
         {pill}
         <div className="walhero-headline">
-          <span className="walhero-tag"><span className="walhero-tag-dot" />The Cold Email Competition</span>
           <h1 className="walhero-title">The world replies to those who know how to write.</h1>
           <p className="walhero-sub">One email. The right words. A reply you weren’t supposed to get.</p>
         </div>
@@ -397,7 +447,6 @@ function WalletHero({ onEnter, goto }) {
         {pill}
 
         <div className="walhero-headline" style={headStyle}>
-          <span className="walhero-tag"><span className="walhero-tag-dot" />The Cold Email Competition</span>
           <h1 className="walhero-title">The world replies to those who know how to write.</h1>
           <p className="walhero-sub">One email. The right words. A reply you weren’t supposed to get.</p>
         </div>
@@ -2229,6 +2278,7 @@ export default function App() {
         onMenu={() => setSidebarOpen(s => !s)}
         onLogo={goHome}
         onJemini={() => setJeminiOpen(o => !o)}
+        navigate={navigate}
       />
       <div className="app">
         <Sidebar
