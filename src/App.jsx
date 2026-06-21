@@ -2079,48 +2079,119 @@ const DOCS_ICON = (
 function ViewTracksHome({ goto, onEnter }) {
   const topics = ['unreachable', 'subject', 'twoliner', 'ask']
   const dates = ['Opened 9:22 PM', 'Jun 19, 2026', 'Jun 17, 2026', 'Jun 17, 2026']
+  // Theme-aware thumbnail. Each track previews its REAL themed doc
+  // (whiteboard / notebook / corkboard / marked-up doc) at thumbnail scale,
+  // echoing that theme's fonts, colors and signature motifs. Copy is pulled
+  // from TRACK_PAGES[t]; only tiny decorative labels are hardcoded.
   const mini = (t, lg) => {
     const d = TRACK_PAGES[t]
-    return (
-      <div className={`gdocs-mini${lg ? ' gdocs-mini-lg' : ''}`}>
-        <div className="gdocs-mini-h1">{TOPIC_NAMES[t]}</div>
+    const name = TOPIC_NAMES[t]
+    const cls = `gmini${lg ? ' gmini-lg' : ''}`
 
-        <div className="gdocs-mini-sub">The Goal</div>
-        <p className="gdocs-mini-p"><RT>{d.goal}</RT></p>
-        {d.goalExtra && <p className="gdocs-mini-p"><RT>{d.goalExtra}</RT></p>}
+    // ---- subject -> WHITEBOARD (marker font, hand-drawn boxes, sticky notes) ----
+    if (t === 'subject') {
+      return (
+        <div className={`${cls} gmini-wb`}>
+          <div className="gmini-wb-title">{name}<Squiggle className="gmini-wb-underline" /></div>
+          <span className="gmini-wb-sticky">brainstorm<br />v3 ✎</span>
+          <div className="gmini-wb-grid">
+            <div className="gmini-wb-box gmini-wb-blu">
+              <div className="gmini-wb-h">The Goal</div>
+              <p className="gmini-wb-p"><RT>{d.goal}</RT></p>
+            </div>
+            <div className="gmini-wb-box gmini-wb-blk">
+              <div className="gmini-wb-h">How It's Won</div>
+              {d.howWon.slice(0, 2).map((l, i) => <p className="gmini-wb-p" key={i}><RT>{l}</RT></p>)}
+            </div>
+            <div className="gmini-wb-box gmini-wb-grn">
+              <div className="gmini-wb-h">Judges</div>
+              <ul className="gmini-wb-list">
+                {d.judges.slice(0, 3).map((l, i) => <li key={i}><span className="gmini-wb-bul">▸</span><RT>{l}</RT></li>)}
+              </ul>
+            </div>
+            <div className="gmini-wb-box gmini-wb-red">
+              <div className="gmini-wb-h">Prize ★</div>
+              <p className="gmini-wb-p"><strong>$500</strong> winning entry</p>
+            </div>
+          </div>
+        </div>
+      )
+    }
 
-        <div className="gdocs-mini-sub">How It's Won</div>
-        {d.howWon.map((l, i) => <p className="gdocs-mini-p" key={i}><RT>{l}</RT></p>)}
+    // ---- twoliner -> LINED NOTEBOOK (ruled paper, handwriting, coffee ring) ----
+    if (t === 'twoliner') {
+      return (
+        <div className={`${cls} gmini-nb`}>
+          <div className="gmini-nb-coffee" aria-hidden="true" />
+          <div className="gmini-nb-title">{name}</div>
+          <div className="gmini-nb-sec">
+            <div className="gmini-nb-h">The Goal</div>
+            <p className="gmini-nb-p"><span className="gmini-nb-hl"><RT>{d.goal}</RT></span></p>
+          </div>
+          <div className="gmini-nb-sec">
+            <div className="gmini-nb-h">How It's Won</div>
+            {d.howWon.slice(0, 2).map((l, i) => <p className="gmini-nb-p" key={i}><RT>{l}</RT></p>)}
+          </div>
+          <div className="gmini-nb-sec">
+            <div className="gmini-nb-h">Judges</div>
+            <ul className="gmini-nb-list">
+              {d.judges.slice(0, 3).map((l, i) => <li key={i}><span className="gmini-nb-bul">→</span><RT>{l}</RT></li>)}
+            </ul>
+          </div>
+        </div>
+      )
+    }
 
-        <div className="gdocs-mini-sub">What This Track Rewards</div>
-        {d.rewards.map((l, i) => <p className="gdocs-mini-p" key={i}><RT>{l}</RT></p>)}
-
-        <div className="gdocs-mini-sub">What Judges Look For</div>
-        <ul className="gdocs-mini-list">
-          {d.judges.map((l, i) => <li key={i}><span className="gdocs-mini-mark">▸</span><span><RT>{l}</RT></span></li>)}
-        </ul>
-
-        <div className="gdocs-mini-sub">Strong Entries</div>
-        <ul className="gdocs-mini-list">
-          {d.strong.map((l, i) => <li key={i}><span className="gdocs-mini-mark">•</span><span><RT>{l}</RT></span></li>)}
-        </ul>
-
-        <div className="gdocs-mini-sub">Common Mistakes</div>
-        <ul className="gdocs-mini-list">
-          {d.mistakes.map((l, i) => <li key={i}><span className="gdocs-mini-mark">–</span><span><RT>{l}</RT></span></li>)}
-        </ul>
-
-        <div className="gdocs-mini-sub">Scoring</div>
-        <table className="gdocs-mini-table">
-          <tbody>
-            {d.scoring.map((s, i) => (
-              <tr key={i}><td>{s.label}</td><td className="gdocs-mini-pts">{s.pts}</td></tr>
+    // ---- ask -> CORKBOARD (cork bg, pinned index cards) ----
+    if (t === 'ask') {
+      const colors = ['gmini-ck-white', 'gmini-ck-yellow', 'gmini-ck-blue', 'gmini-ck-pink']
+      const cards = [
+        { h: 'The Goal', body: <p className="gmini-ck-p"><RT>{d.goal}</RT></p> },
+        { h: "How It's Won", body: d.howWon.slice(0, 2).map((l, i) => <p className="gmini-ck-p" key={i}><RT>{l}</RT></p>) },
+        { h: 'Judges', body: (
+          <ul className="gmini-ck-list">
+            {d.judges.slice(0, 3).map((l, i) => <li key={i}><span className="gmini-ck-bul">✶</span><RT>{l}</RT></li>)}
+          </ul>
+        ) },
+        { h: 'Prize ★', body: <p className="gmini-ck-p"><strong>$500</strong> winning entry</p> },
+      ]
+      return (
+        <div className={`${cls} gmini-ck`}>
+          <div className="gmini-ck-titlecard"><span className="gmini-ck-pin" />{name}</div>
+          <div className="gmini-ck-grid">
+            {cards.map((c, i) => (
+              <div className={`gmini-ck-card ${colors[i]}`} key={c.h} style={{ transform: `rotate(${rot(i + 1, 2)}deg)` }}>
+                {i % 2 === 0 ? <span className="gmini-ck-pin" /> : <span className="gmini-ck-tape" />}
+                <div className="gmini-ck-h">{c.h}</div>
+                {c.body}
+              </div>
             ))}
-          </tbody>
-        </table>
+          </div>
+        </div>
+      )
+    }
 
-        <div className="gdocs-mini-sub">Prize</div>
-        <p className="gdocs-mini-p"><strong>$500</strong> for the winning entry. Every qualifying entry is also automatically considered for the Best Cold Email ($1,000 grand prize).</p>
+    // ---- unreachable (default) -> MARKED-UP GOOGLE DOC (highlighter + margin notes + arrow) ----
+    return (
+      <div className={`${cls} gmini-mkd`}>
+        <span className="gmini-mkd-note gmini-mkd-note-1">&lt;- start here</span>
+        <span className="gmini-mkd-note gmini-mkd-note-2">love this!!</span>
+        <HandArrow className="gmini-mkd-arrow" />
+        <div className="gmini-mkd-h1">{name}</div>
+        <div className="gmini-mkd-sub">The Goal</div>
+        <p className="gmini-mkd-p"><span className="gmini-mkd-hl gmini-mkd-hl-y"><RT>{d.goal}</RT></span></p>
+        <div className="gmini-mkd-sub">How It's Won</div>
+        {d.howWon.slice(0, 2).map((l, i) => (
+          <p className="gmini-mkd-p" key={i}>{i === 0 ? <span className="gmini-mkd-hl gmini-mkd-hl-g"><RT>{l}</RT></span> : <RT>{l}</RT>}</p>
+        ))}
+        <div className="gmini-mkd-sub">What Judges Look For</div>
+        <ul className="gmini-mkd-list">
+          {d.judges.slice(0, 3).map((l, i) => (
+            <li key={i}><span className="gmini-mkd-mark">▸</span><span>{i === 0 ? <span className="gmini-mkd-underline"><RT>{l}</RT></span> : <RT>{l}</RT>}</span></li>
+          ))}
+        </ul>
+        <div className="gmini-mkd-sub">Prize</div>
+        <p className="gmini-mkd-p"><strong className="gmini-mkd-hl gmini-mkd-hl-y">$500</strong> winning entry.</p>
       </div>
     )
   }
