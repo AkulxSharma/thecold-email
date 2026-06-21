@@ -73,7 +73,7 @@ function TopBar({ onMenu, onLogo, onJemini }) {
         <div className="jemini" onClick={e => { e.stopPropagation(); onJemini() }}><I.Spark /> Jemini</div>
         <div className="icon-btn" title="Feedback"><I.Feedback /></div>
         <div className="status-pill"><span className="status-dot" /> Active <I.CaretDown /></div>
-        <div className="avatar-ring" title={`${meme.name} — click for the takeaway`} onClick={() => setPfpOpen(true)}>
+        <div className="avatar-ring" title={`${meme.name}: click for the takeaway`} onClick={() => setPfpOpen(true)}>
           <img className="avatar-img" src={meme.img} alt={meme.name} onError={e => { e.currentTarget.style.display = 'none' }} />
         </div>
       </div>
@@ -226,18 +226,18 @@ function jeminiAnswer(qRaw) {
   const has = (...words) => words.some(w => q.includes(w))
 
   if (has('hi', 'hey', 'hello', 'yo ')) return "Hey. Ask me about the tracks, prizes, the rule, deadlines, or how to enter."
-  if (has('unreachable')) return "The Unreachable: get a reply from someone who never replies — a founder, a celeb, an investor. Scored on how unreachable they are + the reply. $500."
+  if (has('unreachable')) return "The Unreachable: get a reply from someone who never replies, like a founder, a celeb, or an investor. Scored on how unreachable they are + the reply. $500."
   if (has('subject')) return "Best Subject Line: the reply was earned by the subject line alone. Scored on the line itself + that it landed a reply. $500."
   if (has('two-liner', 'two liner', 'twoliner', '2 line', 'short')) return "The Two-Liner: land a reply in 2 sentences or fewer. Scored on brevity + the reply. $500."
-  if (has('the ask', 'big ask', 'huge', 'land')) return "The Ask: land a huge yes — money, a meeting, a job, a partnership. Scored on the size of the yes. $500."
-  if (has('track')) return "4 tracks, $500 each:\n• The Unreachable\n• Best Subject Line\n• The Two-Liner\n• The Ask\nEvery entry also competes for The Best Cold Email — the $1,000 grand prize."
-  if (has('prize', 'money', 'win', 'cash', '$', 'pay')) return "$3,000 total:\n• The Best Cold Email (grand) — $1,000\n• Each of the 4 tracks — $500"
-  if (has('grand', 'best cold email', 'overall')) return "The Best Cold Email is the $1,000 grand prize — the single best email of the event. Every entry, any track, is in the running."
+  if (has('the ask', 'big ask', 'huge', 'land')) return "The Ask: land a huge yes: money, a meeting, a job, a partnership. Scored on the size of the yes. $500."
+  if (has('track')) return "4 tracks, $500 each:\n• The Unreachable\n• Best Subject Line\n• The Two-Liner\n• The Ask\nEvery entry also competes for The Best Cold Email, the $1,000 grand prize."
+  if (has('prize', 'money', 'win', 'cash', '$', 'pay')) return "$3,000 total:\n• The Best Cold Email (grand): $1,000\n• Each of the 4 tracks: $500"
+  if (has('grand', 'best cold email', 'overall')) return "The Best Cold Email is the $1,000 grand prize: the single best email of the event. Every entry, any track, is in the running."
   if (has('rule', 'cheat', 'allowed', 'disqualif', 'fake')) return "One rule: real replies only. Someone who doesn’t already know you has to write back. No impersonation, no lying, no pre-existing relationship, no mass-blasting. Break any → disqualified."
-  if (has('judg', 'score', 'rubric', 'how do you decide')) return "Two steps: (1) a pass/fail gate — real reply, no rule broken; (2) a 100-point rubric per track. Highest per track wins; strongest overall takes the grand prize."
+  if (has('judg', 'score', 'rubric', 'how do you decide')) return "Two steps: (1) a pass/fail gate, real reply, no rule broken; (2) a 100-point rubric per track. Highest per track wins; strongest overall takes the grand prize."
   if (has('enter', 'how do i', 'submit', 'join', 'sign up', 'apply')) return "Send a cold email → get a real reply → submit the form with a screenshot of the reply before Jul 7. Hit Enter (top-left) to start."
-  if (has('deadline', 'date', 'when', 'timeline', 'launch', 'close', 'over')) return "Timeline:\n• Jun 24 — launch\n• Jun 30 — registration closes\n• Jul 7 — submissions close\n• Jul 10 — winners announced"
-  if (has('what', 'about', 'this', 'explain')) return "thecold.email is a competition to find the best cold emails on the planet — proven by who actually replied. Get the reply."
+  if (has('deadline', 'date', 'when', 'timeline', 'launch', 'close', 'over')) return "Timeline:\n• Jun 24: launch\n• Jun 30: registration closes\n• Jul 7: submissions close\n• Jul 10: winners announced"
+  if (has('what', 'about', 'this', 'explain')) return "thecold.email is a competition to find the best cold emails on the planet, proven by who actually replied. Get the reply."
   return "Not sure on that one. Try: tracks, prizes, the rule, judging, deadlines, or how to enter."
 }
 
@@ -305,10 +305,10 @@ function shortDate(iso) {
 // The 4 tracks, in sidebar order — topic keys map to TRACK_ICONS + the track-* views
 const TRACK_TEASERS = ['unreachable', 'subject', 'twoliner', 'ask']
 const TRACK_TEASER_COPY = {
-  unreachable: { body: 'Pick someone who almost never replies — a founder, an exec, a name everyone knows — and get them to write back.', tag: 'Get the reply no one gets.' },
+  unreachable: { body: 'Pick someone who almost never replies: a founder, an exec, a name everyone knows. Get them to write back.', tag: 'Get the reply no one gets.' },
   subject:     { body: 'Write a subject line so good they have to open it. The reply you earn is credited to those few words.', tag: 'Win on the open.' },
-  twoliner:    { body: 'Two sentences or less. No room to ramble — every word has to pull its weight and still land a reply.', tag: 'Say less, get more.' },
-  ask:         { body: 'Land a real "yes" from someone who could open a door — a job, an intro, money, a favor. The bigger the ask, the bigger the win.', tag: 'Ask big, win big.' },
+  twoliner:    { body: 'Two sentences or less. No room to ramble. Every word has to pull its weight and still land a reply.', tag: 'Say less, get more.' },
+  ask:         { body: 'Land a real "yes" from someone who could open a door: a job, an intro, money, a favor. The bigger the ask, the bigger the win.', tag: 'Ask big, win big.' },
 }
 
 // ---- wallet.google-style pinned scroll hero ----
@@ -366,7 +366,7 @@ function WalletHero({ onEnter, goto }) {
         <div className="walhero-headline">
           <span className="walhero-tag"><span className="walhero-tag-dot" />The Cold Email Competition</span>
           <h1 className="walhero-title">The world replies to those who know how to write.</h1>
-          <p className="walhero-sub">Win up to <strong>$3,000</strong> for one great cold email — proven by who actually replied.</p>
+          <p className="walhero-sub">One email. The right words. A reply you weren’t supposed to get.</p>
         </div>
         <div className="walhero-static-cards">
           {cards.map((topic, i) => (
@@ -399,7 +399,7 @@ function WalletHero({ onEnter, goto }) {
         <div className="walhero-headline" style={headStyle}>
           <span className="walhero-tag"><span className="walhero-tag-dot" />The Cold Email Competition</span>
           <h1 className="walhero-title">The world replies to those who know how to write.</h1>
-          <p className="walhero-sub">Win up to <strong>$3,000</strong> for one great cold email — proven by who actually replied.</p>
+          <p className="walhero-sub">One email. The right words. A reply you weren’t supposed to get.</p>
         </div>
 
         <div className="walhero-deck">
@@ -433,9 +433,9 @@ function Manifesto() {
   return (
     <section className="home-manifesto">
       <blockquote className="home-manifesto-quote">
-        “The cold email is the last open door. Anyone can knock. Almost no one does it well.”
+        “Every closed door has an inbox. The cold email is the one knock that still works, and almost no one dares to use it. The world is far more reachable than it looks. It opens for anyone willing to write to a stranger and ask. One email, sent to the right person at the right moment, can change the shape of a life. The world replies to those who dare to write.”
       </blockquote>
-      <div className="home-manifesto-note">— manifesto placeholder, real copy TBD</div>
+      <div className="home-manifesto-note">Working draft. The final manifesto is coming from the team.</div>
     </section>
   )
 }
@@ -534,7 +534,7 @@ function ViewOverview({ onEnter, goto }) {
             <a href="#" className="home-footer-link">LinkedIn</a>
             <a href="#" className="home-footer-link">TikTok</a>
           </div>
-          <div className="home-footer-sponsors">Sponsors — your logo here</div>
+          <div className="home-footer-sponsors">Sponsors: your logo here</div>
         </footer>
 
       </div>
@@ -601,7 +601,7 @@ const FORMS_ICON = (
 // Shared "how to enter" steps
 const ENTER_STEPS = [
   { n: 1, icon: 'how_to_reg',       title: 'Register',                 text: 'Fill the form below. We save your details and email you a confirmation.' },
-  { n: 2, icon: 'send',             title: 'Send cold emails',          text: 'Pick a track. Write to people who have every reason to ignore you — founders, execs, the ones you look up to. No templates, no spray — send as many as you want.' },
+  { n: 2, icon: 'send',             title: 'Send cold emails',          text: 'Pick a track. Write to people who have every reason to ignore you: founders, execs, the ones you look up to. No templates, no spray. Send as many as you want.' },
   { n: 3, icon: 'mark_email_read',  title: 'Submit the ones that reply', text: 'Only emails that get a real reply count. Attach a screenshot/PDF of any thread that landed a response and submit it.' },
 ]
 
@@ -706,7 +706,7 @@ function ViewEnter({ onEnter }) {
         </div>
       </div>
       <div className="enter-section">
-        <div className="enter-section-head">Optional details <span className="enter-section-hint">— skip any of these</span></div>
+        <div className="enter-section-head">Optional details <span className="enter-section-hint">(skip any of these)</span></div>
         <div className="enter-fields">
           {optional.map(qq => <Field key={qq.name} qq={qq} />)}
         </div>
@@ -718,7 +718,7 @@ function ViewEnter({ onEnter }) {
     <div className={'enter-done ' + cls}>
       <I.M name="check_circle" size={40} />
       <h3>You’re registered.</h3>
-      <p>We’ve emailed you a confirmation. Now go send one real cold email — then come back and submit the reply.</p>
+      <p>We’ve emailed you a confirmation. Now go send one real cold email, then come back and submit the reply.</p>
       <span className="enter-link" onClick={() => { setSubmitted(false); setValues({}); setErrors({}) }}>Register someone else</span>
     </div>
   )
@@ -758,7 +758,7 @@ function ViewEnter({ onEnter }) {
           </div>
 
           <div className="gclass-card">
-            <h3 className="gclass-h3">Funnel 1 — Registration</h3>
+            <h3 className="gclass-h3">Funnel 1: Registration</h3>
             {submitted ? <Done cls="enter-done-light" /> : (
               <>
                 <FieldList />
@@ -768,7 +768,7 @@ function ViewEnter({ onEnter }) {
           </div>
 
           <div className="gclass-card gclass-attach">
-            <h3 className="gclass-h3">Funnel 2 — Your submission</h3>
+            <h3 className="gclass-h3">Funnel 2: Your submission</h3>
             <p>When they reply, attach a screenshot/PDF of the thread and submit your entry through the submission window.</p>
             <a className="gclass-submit-link" role="button" tabIndex={0} onClick={onEnter}
                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onEnter() } }}>
@@ -939,7 +939,7 @@ function gcalAddUrl() {
     `Get the reply. https://thecold.email`
   const params = new URLSearchParams({
     action: 'TEMPLATE',
-    text: 'thecold.email — The Cold Email Competition',
+    text: 'thecold.email: The Cold Email Competition',
     dates: `${ymd(launch)}/${ymd(endExcl)}`,
     details,
   })
@@ -1220,7 +1220,7 @@ function ViewCalendar() {
                 <span className="gcev-row-ic"><I.M name="segment" size={20} /></span>
                 <div className="gcev-row-text">
                   <div>{sel.ev.allDay ? 'All-day event' : 'thecold.email event'}</div>
-                  <div className="gcev-row-sub">Get the reply — one cold email can change everything.</div>
+                  <div className="gcev-row-sub">Get the reply. One cold email can change everything.</div>
                 </div>
               </div>
               <div className="gcev-row">
@@ -1353,7 +1353,7 @@ function ViewBest() {
           </div>
           {aiOpen && (
             <p className="ai-ov-body">
-              These are example cold emails — the best of thecold.email, proven by who actually replied. Akul will replace them with the real winning entries.
+              These are example cold emails, the best of thecold.email, proven by who actually replied. Akul will replace them with the real winning entries.
             </p>
           )}
         </div>
@@ -1931,7 +1931,7 @@ function ViewRule({ onEnter }) {
       <p className="keep-support">Judges may request additional verification if needed. Failure to provide proof may result in disqualification.</p>
     </>) },
     { id: 'fairplay', color: 'purple', title: 'Fair play', render: () => (<>
-      <p className="keep-text">The goal is to earn trust from someone who doesn’t know you — not leverage an existing relationship.</p>
+      <p className="keep-text">The goal is to earn trust from someone who doesn’t know you, not leverage an existing relationship.</p>
       {group('fairplay', 'Recipients cannot be', R.fairPlayNot)}
       <p className="keep-support">If the recipient would reasonably recognize you, it doesn’t count.</p>
     </>) },
@@ -2215,7 +2215,7 @@ export default function App() {
     // TODO(Akul): POST these fields to SUBMISSION_FORM_URL (Google Form) or
     // redirect/embed for confirmation once the form URL is supplied.
     setComposeOpen(false)
-    showToast('Entry submitted. Good luck — go get the reply.')
+    showToast('Entry submitted. Good luck, go get the reply.')
   }
 
   // Navigate by internal view key — preserves every existing goto()/setView() call site.

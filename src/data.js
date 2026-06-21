@@ -9,23 +9,23 @@ export const EMAILS = [
     id: 0, sender: HOST, email: HOST_EMAIL, to: YOU, folder: 'inbox', tab: 'primary', topic: '',
     subject: 'Enter the competition →', tag: 'Enter', stars: 2026, views: 9120, starred: true, read: false,
     date: 'Jun 24', isEntryCta: true,
-    preview: 'Click to submit your entry — pick a track, paste the reply you got, and you’re in.',
+    preview: 'Click to submit your entry: pick a track, paste the reply you got, and you’re in.',
     body: '', replies: [],
   },
   {
     id: 1, sender: HOST, email: HOST_EMAIL, to: YOU, folder: 'inbox', tab: 'primary', topic: '',
     subject: 'Get the reply.', tag: 'Start here', stars: 999, views: 4821, starred: true, read: false,
     date: 'Jun 24',
-    preview: 'A cold email competition to find the best cold emails on the planet — proven by who actually replied.',
+    preview: 'A cold email competition to find the best cold emails on the planet, proven by who actually replied.',
     body: `Welcome to thecold.email.
 
-A cold email competition to find the best cold emails on the planet — proven by who actually replied.
+A cold email competition to find the best cold emails on the planet, proven by who actually replied.
 
-This isn't about clever copy in a vacuum. It's about results. The only thing that counts is someone who had every reason to ignore you writing back anyway — a founder, an investor, someone you look up to.
+This isn't about clever copy in a vacuum. It's about results. The only thing that counts is someone who had every reason to ignore you writing back anyway: a founder, an investor, someone you look up to.
 
 One email can change a life. Let's go get the reply.
 
-— thecold.email`,
+thecold.email`,
     replies: [],
   },
   {
@@ -33,7 +33,7 @@ One email can change a life. Let's go get the reply.
     subject: 'The one rule: real replies only', tag: 'Read this', stars: 870, views: 3960, starred: true, read: false,
     date: 'Jun 24',
     preview: 'A cold email counts only if someone who doesn’t already know you actually wrote back. Break any rule below and you are disqualified.',
-    body: `THE ONE RULE — real replies only.
+    body: `THE ONE RULE: real replies only.
 
 A cold email counts only if someone who doesn’t already know you actually wrote back.
 
@@ -45,19 +45,19 @@ You are DISQUALIFIED for any of:
 
 That's it. Un-fakeable proof is the whole point.
 
-(How we verify, for now: a screenshot of the reply — "verified by us." Raw-email / header proof is parked for later.)`,
+(How we verify, for now: a screenshot of the reply, "verified by us." Raw-email / header proof is parked for later.)`,
     replies: [],
   },
   {
     id: 3, sender: HOST, email: HOST_EMAIL, to: YOU, folder: 'inbox', tab: 'primary', topic: '',
-    subject: '★ The Best Cold Email — the grand prize', tag: 'Grand prize', stars: 1240, views: 5102, starred: true, read: false,
+    subject: '★ The Best Cold Email: the grand prize', tag: 'Grand prize', stars: 1240, views: 5102, starred: true, read: false,
     date: 'Jun 24',
     preview: 'The single best cold email of the entire event. Every entry, in any track, is in the running for it.',
-    body: `★ THE BEST COLD EMAIL — the grand prize.
+    body: `★ THE BEST COLD EMAIL: the grand prize.
 
 The single best cold email of the entire event.
 
-Every entry — no matter which track it's in — is automatically in the running for this. The four tracks are the specialized categories; this is the overall crown.
+Every entry, no matter which track it's in, is automatically in the running for this. The four tracks are the specialized categories; this is the overall crown.
 
 The panel's grand pick: the email that best combines a hard-won reply, a real result, and craft.
 
@@ -66,18 +66,18 @@ Prize: $1,000.`,
   },
   {
     id: 4, sender: HOST, email: HOST_EMAIL, to: YOU, folder: 'inbox', tab: 'primary', topic: 'unreachable',
-    subject: 'Track 1 — The Unreachable', tag: 'Track', stars: 612, views: 2840, starred: false, read: false,
+    subject: 'Track 1: The Unreachable', tag: 'Track', stars: 612, views: 2840, starred: false, read: false,
     date: 'Jun 24',
     preview: 'A reply from someone who almost never replies (Elon, Obama, Paul Graham). Hardest target wins.',
-    body: `TRACK 1 — THE UNREACHABLE
+    body: `TRACK 1: THE UNREACHABLE
 
-The goal: a reply from someone who almost never replies — think Elon, Obama, Paul Graham.
+The goal: a reply from someone who almost never replies. Think Elon, Obama, Paul Graham.
 
 How it's won: the hardest target to reach wins.
 
 Scoring (out of 100):
-• Difficulty of the target — how unreachable they are (50)
-• Depth of the reply — real engagement, not a brush-off (30)
+• Difficulty of the target: how unreachable they are (50)
+• Depth of the reply: real engagement, not a brush-off (30)
 • Craft of the email (20)
 
 Prize: $500.`,
@@ -85,10 +85,10 @@ Prize: $500.`,
   },
   {
     id: 5, sender: HOST, email: HOST_EMAIL, to: YOU, folder: 'inbox', tab: 'primary', topic: 'subject',
-    subject: 'Track 2 — Best Subject Line', tag: 'Track', stars: 548, views: 2510, starred: false, read: false,
+    subject: 'Track 2: Best Subject Line', tag: 'Track', stars: 548, views: 2510, starred: false, read: false,
     date: 'Jun 24',
-    preview: 'A reply earned by the subject line. Strongest subject line wins — and it has to be honest.',
-    body: `TRACK 2 — BEST SUBJECT LINE
+    preview: 'A reply earned by the subject line. Strongest subject line wins, and it has to be honest.',
+    body: `TRACK 2: BEST SUBJECT LINE
 
 The goal: a reply earned by the subject line.
 
@@ -97,17 +97,17 @@ How it's won: the strongest subject-line craft (the reply proves the open).
 Scoring (out of 100):
 • Subject-line hook & craft (60)
 • That it earned a genuine reply (25)
-• Honesty — no clickbait lie (15)
+• Honesty: no clickbait lie (15)
 
 Prize: $500.`,
     replies: [],
   },
   {
     id: 6, sender: HOST, email: HOST_EMAIL, to: YOU, folder: 'inbox', tab: 'primary', topic: 'twoliner',
-    subject: 'Track 3 — The Two-Liner', tag: 'Track', stars: 503, views: 2330, starred: false, read: false,
+    subject: 'Track 3: The Two-Liner', tag: 'Track', stars: 503, views: 2330, starred: false, read: false,
     date: 'Jun 24',
     preview: 'A reply from an email of two sentences or less. The most result from the fewest words.',
-    body: `TRACK 3 — THE TWO-LINER
+    body: `TRACK 3: THE TWO-LINER
 
 The goal: a reply from an email of two sentences or less.
 
@@ -116,24 +116,24 @@ How it's won: the most result from the fewest words.
 Scoring (out of 100):
 • Result earned vs. how few words used (50)
 • Craft & clarity (30)
-• Brevity — one sentence beats two (20)
+• Brevity: one sentence beats two (20)
 
 Prize: $500.`,
     replies: [],
   },
   {
     id: 7, sender: HOST, email: HOST_EMAIL, to: YOU, folder: 'inbox', tab: 'primary', topic: 'ask',
-    subject: 'Track 4 — The Ask', tag: 'Track', stars: 690, views: 3140, starred: false, read: false,
+    subject: 'Track 4: The Ask', tag: 'Track', stars: 690, views: 3140, starred: false, read: false,
     date: 'Jun 24',
-    preview: 'A major "yes" from someone who could change things for you — a job, an intro, money, a favor. Biggest yes wins.',
-    body: `TRACK 4 — THE ASK
+    preview: 'A major "yes" from someone who could change things for you: a job, an intro, money, a favor. Biggest yes wins.',
+    body: `TRACK 4: THE ASK
 
-The goal: a major "yes" from someone who could change things for you — a job, an intro, money, a favor.
+The goal: a major "yes" from someone who could change things for you: a job, an intro, money, a favor.
 
 How it's won: the biggest yes wins.
 
 Scoring (out of 100):
-• Size of the "yes" — how big, valuable, or unlikely (60)
+• Size of the "yes": how big, valuable, or unlikely (60)
 • Proof the yes was real (20)
 • Craft of the email (20)
 
@@ -149,7 +149,7 @@ Prize: $500.`,
 
 1. Send your cold email (someone who doesn’t know you, real ask).
 2. Get a real reply.
-3. Submit the form with a screenshot of that reply — before the July 7 deadline.
+3. Submit the form with a screenshot of that reply, before the July 7 deadline.
 
 That's it. Verified by us.
 
@@ -158,26 +158,26 @@ Pick the track that fits your win; every entry is also automatically in the runn
   },
   {
     id: 9, sender: HOST, email: HOST_EMAIL, to: YOU, folder: 'inbox', tab: 'primary', topic: '',
-    subject: 'Key dates — the timeline', tag: 'Timeline', stars: 388, views: 1760, starred: false, read: false,
+    subject: 'Key dates: the timeline', tag: 'Timeline', stars: 388, views: 1760, starred: false, read: false,
     date: 'Jun 24',
     preview: 'Launch Jun 24 → registrations close Jun 30 → submit by Jul 7 → winners Jul 10.',
     body: `THE TIMELINE
 
-• Jun 24 — Launch. Registrations open.
-• Jun 30 — Registrations close.
-• Jun 24 → Jul 7 — Send window. Send your cold emails.
-• Jul 7 — Submission deadline (form + screenshot of the reply).
-• Jul 10 — Winners announced.
+• Jun 24: Launch. Registrations open.
+• Jun 30: Registrations close.
+• Jun 24 → Jul 7: Send window. Send your cold emails.
+• Jul 7: Submission deadline (form + screenshot of the reply).
+• Jul 10: Winners announced.
 
 One event. One shot. Get the reply.`,
     replies: [],
   },
   {
     id: 10, sender: HOST, email: HOST_EMAIL, to: YOU, folder: 'inbox', tab: 'primary', topic: '',
-    subject: 'The prize pool — $3,000', tag: 'Prizes', stars: 1510, views: 6240, starred: true, read: false,
+    subject: 'The prize pool: $3,000', tag: 'Prizes', stars: 1510, views: 6240, starred: true, read: false,
     date: 'Jun 24',
     preview: '$3,000 total. $1,000 grand prize + $500 for each of the four tracks.',
-    body: `THE PRIZE POOL — $3,000 total.
+    body: `THE PRIZE POOL: $3,000 total.
 
 ★ The Best Cold Email (grand prize) ...... $1,000
 1. The Unreachable ....................... $500
@@ -192,15 +192,15 @@ A cash prize for each track, plus a bigger grand prize for the best cold email o
     id: 11, sender: HOST, email: HOST_EMAIL, to: YOU, folder: 'inbox', tab: 'primary', topic: '',
     subject: 'How judging works', tag: 'Judging', stars: 297, views: 1430, starred: false, read: false,
     date: 'Jun 24',
-    preview: 'Step 1 — the Gate (pass/fail). Step 2 — a 100-point rubric per track, scored by the panel.',
+    preview: 'Step 1: the Gate (pass/fail). Step 2: a 100-point rubric per track, scored by the panel.',
     body: `HOW JUDGING WORKS
 
-Step 1 — THE GATE (pass/fail). Every entry must clear this before it's scored:
+Step 1: THE GATE (pass/fail). Every entry must clear this before it's scored:
 • A real reply from someone who had no reason to answer
 • No impersonation, no lying, no pre-existing relationship, no mass-blasting
 Fail any → disqualified.
 
-Step 2 — SCORING (out of 100). A panel of organizers + guest judges scores each qualifying entry. Criteria are weighted per track (see each track's email).
+Step 2: SCORING (out of 100). A panel of organizers + guest judges scores each qualifying entry. Criteria are weighted per track (see each track's email).
 
 Highest score per track wins that track. The strongest entry overall takes The Best Cold Email.`,
     replies: [],
@@ -223,23 +223,23 @@ Get the reply. → thecold.email`,
 // Click the avatar → Gmail-style contact card: joke email + "Hi, [hi]!" + a usable cold-email takeaway.
 // Images live in public/memes/ (from PFP_IMGS.zip). Emails are deliberately fake/punny, not real.
 export const MEMES = [
-  { name: 'Elon Musk',        hi: 'Elon',    email: 'dogefather@x.com',           img: '/memes/IMG-20260619-WA0024.jpg', tip: 'Send at 3am and tweet through it — the unhinged-but-bold email gets the reply the polished one never will.' },
+  { name: 'Elon Musk',        hi: 'Elon',    email: 'dogefather@x.com',           img: '/memes/IMG-20260619-WA0024.jpg', tip: 'Send at 3am and tweet through it. The unhinged-but-bold email gets the reply the polished one never will.' },
   { name: 'Jeff Bezos',       hi: 'Jeff',    email: '1click@amazon.com',          img: '/memes/IMG-20260619-WA0023.jpg', tip: 'Make replying a one-click decision. Every extra step you ask for is another reason they bounce.' },
   { name: 'Barack Obama',     hi: 'Barack',  email: 'yeswecan@whitehouse.gov',    img: '/memes/IMG-20260619-WA0012.jpg', tip: 'Write to one person, not a rally. "You" wins more votes than "everyone."' },
-  { name: 'Donald Trump',     hi: 'Donald',  email: 'covfefe@truth.social',       img: '/memes/IMG-20260619-WA0020.jpg', tip: 'Your subject line is the whole campaign — tremendous open rates, the best, or nothing happens. Believe me.' },
+  { name: 'Donald Trump',     hi: 'Donald',  email: 'covfefe@truth.social',       img: '/memes/IMG-20260619-WA0020.jpg', tip: 'Your subject line is the whole campaign: tremendous open rates, the best, or nothing happens. Believe me.' },
   { name: 'Kanye West',       hi: 'Ye',      email: 'immaletyoufinish@yeezy.com', img: '/memes/Kanye.jpeg',              tip: "Interrupt the inbox like it's the VMAs. Confidence opens what politeness leaves on read." },
   { name: 'Drake',            hi: 'Drake',   email: 'started@thebottom.com',      img: '/memes/IMG-20260619-WA0015.jpg', tip: 'Started from "no reply," now we here. The follow-up is where the deal actually lives.' },
-  { name: 'Justin Bieber',    hi: 'Justin',  email: 'sorry@beliebers.com',        img: '/memes/IMG-20260619-WA0008.jpg', tip: 'Is it too late now to say sorry? Never — a good follow-up beats a perfect first email every time.' },
+  { name: 'Justin Bieber',    hi: 'Justin',  email: 'sorry@beliebers.com',        img: '/memes/IMG-20260619-WA0008.jpg', tip: 'Is it too late now to say sorry? Never. A good follow-up beats a perfect first email every time.' },
   { name: 'Sabrina Carpenter',hi: 'Sabrina', email: 'espresso@sabrina.com',       img: '/memes/IMG-20260619-WA0018.jpg', tip: 'Be the email that keeps them up like espresso. Memorable beats polished.' },
-  { name: 'Max Verstappen',   hi: 'Max',     email: 'boxbox@redbull.com',         img: '/memes/IMG-20260619-WA0011.jpg', tip: 'Lights out and away you go. Speed wins — the faster you send, the more shots on goal.' },
+  { name: 'Max Verstappen',   hi: 'Max',     email: 'boxbox@redbull.com',         img: '/memes/IMG-20260619-WA0011.jpg', tip: 'Lights out and away you go. Speed wins: the faster you send, the more shots on goal.' },
   { name: 'Charlie Kirk',     hi: 'Charlie', email: 'provemewrong@tpusa.com',     img: '/memes/IMG-20260619-WA0019.jpg', tip: "Set up a table they can't walk past. A sharp question is harder to ignore than a statement." },
   { name: 'Mark Zuckerberg',  hi: 'Mark',    email: 'definitelyhuman@meta.com',   img: '/memes/IMG-20260619-WA0022.jpg', tip: "Don't email like an avatar in an empty metaverse. One human detail beats a thousand merge tags." },
   { name: 'Anthony Mackie',   hi: 'Anthony', email: 'onyourleft@marvel.com',      img: '/memes/IMG-20260619-WA0014.jpg', tip: 'Show up on their left when they least expect it, and ask like you already caught the shield.' },
-  { name: 'Brooklyn 99',      hi: 'Jake',    email: 'coolcoolcool@nine9.com',     img: '/memes/IMG-20260619-WA0009.jpg', tip: 'Cool cool cool, no doubt no doubt — keep it short. Ten-second reads are the ones that get read.' },
-  { name: 'Phil Dunphy',      hi: 'Phil',    email: 'philosophy@dunphy.com',      img: '/memes/IMG-20260619-WA0013.jpg', tip: "WTF — Why The Face? Be the warm one. People reply to the guy they'd grab a coffee with." },
+  { name: 'Brooklyn 99',      hi: 'Jake',    email: 'coolcoolcool@nine9.com',     img: '/memes/IMG-20260619-WA0009.jpg', tip: 'Cool cool cool, no doubt no doubt. Keep it short. Ten-second reads are the ones that get read.' },
+  { name: 'Phil Dunphy',      hi: 'Phil',    email: 'philosophy@dunphy.com',      img: '/memes/IMG-20260619-WA0013.jpg', tip: "WTF? Why The Face? Be the warm one. People reply to the guy they'd grab a coffee with." },
   { name: 'The Kiss-Cam Couple', hi: 'you two', email: 'wrongperson@coldplay.com', img: '/memes/IMG-20260619-WA0016.jpg', tip: 'Check the "To" field twice. The wrong recipient turns a cold email into a viral one.' },
   { name: 'Caught Mid-Sentence', hi: 'there', email: 'waitwhat@oops.com',         img: '/memes/IMG-20260619-WA0010.jpg', tip: 'Open mid-thought and they lean in. A weird first line beats "Dear Sir or Madam."' },
-  { name: 'Corporate Era',    hi: 'champ',   email: 'circleback@synergy.com',     img: '/memes/IMG-20260619-WA0021.jpg', tip: "Let's circle back — but actually. Respect their calendar: get to the ask before sentence two." },
+  { name: 'Corporate Era',    hi: 'champ',   email: 'circleback@synergy.com',     img: '/memes/IMG-20260619-WA0021.jpg', tip: "Let's circle back, but actually. Respect their calendar: get to the ask before sentence two." },
 ]
 
 // The Rule page (v2.0 spec) — list content; headings/copy live inline in ViewRule.
@@ -374,8 +374,8 @@ export const TRACK_PAGES = {
       'Submitting a reply with no real engagement.',
     ],
     scoring: [
-      { label: 'Difficulty of the target — how unreachable they are', pts: 50 },
-      { label: 'Depth of the reply — real engagement, not a brush-off', pts: 30 },
+      { label: 'Difficulty of the target: how unreachable they are', pts: 50 },
+      { label: 'Depth of the reply: real engagement, not a brush-off', pts: 30 },
       { label: 'Craft of the email', pts: 20 },
     ],
   },
@@ -408,7 +408,7 @@ export const TRACK_PAGES = {
     scoring: [
       { label: 'Subject-line hook & craft', pts: 60 },
       { label: 'That it earned a genuine reply', pts: 25 },
-      { label: 'Honesty — no clickbait lie', pts: 15 },
+      { label: 'Honesty: no clickbait lie', pts: 15 },
     ],
   },
   twoliner: {
@@ -443,7 +443,7 @@ export const TRACK_PAGES = {
     scoring: [
       { label: 'Result earned vs. how few words used', pts: 50 },
       { label: 'Craft & clarity', pts: 30 },
-      { label: 'Brevity — one sentence beats two', pts: 20 },
+      { label: 'Brevity: one sentence beats two', pts: 20 },
     ],
   },
   ask: {
@@ -477,7 +477,7 @@ export const TRACK_PAGES = {
       'Confusing a reply with a meaningful yes.',
     ],
     scoring: [
-      { label: 'Size of the "yes" — how big, valuable, or unlikely', pts: 60 },
+      { label: 'Size of the "yes": how big, valuable, or unlikely', pts: 60 },
       { label: 'Proof the yes was real', pts: 20 },
       { label: 'Craft of the email', pts: 20 },
     ],
@@ -522,7 +522,7 @@ export const EVENTS = [
 //   email → email regex · url → URL format · required → blocks submit.
 export const ENTER_FORM = {
   title: 'Enter the Competition',
-  desc: 'Funnel 1 — Registration. Tell us who you are and why you’re in. Send as many cold emails as you like — you only submit the ones that get a real reply.',
+  desc: 'Funnel 1: Registration. Tell us who you are and why you’re in. Send as many cold emails as you like. You only submit the ones that get a real reply.',
   questions: [
     { name: 'full_name',     q: 'Full name',                          type: 'short',     required: true,  ph: 'First and last name' },
     { name: 'email',         q: 'Email',                              type: 'email',     required: true,  ph: 'you@example.com' },
