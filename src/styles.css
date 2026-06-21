@@ -174,6 +174,11 @@ html, body, #root { font-family:'Roboto',Arial,sans-serif; color:var(--text); ba
 .cw-label { color:#5e5e5e; min-width:36px; }
 .cw-field input { flex:1; border:none; outline:none; font-size:14px; background:transparent; }
 .cw-field-plain { padding-left:16px; }
+/* Fixed "To" destination — read-only chip, clearly not an editable input */
+.cw-field-fixed { background:#fafafa; }
+.cw-to-chip { display:inline-flex; align-items:center; gap:6px; background:#e6f4ea; color:#137333; border:1px solid #b7e1c2; border-radius:999px; padding:3px 10px 3px 8px; font-size:13px; font-weight:500; }
+.cw-to-chip .msym { color:#1e8e3e; }
+.cw-to-note { margin-left:auto; color:#9aa0a6; font-size:12px; }
 .cw-subject { font-weight:400; }
 /* Track selection — custom-styled select */
 .cw-track { border-bottom:1px solid #f1f1f1; padding:12px 16px 14px; }
@@ -187,6 +192,8 @@ html, body, #root { font-family:'Roboto',Arial,sans-serif; color:var(--text); ba
 .cw-body textarea { width:100%; border:none; outline:none; resize:none; min-height:160px; font-family:inherit; font-size:14px; }
 /* Attachment chips */
 .cw-attachments { display:flex; flex-wrap:wrap; gap:8px; padding:0 16px 10px; }
+.cw-attach-head { flex-basis:100%; display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; color:#137333; margin:0 0 2px; }
+.cw-attach-head .msym { color:#1e8e3e; }
 .cw-chip { display:flex; align-items:center; gap:6px; max-width:220px; background:#f1f3f4; border:1px solid #dadce0; border-radius:8px; padding:5px 8px; font-size:13px; color:#202124; }
 .cw-chip .msym { color:#5f6368; }
 /* Sidebar icons: outlined by default, filled only when the item is active */
@@ -2587,7 +2594,6 @@ html, body, #root {
   margin: 38px 0 10px; line-height: 1.3;
   padding-top: 18px;
   border-top: 1px solid #ecedef;
-  text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px;
 }
 /* First H2 (The Goal) sits right under the title — no divider/extra top space */
 .gdoc-h1 + .gdoc-h2 {
@@ -2843,6 +2849,7 @@ html, body, #root {
 .enter-done h3 { margin: 4px 0 0; font: 600 20px 'Google Sans', sans-serif; color: #202124; }
 .enter-done p { margin: 0; max-width: 420px; color: #5f6368; font: 400 14px 'Roboto', sans-serif; }
 .enter-link { color: #1a73e8; cursor: pointer; font: 500 14px 'Google Sans', sans-serif; margin-top: 8px; }
+.enter-done-actions { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 14px; }
 
 /* ---------- CLASSROOM ---------- */
 .gclass { background: #f8f9fa; }
@@ -2866,12 +2873,28 @@ html, body, #root {
 .gclass-steps li { font: 400 14px 'Roboto', sans-serif; color: #3c4043; line-height: 1.5; }
 .gclass-h3 { font: 500 16px 'Google Sans', sans-serif; color: #202124; margin: 0 0 16px; }
 .gclass-btn { background: #1e8e3e; color: #fff; border: 0; border-radius: 6px; padding: 10px 22px; font: 600 14px 'Google Sans', sans-serif; cursor: pointer; }
+.gclass-btn:hover { background: #137333; }
+.gclass-btn-row { display: inline-flex; align-items: center; gap: 8px; }
 .gclass-attach-btn { display: inline-flex; align-items: center; gap: 8px; background: #fff; color: #1e8e3e; border: 1px solid #1e8e3e; border-radius: 6px; padding: 10px 20px; font: 600 14px 'Google Sans', sans-serif; cursor: pointer; }
 .gclass-attach p { font: 400 14px 'Roboto', sans-serif; color: #5f6368; margin: 0 0 16px; line-height: 1.5; }
-/* Funnel 2 — hyperlink-style entry into the submission window */
-.gclass-submit-link { display: inline-flex; align-items: center; gap: 8px; color: #1a73e8; font: 600 15px 'Google Sans', sans-serif; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; border-radius: 6px; padding: 2px 2px; }
-.gclass-submit-link:hover { color: #0b4ec0; }
-.gclass-submit-link:focus-visible { outline: 2px solid #1a73e8; outline-offset: 2px; }
+
+/* ---- Funnel flow: Step 1 → Step 2 ---- */
+.gclass-funnels { display: flex; flex-direction: column; gap: 0; }
+.gclass-funnel.is-done { border-color: #b7e1c2; background: #f6fcf8; }
+.gclass-funnel-head { display: flex; align-items: center; gap: 14px; margin: 0 0 16px; }
+.gclass-step-badge { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; background: #1e8e3e; color: #fff; display: flex; align-items: center; justify-content: center; font: 600 15px 'Google Sans', sans-serif; }
+.gclass-funnel-heading { display: flex; flex-direction: column; gap: 1px; }
+.gclass-step-eyebrow { font: 600 11px 'Google Sans', sans-serif; letter-spacing: .6px; text-transform: uppercase; color: #1e8e3e; }
+.gclass-funnel-head .gclass-h3 { margin: 0; }
+.gclass-funnel-connector { display: flex; flex-direction: column; align-items: center; color: #1e8e3e; padding: 6px 0; }
+.gclass-connector-line { width: 2px; height: 14px; background: #b7e1c2; }
+.gclass-funnel-connector .msym { background: #e6f4ea; border-radius: 50%; padding: 3px; }
+
+/* Funnel 2 — primary button entry into the submission window */
+.gclass-submit-btn { display: inline-flex; align-items: center; gap: 8px; background: #1e8e3e; color: #fff; border: 0; border-radius: 6px; padding: 11px 22px; font: 600 14px 'Google Sans', sans-serif; cursor: pointer; transition: background .15s, box-shadow .15s; }
+.gclass-submit-btn:hover { background: #137333; box-shadow: 0 1px 3px rgba(0,0,0,.18); }
+.gclass-submit-btn:focus-visible { outline: 2px solid #1e8e3e; outline-offset: 2px; }
+.gclass-funnel-help { font: 400 13px 'Roboto', sans-serif; color: #5f6368; margin: 12px 0 0 !important; }
 
 /* ============================================================
    GLOBAL RESPONSIVE — tablet + mobile across every view

@@ -201,9 +201,10 @@ function ComposeWindow({ onClose, onSend }) {
         <span className="cw-label">Target Email</span>
         <input type="email" value={targetEmail} onChange={e => setTargetEmail(e.target.value)} placeholder="Email Address of the Target" />
       </div>
-      <div className="cw-field">
+      <div className="cw-field cw-field-fixed">
         <span className="cw-label">To</span>
-        <input value="judges@thecold.email" readOnly tabIndex={-1} style={{ color: '#5e5e5e' }} />
+        <span className="cw-to-chip"><I.M name="verified" size={16} /> judges@thecold.email</span>
+        <span className="cw-to-note">Fixed destination</span>
       </div>
 
       {/* Track selection — custom-styled select */}
@@ -226,6 +227,10 @@ function ComposeWindow({ onClose, onSend }) {
 
       {files.length > 0 && (
         <div className="cw-attachments">
+          <div className="cw-attach-head">
+            <I.M name="check_circle" size={16} />
+            {files.length} file{files.length > 1 ? 's' : ''} attached
+          </div>
           {files.map((f, i) => (
             <div className="cw-chip" key={i}>
               <I.M name="description" size={18} />
@@ -679,10 +684,16 @@ function ViewEnter({ onEnter }) {
     ENTER_FORM.questions.forEach(qq => {
       const v = values[qq.name]
       const empty = qq.type === 'checkbox' ? !(Array.isArray(v) && v.length) : !(v && String(v).trim())
-      if (qq.required && empty) { e[qq.name] = 'This field is required.'; return }
+      if (qq.required && empty) {
+        if (qq.type === 'email')        e[qq.name] = 'We need your email to send your confirmation.'
+        else if (qq.type === 'checkbox' || qq.type === 'radio') e[qq.name] = 'Pick at least one option to continue.'
+        else if (qq.type === 'dropdown') e[qq.name] = 'Choose an option to continue.'
+        else                            e[qq.name] = 'This one’s required — add a short answer.'
+        return
+      }
       if (empty) return
-      if (qq.type === 'email' && !EMAIL_RE.test(String(v).trim())) e[qq.name] = 'Enter a valid email address.'
-      if (qq.type === 'url' && !URL_RE.test(String(v).trim())) e[qq.name] = 'Enter a valid link (e.g. https://…).'
+      if (qq.type === 'email' && !EMAIL_RE.test(String(v).trim())) e[qq.name] = 'That doesn’t look like a valid email — check for typos.'
+      if (qq.type === 'url' && !URL_RE.test(String(v).trim())) e[qq.name] = 'Enter a full link starting with https:// (e.g. https://example.com).'
     })
     return e
   }
@@ -768,7 +779,12 @@ function ViewEnter({ onEnter }) {
       <I.M name="check_circle" size={40} />
       <h3>You’re registered.</h3>
       <p>We’ve emailed you a confirmation. Now go send one real cold email, then come back and submit the reply.</p>
-      <span className="enter-link" onClick={() => { setSubmitted(false); setValues({}); setErrors({}) }}>Register someone else</span>
+      <div className="enter-done-actions">
+        <button className="gclass-btn gclass-btn-row" onClick={onEnter}>
+          <I.M name="send" size={18} /> Continue to submission
+        </button>
+        <span className="enter-link" onClick={() => { setSubmitted(false); setValues({}); setErrors({}) }}>Register someone else</span>
+      </div>
     </div>
   )
 
@@ -806,23 +822,43 @@ function ViewEnter({ onEnter }) {
             </ol>
           </div>
 
-          <div className="gclass-card">
-            <h3 className="gclass-h3">Funnel 1: Registration</h3>
-            {submitted ? <Done cls="enter-done-light" /> : (
-              <>
-                <FieldList />
-                <button className="gclass-btn" onClick={handleSubmit}>Hand in registration</button>
-              </>
-            )}
-          </div>
+          <div className="gclass-funnels">
+            <div className={'gclass-card gclass-funnel' + (submitted ? ' is-done' : '')}>
+              <div className="gclass-funnel-head">
+                <span className="gclass-step-badge">{submitted ? <I.M name="check" size={18} /> : 1}</span>
+                <div className="gclass-funnel-heading">
+                  <span className="gclass-step-eyebrow">Step 1 of 2</span>
+                  <h3 className="gclass-h3">Funnel 1: Registration</h3>
+                </div>
+              </div>
+              {submitted ? <Done cls="enter-done-light" /> : (
+                <>
+                  <FieldList />
+                  <button className="gclass-btn" onClick={handleSubmit}>Hand in registration</button>
+                </>
+              )}
+            </div>
 
-          <div className="gclass-card gclass-attach">
-            <h3 className="gclass-h3">Funnel 2: Your submission</h3>
-            <p>When they reply, attach a screenshot/PDF of the thread and submit your entry through the submission window.</p>
-            <a className="gclass-submit-link" role="button" tabIndex={0} onClick={onEnter}
-               onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onEnter() } }}>
-              <I.M name="send" size={18} /> Open the submission window
-            </a>
+            <div className="gclass-funnel-connector" aria-hidden="true">
+              <span className="gclass-connector-line" />
+              <I.M name="arrow_downward" size={18} />
+            </div>
+
+            <div className="gclass-card gclass-funnel gclass-attach">
+              <div className="gclass-funnel-head">
+                <span className="gclass-step-badge">2</span>
+                <div className="gclass-funnel-heading">
+                  <span className="gclass-step-eyebrow">Step 2 of 2</span>
+                  <h3 className="gclass-h3">Funnel 2: Your submission</h3>
+                </div>
+              </div>
+              <p>When they reply, attach a screenshot/PDF of the thread and submit your entry through the submission window.</p>
+              <button className="gclass-submit-btn" type="button" onClick={onEnter}
+                 onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onEnter() } }}>
+                <I.M name="send" size={18} /> Open the submission window
+              </button>
+              <p className="gclass-funnel-help">Opens the submission window — no email leaves your inbox here.</p>
+            </div>
           </div>
         </main>
       </div>
