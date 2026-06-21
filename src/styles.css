@@ -2512,104 +2512,30 @@ html, body, #root {
 .gdocs-mini-lg .gdocs-mini-list li { gap: 4px; margin-bottom: 3px; }
 
 /* ===================================================================
-   THEMED DOC THUMBNAILS (gmini-*)
-   Each track previews its real themed doc at thumbnail scale. These are
-   scoped to the thumbnail boxes only and never touch the full track pages.
-   namespaces: gmini-wb / gmini-nb / gmini-ck / gmini-mkd
+   TRACK DOC THUMBNAILS (gmini-mkd-*)
+   Every track previews its REAL marked-up Google Doc page (TrackMarkedDoc) at
+   thumbnail scale — a faithful 1:1 miniature: same section order, the closed
+   hand-drawn circle around the title, yellow/green highlighter swipes, the
+   strike+edit on Rewards, ▸/• marks, scoring row, prize callout, handwritten
+   margin notes, hand arrows and a Google-Docs comment bubble. Scoped to the
+   thumbnail boxes only; never touches the full track page. Decoration clips at
+   the frame edge (thumbnails are overflow:hidden).
    =================================================================== */
 .gmini { position: relative; width: 100%; height: 100%; box-sizing: border-box;
   overflow: hidden; text-align: left; padding: 9px 8px; }
 .gmini-lg { padding: 12px 11px; }
 
-/* ---- WHITEBOARD (subject) ---- */
-.gmini-wb { background:
-    radial-gradient(circle at 20% 15%, rgba(0,0,0,.03), transparent 40%),
-    linear-gradient(135deg, #f7f6f1, #eef0ec); padding-top: 7px; }
-.gmini-wb-title { position: relative; width: max-content; max-width: 100%; margin: 0 auto 4px;
-  font-family: 'Permanent Marker', cursive; font-size: 11px; color: #1f2933;
-  transform: rotate(-1.5deg); line-height: 1; }
-.gmini-lg .gmini-wb-title { font-size: 15px; }
-.gmini-wb-underline { display: block; width: 100%; height: 5px; color: #d93025; }
-.gmini-wb-sticky { position: absolute; top: 6px; right: 5px; z-index: 2;
-  font-family: 'Permanent Marker', cursive; font-size: 5px; line-height: 1.25;
-  color: #4a3b00; background: #fff4a3; padding: 4px 4px; text-align: center;
-  transform: rotate(5deg); box-shadow: 1px 2px 4px rgba(0,0,0,.18); }
-.gmini-lg .gmini-wb-sticky { font-size: 6.5px; }
-.gmini-wb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 6px; margin-top: 6px; }
-.gmini-wb-box { position: relative; border: 1.4px solid currentColor; border-radius: 6px;
-  padding: 4px 5px; background: rgba(255,255,255,.4); }
-.gmini-wb-blk { color: #25292e; } .gmini-wb-blu { color: #1a56d6; }
-.gmini-wb-red { color: #c5221f; } .gmini-wb-grn { color: #137333; }
-.gmini-wb-h { font-family: 'Permanent Marker', cursive; font-size: 6px; margin: 0 0 2px; color: inherit; }
-.gmini-lg .gmini-wb-h { font-size: 8px; }
-.gmini-wb-p { font-family: 'Caveat', cursive; font-size: 6.5px; line-height: 1.25; margin: 0 0 1px; color: #1f2933; }
-.gmini-wb-list { list-style: none; margin: 0; padding: 0; }
-.gmini-wb-list li { display: flex; gap: 2px; font-family: 'Caveat', cursive; font-size: 6.5px;
-  line-height: 1.2; color: #1f2933; }
-.gmini-wb-bul { color: currentColor; font-weight: 700; }
-.gmini-lg .gmini-wb-p, .gmini-lg .gmini-wb-list li { font-size: 8.5px; }
-
-/* ---- LINED NOTEBOOK (twoliner) ---- */
-.gmini-nb { background-color: #fcfbf3;
-  background-image: repeating-linear-gradient(180deg, transparent 0 11px, #b9d4e6 11px 12px);
-  background-position: 0 8px; padding-left: 16px; }
-.gmini-nb::before { content: ''; position: absolute; top: 0; bottom: 0; left: 12px;
-  width: 1.5px; background: #e89; opacity: .65; }
-.gmini-nb-coffee { position: absolute; top: 6px; right: 6px; width: 30px; height: 30px;
-  border-radius: 50%; border: 3px solid rgba(120,72,30,.18);
-  box-shadow: inset 0 0 6px rgba(120,72,30,.12); transform: rotate(8deg); pointer-events: none; }
-.gmini-nb-title { font-family: 'Permanent Marker', cursive; font-size: 11px; color: #1c3a52;
-  margin: 0 0 4px; line-height: 1.1; }
-.gmini-lg .gmini-nb-title { font-size: 15px; }
-.gmini-nb-sec { margin: 0 0 3px; }
-.gmini-nb-h { font-family: 'Permanent Marker', cursive; font-size: 7px; color: #b3261e;
-  display: inline-block; margin: 2px 0 0; border-bottom: 1px solid rgba(179,38,30,.4); }
-.gmini-lg .gmini-nb-h { font-size: 9px; }
-.gmini-nb-p { font-family: 'Patrick Hand', cursive; font-size: 7px; line-height: 12px; margin: 0; color: #243; }
-.gmini-nb-list { list-style: none; margin: 0; padding: 0; }
-.gmini-nb-list li { display: flex; gap: 3px; font-family: 'Patrick Hand', cursive;
-  font-size: 7px; line-height: 12px; color: #243; }
-.gmini-nb-bul { color: #1c3a52; font-weight: 700; }
-.gmini-lg .gmini-nb-p, .gmini-lg .gmini-nb-list li { font-size: 9px; line-height: 14px; }
-.gmini-nb-hl { background: linear-gradient(180deg, transparent 12%, rgba(255,224,102,.75) 12%, rgba(255,224,102,.75) 86%, transparent 86%);
-  box-decoration-break: clone; -webkit-box-decoration-break: clone; }
-
-/* ---- CORKBOARD (ask) ---- */
-.gmini-ck { background-color: #c19a5b;
-  background-image:
-    radial-gradient(circle at 50% 50%, rgba(0,0,0,.05) 0.6px, transparent 1px),
-    radial-gradient(ellipse at 30% 20%, rgba(120,80,30,.25), transparent 60%),
-    radial-gradient(ellipse at 80% 80%, rgba(90,60,20,.3), transparent 55%);
-  background-size: 4px 4px, 100% 100%, 100% 100%; padding: 8px 7px; }
-.gmini-ck-titlecard { position: relative; width: max-content; max-width: 100%; margin: 2px auto 7px;
-  background: #fffdf6; padding: 4px 12px; box-shadow: 0 3px 7px rgba(0,0,0,.3);
-  font-family: 'Permanent Marker', cursive; font-size: 9px; color: #b3261e; line-height: 1.1; }
-.gmini-lg .gmini-ck-titlecard { font-size: 12px; }
-.gmini-ck-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 7px; }
-.gmini-ck-card { position: relative; padding: 5px 6px 6px; background: #fffdf6;
-  box-shadow: 0 3px 7px rgba(0,0,0,.3); font-family: 'Patrick Hand', cursive; color: #2b2b2b; }
-.gmini-ck-white { background: #fffdf6; } .gmini-ck-yellow { background: #fff6a8; }
-.gmini-ck-blue { background: #cfe6ff; } .gmini-ck-pink { background: #ffd6e2; }
-.gmini-ck-h { font-family: 'Permanent Marker', cursive; font-size: 6px; color: #1a56d6; margin: 1px 0 3px; }
-.gmini-lg .gmini-ck-h { font-size: 8px; }
-.gmini-ck-p { font-family: 'Patrick Hand', cursive; font-size: 6.5px; line-height: 1.3; margin: 0 0 1px; }
-.gmini-ck-list { list-style: none; margin: 0; padding: 0; }
-.gmini-ck-list li { display: flex; gap: 2px; font-family: 'Patrick Hand', cursive;
-  font-size: 6.5px; line-height: 1.25; }
-.gmini-ck-bul { color: #d61f1f; }
-.gmini-lg .gmini-ck-p, .gmini-lg .gmini-ck-list li { font-size: 8.5px; }
-.gmini-ck-pin { position: absolute; top: -4px; left: 50%; transform: translateX(-50%);
-  width: 8px; height: 8px; border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #ff8a8a, #d61f1f 65%, #9c0000);
-  box-shadow: 0 1px 2px rgba(0,0,0,.4); z-index: 2; }
-.gmini-ck-tape { position: absolute; top: -4px; left: 50%; transform: translateX(-50%) rotate(-3deg);
-  width: 30px; height: 9px; background: rgba(220,210,150,.6); box-shadow: 0 1px 2px rgba(0,0,0,.2); z-index: 2; }
-
-/* ---- MARKED-UP GOOGLE DOC (unreachable) ---- */
+/* ---- MARKED-UP GOOGLE DOC (all tracks) ---- */
 .gmini-mkd { background: #fff; }
-.gmini-mkd-h1 { font: 700 10px 'Arial',sans-serif; color: #202124; text-align: center;
-  margin-bottom: 5px; line-height: 1.2; }
+.gmini-mkd-h1 { position: relative; display: block; width: max-content; max-width: 100%;
+  font: 700 10px 'Arial',sans-serif; color: #202124; text-align: center;
+  margin: 2px auto 6px; line-height: 1.2; }
 .gmini-lg .gmini-mkd-h1 { font-size: 13px; }
+/* closed hand-drawn circle around the title (mirrors .mkd-circle) */
+.gmini-mkd-circle::after { content: ''; position: absolute; left: 50%; top: 50%;
+  width: calc(100% + 16px); height: 150%; transform: translate(-50%,-50%) rotate(-2deg);
+  border: 1.4px solid rgba(217,48,37,.6); border-radius: 50%; pointer-events: none; }
+.gmini-lg .gmini-mkd-circle::after { width: calc(100% + 22px); border-width: 1.7px; }
 .gmini-mkd-sub { font: 500 6px 'Arial',sans-serif; color: #1155cc; margin: 5px 0 2px;
   text-decoration: underline; text-underline-offset: 1.5px; }
 .gmini-lg .gmini-mkd-sub { font-size: 7.5px; }
@@ -2617,19 +2543,49 @@ html, body, #root {
 .gmini-mkd-list { list-style: none; margin: 0 0 2px; padding: 0; }
 .gmini-mkd-list li { display: flex; gap: 3px; font: 400 6px 'Arial',sans-serif; color: #3c4043; line-height: 1.5; }
 .gmini-mkd-mark { flex: none; color: #5f6368; }
+.gmini-mkd-mark-dot { color: #1a73e8; font-weight: 700; }
 .gmini-lg .gmini-mkd-p, .gmini-lg .gmini-mkd-list li { font-size: 7.5px; }
 .gmini-mkd-hl { background-image: linear-gradient(180deg, transparent 8%, var(--hl) 8%, var(--hl) 88%, transparent 88%);
   padding: 0 1px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
 .gmini-mkd-hl-y { --hl: rgba(255,234,84,.78); }
 .gmini-mkd-hl-g { --hl: rgba(146,237,142,.7); }
 .gmini-mkd-underline { box-shadow: inset 0 -0.5em 0 rgba(217,48,37,.18); }
+/* hand strikethrough + caret edit on Rewards (mirrors .mkd-strike / .mkd-edit) */
+.gmini-mkd-strike { position: relative; color: #7a7d80; }
+.gmini-mkd-strike::after { content: ''; position: absolute; left: -1px; right: -1px; top: 52%;
+  height: 1px; background: #d93025; transform: rotate(-1.2deg); }
+.gmini-mkd-edit { font-family: 'Caveat', cursive; color: #d93025; font-size: 8px; font-weight: 700;
+  margin-left: 2px; transform: rotate(-3deg); display: inline-block; }
+.gmini-lg .gmini-mkd-edit { font-size: 10px; }
+/* scoring row */
+.gmini-mkd-table { width: 100%; border-collapse: collapse; margin: 1px 0 2px;
+  font: 400 6px 'Arial',sans-serif; color: #3c4043; }
+.gmini-lg .gmini-mkd-table { font-size: 7.5px; }
+.gmini-mkd-table td { border: 0.7px solid #dadce0; padding: 1px 3px; line-height: 1.3; }
+.gmini-mkd-table-pts { text-align: right; width: 18%; white-space: nowrap; }
+/* handwritten margin notes */
 .gmini-mkd-note { position: absolute; font-family: 'Caveat', cursive; font-weight: 700;
   font-size: 8px; line-height: 1; z-index: 3; pointer-events: none; }
 .gmini-lg .gmini-mkd-note { font-size: 10px; }
-.gmini-mkd-note-1 { top: 58px; right: 1px; color: #d93025; transform: rotate(-6deg); }
-.gmini-mkd-note-2 { bottom: 14px; left: 2px; color: #1e8e3e; transform: rotate(5deg); }
-.gmini-mkd-arrow { position: absolute; width: 26px; height: 16px; color: #1a73e8;
-  top: 40px; right: 6px; transform: rotate(-12deg); z-index: 3; }
+.gmini-mkd-note-1 { top: 56px; right: 1px; color: #d93025; transform: rotate(-6deg); }
+.gmini-mkd-note-2 { bottom: 12px; left: 2px; color: #1e8e3e; transform: rotate(5deg); }
+/* hand arrows */
+.gmini-mkd-arrow { position: absolute; width: 24px; height: 15px; color: #d93025; z-index: 3; pointer-events: none; }
+.gmini-mkd-arrow-1 { top: 50px; right: 22px; transform: scaleX(-1) rotate(8deg); }
+.gmini-mkd-arrow-2 { top: 150px; left: 8px; transform: rotate(6deg); color: #1a73e8; }
+/* google-docs comment bubble in right margin */
+.gmini-mkd-comment { position: absolute; top: 86px; right: -4px; width: 58px; z-index: 4;
+  background: #fff; border: 0.8px solid #e0e0e0; border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(60,64,67,.25); padding: 3px 4px; display: flex; gap: 3px;
+  font-family: 'Roboto', sans-serif; }
+.gmini-lg .gmini-mkd-comment { width: 72px; top: 96px; }
+.gmini-mkd-comment-av { flex: 0 0 11px; width: 11px; height: 11px; border-radius: 50%;
+  background: #1a73e8; color: #fff; font-size: 5px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; }
+.gmini-mkd-comment-body { display: flex; flex-direction: column; gap: 0; font-size: 5px; color: #3c4043; line-height: 1.3; }
+.gmini-mkd-comment-body b { font-size: 5px; }
+.gmini-lg .gmini-mkd-comment-av { flex-basis: 13px; width: 13px; height: 13px; font-size: 6px; }
+.gmini-lg .gmini-mkd-comment-body, .gmini-lg .gmini-mkd-comment-body b { font-size: 6px; }
 
 /* recent documents */
 .gdocs-recent { max-width: 1040px; margin: 0 auto; padding: 22px 24px 40px; }
