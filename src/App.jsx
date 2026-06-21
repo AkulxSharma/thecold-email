@@ -966,14 +966,17 @@ function localizeEvents(tz) {
   })
 }
 // Resolve the viewer's timezone from their IP (respects VPN). Falls back to device.
+// GeoJS is CORS-enabled + key-free and works from the browser; ipapi.co is a
+// secondary fallback. (The old ipwho.is endpoint started returning 403, and
+// ipapi.co alone was CORS-blocked here, so the tz silently fell back to device.)
 async function fetchIpTz() {
   try {
-    const r = await fetch('https://ipapi.co/json/')
+    const r = await fetch('https://get.geojs.io/v1/ip/geo.json')
     if (r.ok) { const j = await r.json(); if (j && j.timezone) return j.timezone }
   } catch {}
   try {
-    const r = await fetch('https://ipwho.is/')
-    if (r.ok) { const j = await r.json(); if (j && j.timezone && j.timezone.id) return j.timezone.id }
+    const r = await fetch('https://ipapi.co/json/')
+    if (r.ok) { const j = await r.json(); if (j && j.timezone) return j.timezone }
   } catch {}
   return null
 }
