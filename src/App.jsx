@@ -459,19 +459,10 @@ function ViewOverview({ onEnter, goto }) {
         {/* 1 — HERO (wallet.google-style pinned scroll sequence) */}
         <WalletHero onEnter={onEnter} goto={goto} />
 
-        {/* Launch film — NotebookLM-style: centered title + 2-col (copy | media card) */}
+        {/* Launch film — NotebookLM-style: centered title + wide centered media card */}
         <section className="home-film">
           <h2 className="home-film-title">Watch how the world replies</h2>
           <div className="home-film-row">
-            <div className="home-film-copy">
-              <span className="home-film-icon"><I.M name="movie" size={28} /></span>
-              <h3 className="home-film-heading">The launch film</h3>
-              <p className="home-film-body">
-                The film that kicks off the competition drops June 24 — one cold
-                email, one real reply, and the people who pulled it off. Watch it,
-                then go get a reply of your own.
-              </p>
-            </div>
             <div className="home-film-media">
               <div className="home-video-play"><I.M name="play_arrow" size={40} /></div>
               <span className="home-film-badge">Drops June 24</span>
