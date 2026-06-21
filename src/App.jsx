@@ -1762,8 +1762,10 @@ function ViewTrackDoc({ data, title }) {
           <h1 className="gdoc-h1">{title}</h1>
 
           <h2 className="gdoc-h2">The Goal</h2>
-          <p className="gdoc-p"><RT>{data.goal}</RT></p>
-          {data.goalExtra && <p className="gdoc-p"><RT>{data.goalExtra}</RT></p>}
+          <div className="gdoc-goal">
+            <p className="gdoc-p gdoc-goal-lead"><RT>{data.goal}</RT></p>
+            {data.goalExtra && <p className="gdoc-p gdoc-goal-extra"><RT>{data.goalExtra}</RT></p>}
+          </div>
 
           <h2 className="gdoc-h2">How It's Won</h2>
           {data.howWon.map((l, i) => <p className="gdoc-p" key={i}><RT>{l}</RT></p>)}
@@ -1799,7 +1801,10 @@ function ViewTrackDoc({ data, title }) {
           </table>
 
           <h2 className="gdoc-h2">Prize</h2>
-          <p className="gdoc-p"><strong>$500</strong> for the winning entry. Every qualifying entry is also automatically considered for the Best Cold Email ($1,000 grand prize).</p>
+          <div className="gdoc-prize">
+            <span className="gdoc-prize-icon"><I.M name="emoji_events" size={22} /></span>
+            <p className="gdoc-p gdoc-prize-text"><strong>$500</strong> for the winning entry. Every qualifying entry is also automatically considered for the Best Cold Email ($1,000 grand prize).</p>
+          </div>
         </div>
       </div>
     </div>
