@@ -330,20 +330,6 @@ function JeminiPanel({ onClose, open }) {
           </div>
         )}
       </div>
-
-      {/* compose row — typed follow-up questions */}
-      <div className="jp-compose">
-        <input
-          className="jp-input"
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); send() } }}
-          placeholder="Ask about tracks, prizes, the rule…"
-        />
-        <button className="jp-send" title="Send" onClick={() => send()} disabled={!input.trim()}>
-          <I.M name="arrow_upward" size={20} />
-        </button>
-      </div>
     </div>
   )
 }
@@ -1050,9 +1036,14 @@ function ViewCalendar() {
     ? `${monDate.toLocaleString('en-US', { month: 'long' })} ${sunDate.getFullYear()}`
     : `${MONTH_ABBR[monDate.getMonth()]} – ${MONTH_ABBR[sunDate.getMonth()]} ${sunDate.getFullYear()}`
 
-  // Nav
-  const goPrev  = () => setMonDate(d => addDays(d, -7))
-  const goNext  = () => setMonDate(d => addDays(d,  7))
+  // Nav — clamp to at most one week either side of the base week
+  const baseWeek = weekStart(DEFAULT_WEEK)
+  const minWeekTs = addDays(baseWeek, -7).getTime()
+  const maxWeekTs = addDays(baseWeek,  7).getTime()
+  const atMin = monDate.getTime() <= minWeekTs
+  const atMax = monDate.getTime() >= maxWeekTs
+  const goPrev  = () => setMonDate(d => atMin ? d : addDays(d, -7))
+  const goNext  = () => setMonDate(d => atMax ? d : addDays(d,  7))
   const goToday = () => setMonDate(weekStart(new Date(2026, 5, 18)))
 
   // Partition events into all-day and timed, filtered to visible week
@@ -1470,8 +1461,8 @@ function ViewTrack({ topic }) {
   const data = TRACK_PAGES[topic]
   if (!data) return <div className="view-panel"><div className="view-body"><p>Track not found.</p></div></div>
 
-  // All 4 tracks render as a faithful Google Docs document.
-  return <ViewTrackDoc data={data} title={TOPIC_NAMES[topic]} />
+  // Each track renders as a DIFFERENT rough brainstorm artifact (theme by topic).
+  return <ViewTrackDoc data={data} title={TOPIC_NAMES[topic]} topic={topic} />
 }
 
 function ViewTrackUNUSED({ topic }) {
@@ -1727,10 +1718,40 @@ function RT({ children }) {
   })
 }
 
-function ViewTrackDoc({ data, title }) {
+// ---- shared decorative SVG bits for the brainstorm themes ----
+function Squiggle({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 120 24" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M2 14 C 20 4, 30 22, 48 12 S 80 2, 98 14 S 116 8, 118 11"
+        fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+    </svg>
+  )
+}
+function HandArrow({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 90 56" aria-hidden="true">
+      <path d="M4 8 C 30 4, 64 14, 78 44" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" />
+      <path d="M78 44 L 64 38 M78 44 L 82 28" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+// pick a "random but stable" rotation from an index, so layouts don't jump between renders
+const rot = (i, spread = 2.4) => ((((i * 47) % 100) / 100) * 2 - 1) * spread
+
+// ===================== TRACK THEME DISPATCH =====================
+function ViewTrackDoc({ data, title, topic }) {
+  if (topic === 'subject')  return <TrackWhiteboard  data={data} title={title} />
+  if (topic === 'twoliner') return <TrackNotebook    data={data} title={title} />
+  if (topic === 'ask')      return <TrackCorkboard   data={data} title={title} />
+  return <TrackMarkedDoc data={data} title={title} /> // 'unreachable' (default)
+}
+
+// ===================== THEME 1: MARKED-UP GOOGLE DOC =====================
+function TrackMarkedDoc({ data, title }) {
   const menus = ['File', 'Edit', 'View', 'Insert', 'Format', 'Tools', 'Extensions', 'Help']
   return (
-    <div className="view-panel gdoc-canvas">
+    <div className="view-panel gdoc-canvas mkd-canvas">
       <div className="gdoc-chrome">
       {/* Title bar */}
       <div className="gdoc-titlebar">
@@ -1789,24 +1810,47 @@ function ViewTrackDoc({ data, title }) {
 
       {/* The page */}
       <div className="gdoc-page-wrap">
-        <div className="gdoc-page">
-          <h1 className="gdoc-h1">{title}</h1>
+        <div className="gdoc-page mkd-page">
+          {/* margin notes + comment bubbles — generic set-dressing, not track copy */}
+          <span className="mkd-note mkd-note-1">&lt;- start here</span>
+          <span className="mkd-note mkd-note-2">love this!!</span>
+          <span className="mkd-note mkd-note-3">revisit??</span>
+          <HandArrow className="mkd-arrow mkd-arrow-1" />
+          <HandArrow className="mkd-arrow mkd-arrow-2" />
+          <div className="mkd-comment mkd-comment-1">
+            <span className="mkd-comment-av">AR</span>
+            <div className="mkd-comment-body"><b>Aria</b><span>can we make this punchier?</span></div>
+          </div>
+          <div className="mkd-comment mkd-comment-2">
+            <span className="mkd-comment-av mkd-comment-av2">JD</span>
+            <div className="mkd-comment-body"><b>Jordan</b><span>yes — keep this section</span></div>
+          </div>
+
+          <h1 className="gdoc-h1 mkd-circle">{title}</h1>
 
           <h2 className="gdoc-h2">The Goal</h2>
           <div className="gdoc-goal">
-            <p className="gdoc-p gdoc-goal-lead"><RT>{data.goal}</RT></p>
+            <p className="gdoc-p gdoc-goal-lead"><span className="mkd-hl mkd-hl-y"><RT>{data.goal}</RT></span></p>
             {data.goalExtra && <p className="gdoc-p gdoc-goal-extra"><RT>{data.goalExtra}</RT></p>}
           </div>
 
           <h2 className="gdoc-h2">How It's Won</h2>
-          {data.howWon.map((l, i) => <p className="gdoc-p" key={i}><RT>{l}</RT></p>)}
+          {data.howWon.map((l, i) => (
+            <p className="gdoc-p" key={i}>
+              {i === 0 ? <span className="mkd-hl mkd-hl-g"><RT>{l}</RT></span> : <RT>{l}</RT>}
+            </p>
+          ))}
 
           <h2 className="gdoc-h2">What This Track Rewards</h2>
-          {data.rewards.map((l, i) => <p className="gdoc-p" key={i}><RT>{l}</RT></p>)}
+          {data.rewards.map((l, i) => (
+            <p className="gdoc-p" key={i}>
+              {i === 1 ? <><span className="mkd-strike"><RT>{l}</RT></span> <span className="mkd-edit">tighten this</span></> : <RT>{l}</RT>}
+            </p>
+          ))}
 
           <h2 className="gdoc-h2">What Judges Look For</h2>
           <ul className="gdoc-list">
-            {data.judges.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-tri">▸</span><span><RT>{l}</RT></span></li>)}
+            {data.judges.map((l, i) => <li key={i}><span className="gdoc-mark gdoc-mark-tri">▸</span><span>{i === 0 ? <span className="mkd-underline"><RT>{l}</RT></span> : <RT>{l}</RT>}</span></li>)}
           </ul>
 
           <h2 className="gdoc-h2">Strong Entries</h2>
@@ -1834,8 +1878,172 @@ function ViewTrackDoc({ data, title }) {
           <h2 className="gdoc-h2">Prize</h2>
           <div className="gdoc-prize">
             <span className="gdoc-prize-icon"><I.M name="emoji_events" size={22} /></span>
-            <p className="gdoc-p gdoc-prize-text"><strong>$500</strong> for the winning entry. Every qualifying entry is also automatically considered for the Best Cold Email ($1,000 grand prize).</p>
+            <p className="gdoc-p gdoc-prize-text"><strong className="mkd-hl mkd-hl-y">$500</strong> for the winning entry. Every qualifying entry is also automatically considered for the Best Cold Email ($1,000 grand prize).</p>
           </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ===================== shared section walker for marker/handwriting themes =====================
+// Renders the SAME data sections; the caller supplies class names per theme.
+function trackSections(data) {
+  return [
+    { h: 'The Goal', kind: 'goal', items: data.goalExtra ? [data.goal, data.goalExtra] : [data.goal] },
+    { h: "How It's Won", kind: 'para', items: data.howWon },
+    { h: 'What This Track Rewards', kind: 'para', items: data.rewards },
+    { h: 'What Judges Look For', kind: 'list', items: data.judges },
+    { h: 'Strong Entries', kind: 'list', items: data.strong },
+    { h: 'Common Mistakes', kind: 'list', items: data.mistakes },
+  ]
+}
+const PRIZE_LINE = (Strong) => (
+  <>{Strong ? <Strong>$500</Strong> : <strong>$500</strong>} for the winning entry. Every qualifying entry is also automatically considered for the Best Cold Email ($1,000 grand prize).</>
+)
+
+// ===================== THEME 2: WHITEBOARD =====================
+function TrackWhiteboard({ data, title }) {
+  const secs = trackSections(data)
+  const penFor = (i) => ['wb-pen-blk', 'wb-pen-blu', 'wb-pen-red', 'wb-pen-grn'][i % 4]
+  return (
+    <div className="view-panel wb-board">
+      <div className="wb-inner">
+        <div className="wb-title-wrap">
+          <h1 className="wb-title">{title}</h1>
+          <Squiggle className="wb-title-underline" />
+        </div>
+        <span className="wb-sticky wb-sticky-1">brainstorm<br />v3 ✎</span>
+        <span className="wb-sticky wb-sticky-2">DON'T<br />FORGET</span>
+        <HandArrow className="wb-arrow wb-arrow-1" />
+
+        <div className="wb-grid">
+          {secs.map((s, si) => (
+            <div className={`wb-box ${penFor(si)}`} key={s.h} style={{ transform: `rotate(${rot(si, 1.1)}deg)` }}>
+              <h2 className="wb-h">{s.h}</h2>
+              {s.kind === 'list' ? (
+                <ul className="wb-list">
+                  {s.items.map((l, i) => <li key={i}><span className="wb-bullet">▸</span><span><RT>{l}</RT></span></li>)}
+                </ul>
+              ) : (
+                s.items.map((l, i) => <p className="wb-p" key={i}><RT>{l}</RT></p>)
+              )}
+            </div>
+          ))}
+
+          {/* Scoring as a hand-drawn tally box */}
+          <div className="wb-box wb-pen-grn wb-score" style={{ transform: `rotate(${rot(7, 1.1)}deg)` }}>
+            <h2 className="wb-h">Scoring</h2>
+            <div className="wb-tally">
+              {data.scoring.map((s, i) => (
+                <div className="wb-tally-row" key={i}>
+                  <span className="wb-tally-label"><RT>{s.label}</RT></span>
+                  <span className="wb-tally-pts">{s.pts} pts</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Prize box */}
+          <div className="wb-box wb-pen-red wb-prize" style={{ transform: `rotate(${rot(9, 1.1)}deg)` }}>
+            <h2 className="wb-h">Prize ★</h2>
+            <p className="wb-p">{PRIZE_LINE()}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ===================== THEME 3: LINED NOTEBOOK =====================
+function TrackNotebook({ data, title }) {
+  const secs = trackSections(data)
+  return (
+    <div className="view-panel nb-canvas">
+      <div className="nb-page">
+        <div className="nb-coffee" aria-hidden="true" />
+        <div className="nb-tape" aria-hidden="true" />
+        <h1 className="nb-title" style={{ transform: `rotate(${rot(1, 1.4)}deg)` }}>{title}</h1>
+        <span className="nb-doodle nb-doodle-1">★</span>
+        <HandArrow className="nb-arrow" />
+
+        {secs.map((s, si) => (
+          <section className="nb-sec" key={s.h}>
+            <h2 className="nb-h" style={{ transform: `rotate(${rot(si + 3, 0.8)}deg)` }}>{s.h}</h2>
+            {s.kind === 'list' ? (
+              <ul className="nb-list">
+                {s.items.map((l, i) => (
+                  <li key={i} style={{ transform: `rotate(${rot(si * 5 + i, 0.5)}deg)` }}>
+                    <span className="nb-bullet">→</span>
+                    <span>{si === 3 && i === 0 ? <span className="nb-hl"><RT>{l}</RT></span> : <RT>{l}</RT>}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              s.items.map((l, i) => (
+                <p className="nb-p" key={i}>{si === 0 && i === 0 ? <span className="nb-hl"><RT>{l}</RT></span> : <RT>{l}</RT>}</p>
+              ))
+            )}
+          </section>
+        ))}
+
+        <section className="nb-sec">
+          <h2 className="nb-h" style={{ transform: `rotate(${rot(20, 0.8)}deg)` }}>Scoring</h2>
+          {data.scoring.map((s, i) => (
+            <p className="nb-p nb-score-row" key={i}><span className="nb-score-pts">{s.pts}</span> — <RT>{s.label}</RT></p>
+          ))}
+        </section>
+
+        <section className="nb-sec">
+          <h2 className="nb-h" style={{ transform: `rotate(${rot(30, 0.8)}deg)` }}>Prize ★</h2>
+          <p className="nb-p"><span className="nb-hl">{PRIZE_LINE()}</span></p>
+        </section>
+      </div>
+    </div>
+  )
+}
+
+// ===================== THEME 4: CORKBOARD / PINNED CARDS =====================
+function TrackCorkboard({ data, title }) {
+  const secs = trackSections(data)
+  const cardColor = (i) => ['ck-c-white', 'ck-c-yellow', 'ck-c-blue', 'ck-c-pink', 'ck-c-green', 'ck-c-white'][i % 6]
+  return (
+    <div className="view-panel ck-board">
+      <div className="ck-card ck-title-card" style={{ transform: `rotate(${rot(0, 1.6)}deg)` }}>
+        <span className="ck-pin" />
+        <h1 className="ck-title">{title}</h1>
+      </div>
+
+      <div className="ck-grid">
+        {secs.map((s, si) => (
+          <div className={`ck-card ${cardColor(si)}`} key={s.h} style={{ transform: `rotate(${rot(si + 1, 2)}deg)` }}>
+            {si % 2 === 0 ? <span className="ck-pin" /> : <span className="ck-tape" />}
+            <h2 className="ck-h">{s.h}</h2>
+            {s.kind === 'list' ? (
+              <ul className="ck-list">
+                {s.items.map((l, i) => <li key={i}><span className="ck-bullet">✶</span><span><RT>{l}</RT></span></li>)}
+              </ul>
+            ) : (
+              s.items.map((l, i) => <p className="ck-p" key={i}><RT>{l}</RT></p>)
+            )}
+          </div>
+        ))}
+
+        <div className="ck-card ck-c-green ck-score-card" style={{ transform: `rotate(${rot(8, 2)}deg)` }}>
+          <span className="ck-pin" />
+          <h2 className="ck-h">Scoring</h2>
+          {data.scoring.map((s, i) => (
+            <div className="ck-score-row" key={i}>
+              <span className="ck-score-pts">{s.pts}</span>
+              <span className="ck-score-label"><RT>{s.label}</RT></span>
+            </div>
+          ))}
+        </div>
+
+        <div className="ck-card ck-c-pink ck-prize-card" style={{ transform: `rotate(${rot(11, 2)}deg)` }}>
+          <span className="ck-tape" />
+          <h2 className="ck-h">Prize ★</h2>
+          <p className="ck-p">{PRIZE_LINE()}</p>
         </div>
       </div>
     </div>
