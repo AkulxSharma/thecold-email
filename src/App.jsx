@@ -2120,8 +2120,8 @@ const TRACK_DECOR = {
       { kind: 'bracket', from: 'rewards', to: 'judges', dyTop: 66, dyBot: -22, side: 'L', x: -34, text: 'the core', color: '#1a73e8' },
       { kind: 'doodle', anchor: 'judges', dy: 40, side: 'L', x: -60, glyph: '✶', color: '#d93025', rot: -12, size: 28 },
       { kind: 'note',  anchor: 'mistakes', dy: 50, side: 'R', x: -80, text: 'too easy?', color: '#e37400', rot: 7 },
-      { kind: 'comment', anchor: 'rewards', dy: 6, av: 'AR', name: 'Aria',   text: 'push the difficulty angle', color: '#1a73e8' },
-      { kind: 'comment', anchor: 'scoring', dy: 6, av: 'JD', name: 'Jordan', text: 'keep this — it is the core', color: '#1e8e3e' },
+      { kind: 'comment', anchor: 'rewards', dy: 6,  av: 'AR', name: 'Aria',   text: 'Lead with why only they can help.', color: '#1a73e8' },
+      { kind: 'comment', anchor: 'scoring', dy: 16, av: 'JD', name: 'Jordan', text: 'The harder the target, the better.', color: '#1e8e3e' },
     ],
     inline: [
       { section: 'goal',     idx: 0, type: 'hl-y' },
@@ -2139,8 +2139,8 @@ const TRACK_DECOR = {
       { kind: 'tag',   anchor: 'won', dy: 48, side: 'R', x: -76, text: 'v2?', color: '#1a73e8' },
       { kind: 'doodle', anchor: 'strong', dy: -2, side: 'L', x: -60, glyph: '✦', color: '#f9ab00', rot: -12, size: 28 },
       { kind: 'note',  anchor: 'strong', dy: 44, side: 'R', x: -84, text: 'more of this', color: '#1e8e3e', rot: 5 },
-      { kind: 'comment', anchor: 'judges', dy: 2, av: 'MK', name: 'Mara', text: 'A/B test this one?', color: '#1a73e8',
-        reply: { av: 'TP', name: 'Theo', text: 'no clickbait — good', color: '#1e8e3e' } },
+      { kind: 'comment', anchor: 'judges',   dy: 2,  av: 'MK', name: 'Mara', text: 'Spark curiosity without overpromising.', color: '#1a73e8' },
+      { kind: 'comment', anchor: 'mistakes', dy: 18, av: 'TP', name: 'Theo', text: 'Short and plain beats clever.', color: '#1e8e3e' },
     ],
     inline: [
       { section: 'goal',     idx: 0, type: 'hl-o' },
@@ -2160,7 +2160,8 @@ const TRACK_DECOR = {
       { kind: 'note',  anchor: 'goal', dy: 66, side: 'R', x: -82, text: 'every word counts', color: '#d93025', rot: -5 },
       { kind: 'tag',   anchor: 'rewards', dy: 150, side: 'R', x: -78, text: '−2 lines', color: '#d93025' },
       { kind: 'doodle', anchor: 'strong', dy: -2, side: 'L', x: -60, glyph: '✱', color: '#d93025', rot: -12, size: 28 },
-      { kind: 'comment', anchor: 'rewards', dy: 6, av: 'SL', name: 'Sam', text: 'one sentence > two', color: '#1a73e8' },
+      { kind: 'comment', anchor: 'rewards', dy: 6,   av: 'SL', name: 'Sam',   text: 'Cut every word not pulling weight.', color: '#1a73e8' },
+      { kind: 'comment', anchor: 'rewards', dy: 120, av: 'ND', name: 'Nadia', text: 'Say one thing, say it sharp.', color: '#1e8e3e' },
     ],
     inline: [
       { section: 'goal',    idx: 0, type: 'hl-y' },
@@ -2178,8 +2179,8 @@ const TRACK_DECOR = {
       { kind: 'doodle', anchor: 'judges', dy: 40, side: 'L', x: -60, glyph: '★', color: '#1a73e8', rot: -10, size: 28 },
       { kind: 'tag',   anchor: 'strong', dy: 36, side: 'R', x: -78, text: 'proof!', color: '#d93025' },
       { kind: 'note',  anchor: 'mistakes', dy: 50, side: 'R', x: -82, text: 'proof?? →', color: '#d93025', rot: 7 },
-      { kind: 'comment', anchor: 'judges', dy: 2, av: 'RV', name: 'Rey', text: 'make the ask bigger', color: '#1a73e8',
-        reply: { av: 'GB', name: 'Gabe', text: 'proof matters here', color: '#1e8e3e' } },
+      { kind: 'comment', anchor: 'judges',   dy: 2,  av: 'RV', name: 'Rey',  text: 'Ask for the meeting, not just a reply.', color: '#1a73e8' },
+      { kind: 'comment', anchor: 'mistakes', dy: 24, av: 'GB', name: 'Gabe', text: 'One clear ask beats three soft ones.', color: '#1e8e3e' },
     ],
     inline: [
       { section: 'goal',     idx: 0, type: 'hl-p' },
