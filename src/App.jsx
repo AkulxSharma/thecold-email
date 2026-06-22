@@ -2111,15 +2111,15 @@ function DocFrame({ title, canvasClass = '', pageClass = '', children }) {
 //   { section:'goal'|'won'|'rewards'|'judges'|'strong'|'mistakes'|'scoring', idx,
 //     type:'hl-y'|'hl-g'|'hl-o'|'hl-p'|'circ'|'squig'|'strike'|'underline'|'underline2', edit? }
 const TRACK_DECOR = {
-  // ---- Track 1: war-room strategist — arrows + a grouping bracket ----
+  // ---- Track 1: war-room strategist — LEFT-gutter dominant: a grouping bracket
+  //      down the core list + a left star; sparse right notes. Mark zone skews LEFT. ----
   unreachable: {
     title: { type: 'circle', color: 'rgba(217,48,37,.55)' },
     margin: [
-      { kind: 'note',  anchor: 'goal', dy: 70,  side: 'R', x: -92, text: 'who can we reach??', color: '#d93025', rot: -6 },
-      { kind: 'arrow', anchor: 'goal', dy: 112, side: 'R', x: -72, color: '#1e8e3e', variant: 'curlL' },
+      { kind: 'note',  anchor: 'goal', dy: 66, side: 'R', x: -82, text: 'who can we reach??', color: '#d93025', rot: -6 },
       { kind: 'bracket', from: 'rewards', to: 'judges', dyTop: 66, dyBot: -22, side: 'L', x: -34, text: 'the core', color: '#1a73e8' },
-      { kind: 'doodle', anchor: 'judges', dy: 40, side: 'L', x: -64, glyph: '✶', color: '#1e8e3e', rot: -12, size: 30 },
-      { kind: 'note',  anchor: 'mistakes', dy: 50, side: 'R', x: -86, text: 'too easy?', color: '#e37400', rot: 7 },
+      { kind: 'doodle', anchor: 'judges', dy: 40, side: 'L', x: -60, glyph: '✶', color: '#d93025', rot: -12, size: 28 },
+      { kind: 'note',  anchor: 'mistakes', dy: 50, side: 'R', x: -80, text: 'too easy?', color: '#e37400', rot: 7 },
       { kind: 'comment', anchor: 'rewards', dy: 6, av: 'AR', name: 'Aria',   text: 'push the difficulty angle', color: '#1a73e8' },
       { kind: 'comment', anchor: 'scoring', dy: 6, av: 'JD', name: 'Jordan', text: 'keep this — it is the core', color: '#1e8e3e' },
     ],
@@ -2130,15 +2130,15 @@ const TRACK_DECOR = {
       { section: 'mistakes', idx: 0, type: 'squig' },
     ],
   },
-  // ---- Track 2: copywriter — many inline circles + version tags, threaded comment ----
+  // ---- Track 2: copywriter — INLINE-CIRCLE dominant: many word-circles spread
+  //      through the doc, version tags in the right margin, one threaded comment. ----
   subject: {
     title: { type: 'highlight', color: 'rgba(255,234,84,.8)' },
     margin: [
-      { kind: 'note',  anchor: 'goal', dy: 68,  side: 'R', x: -84, text: 'the HOOK', color: '#f9ab00', rot: -5 },
-      { kind: 'arrow', anchor: 'goal', dy: 108, side: 'R', x: -70, color: '#f9ab00', variant: 'curlL' },
-      { kind: 'tag',   anchor: 'won', dy: 48, side: 'R', x: -78, text: 'v2?', color: '#1a73e8' },
-      { kind: 'doodle', anchor: 'strong', dy: -2, side: 'L', x: -66, glyph: '✦', color: '#f9ab00', rot: -12, size: 28 },
-      { kind: 'note',  anchor: 'strong', dy: 44, side: 'R', x: -90, text: 'more of this', color: '#1e8e3e', rot: 5 },
+      { kind: 'note',  anchor: 'goal', dy: 62, side: 'R', x: -80, text: 'the HOOK', color: '#f9ab00', rot: -5 },
+      { kind: 'tag',   anchor: 'won', dy: 48, side: 'R', x: -76, text: 'v2?', color: '#1a73e8' },
+      { kind: 'doodle', anchor: 'strong', dy: -2, side: 'L', x: -60, glyph: '✦', color: '#f9ab00', rot: -12, size: 28 },
+      { kind: 'note',  anchor: 'strong', dy: 44, side: 'R', x: -84, text: 'more of this', color: '#1e8e3e', rot: 5 },
       { kind: 'comment', anchor: 'judges', dy: 2, av: 'MK', name: 'Mara', text: 'A/B test this one?', color: '#1a73e8',
         reply: { av: 'TP', name: 'Theo', text: 'no clickbait — good', color: '#1e8e3e' } },
     ],
@@ -2152,14 +2152,14 @@ const TRACK_DECOR = {
       { section: 'mistakes', idx: 1, type: 'squig' },
     ],
   },
-  // ---- Track 3: ruthless editor — strike-heavy, deliberately SPARSE (whitespace is the point) ----
+  // ---- Track 3: ruthless editor — deliberately SPARSE: one top note, one mid tag,
+  //      one star. Lots of empty margin — the restraint IS the page's signature. ----
   twoliner: {
     title: { type: 'underline', color: '#d93025' },
     margin: [
-      { kind: 'note',  anchor: 'goal', dy: 70,  side: 'R', x: -88, text: 'every word counts', color: '#d93025', rot: -5 },
-      { kind: 'arrow', anchor: 'goal', dy: 112, side: 'R', x: -72, color: '#d93025', variant: 'curlL' },
-      { kind: 'tag',   anchor: 'rewards', dy: 150, side: 'R', x: -82, text: '−2 lines', color: '#d93025' },
-      { kind: 'doodle', anchor: 'strong', dy: -2, side: 'L', x: -66, glyph: '✱', color: '#d93025', rot: -12, size: 28 },
+      { kind: 'note',  anchor: 'goal', dy: 66, side: 'R', x: -82, text: 'every word counts', color: '#d93025', rot: -5 },
+      { kind: 'tag',   anchor: 'rewards', dy: 150, side: 'R', x: -78, text: '−2 lines', color: '#d93025' },
+      { kind: 'doodle', anchor: 'strong', dy: -2, side: 'L', x: -60, glyph: '✱', color: '#d93025', rot: -12, size: 28 },
       { kind: 'comment', anchor: 'rewards', dy: 6, av: 'SL', name: 'Sam', text: 'one sentence > two', color: '#1a73e8' },
     ],
     inline: [
@@ -2168,16 +2168,16 @@ const TRACK_DECOR = {
       { section: 'rewards', idx: 4, type: 'underline' },
     ],
   },
-  // ---- Track 4: dealmaker — bold emphasis, double-underline, annotates the scoring table ----
+  // ---- Track 4: dealmaker — SPREAD across every section + the only page that
+  //      annotates the scoring table (circled cell). Bold, evenly-distributed marks. ----
   ask: {
     title: { type: 'box', color: '#1a73e8' },
     margin: [
-      { kind: 'note',  anchor: 'goal', dy: 70, side: 'R', x: -84, text: 'go BIG', color: '#1a73e8', rot: -6 },
-      { kind: 'arrow', anchor: 'won', dy: 26, side: 'R', x: -66, color: '#1a73e8', variant: 'up' },
-      { kind: 'note',  anchor: 'won', dy: 54, side: 'R', x: -96, text: 'raise the stakes', color: '#1e8e3e', rot: 4 },
-      { kind: 'doodle', anchor: 'judges', dy: 40, side: 'L', x: -64, glyph: '★', color: '#1a73e8', rot: -10, size: 28 },
-      { kind: 'tag',   anchor: 'strong', dy: 36, side: 'R', x: -80, text: 'proof!', color: '#d93025' },
-      { kind: 'note',  anchor: 'mistakes', dy: 50, side: 'R', x: -86, text: 'proof?? →', color: '#d93025', rot: 7 },
+      { kind: 'note',  anchor: 'goal', dy: 64, side: 'R', x: -80, text: 'go BIG', color: '#1a73e8', rot: -6 },
+      { kind: 'note',  anchor: 'won', dy: 38, side: 'R', x: -86, text: 'raise the stakes', color: '#1e8e3e', rot: 4 },
+      { kind: 'doodle', anchor: 'judges', dy: 40, side: 'L', x: -60, glyph: '★', color: '#1a73e8', rot: -10, size: 28 },
+      { kind: 'tag',   anchor: 'strong', dy: 36, side: 'R', x: -78, text: 'proof!', color: '#d93025' },
+      { kind: 'note',  anchor: 'mistakes', dy: 50, side: 'R', x: -82, text: 'proof?? →', color: '#d93025', rot: 7 },
       { kind: 'comment', anchor: 'judges', dy: 2, av: 'RV', name: 'Rey', text: 'make the ask bigger', color: '#1a73e8',
         reply: { av: 'GB', name: 'Gabe', text: 'proof matters here', color: '#1e8e3e' } },
     ],
@@ -2279,7 +2279,7 @@ function TrackMarkedDoc({ data, title, topic }) {
     if (m.kind === 'note')   return <span className="mkd-note" style={{ ...base, color: m.color, transform: `rotate(${m.rot || 0}deg)` }}>{m.text}</span>
     if (m.kind === 'tag')    return <span className="mkd-tag" style={{ ...base, '--c': m.color }}>{m.text}</span>
     if (m.kind === 'doodle') return <span className="mkd-star" style={{ ...base, color: m.color, fontSize: `${m.size || 28}pt`, transform: `rotate(${m.rot ?? -12}deg)` }}>{m.glyph}</span>
-    if (m.kind === 'arrow')  return <HandArrow className={`mkd-arrow mkd-arrow-${m.variant || 'curlL'}`} style={{ ...base, color: m.color }} />
+    if (m.kind === 'arrow')  return <HandArrow className={`mkd-arrow mkd-arrow-${m.variant || 'curlL'}`} style={{ ...base, color: m.color, ...(m.w ? { width: m.w } : {}), ...(m.h ? { height: m.h } : {}) }} />
     return null
   }
 

@@ -106,12 +106,12 @@ Prize: $500.`,
     id: 6, sender: HOST, email: HOST_EMAIL, to: YOU, folder: 'inbox', tab: 'primary', topic: 'twoliner',
     subject: 'Track 3: The Two-Liner', tag: 'Track', stars: 503, views: 2330, starred: false, read: false,
     date: 'Jun 24',
-    preview: 'A reply from an email of two sentences or less. The most result from the fewest words.',
+    preview: 'A reply from an email of two sentences or less. The most impact from the fewest words.',
     body: `TRACK 3: THE TWO-LINER
 
 The goal: a reply from an email of two sentences or less.
 
-How it's won: the most result from the fewest words.
+How it's won: the most impact from the fewest words.
 
 Scoring (out of 100):
 • Result earned vs. how few words used (50)
@@ -413,7 +413,7 @@ export const TRACK_PAGES = {
   },
   twoliner: {
     goal: 'Get a reply using **two sentences or fewer**.',
-    howWon: ['The most result from the fewest words wins.'],
+    howWon: ['The most impact from the fewest words wins.'],
     rewards: [
       'Anyone can write a long email.',
       'Very few people can make every word count.',
