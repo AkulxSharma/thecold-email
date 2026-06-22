@@ -2,6 +2,8 @@ import { useState, useRef, useLayoutEffect, useEffect } from 'react'
 import { Routes, Route, Navigate, useNavigate, useParams, useLocation } from 'react-router-dom'
 import { EMAILS, TOPIC_NAMES, DEADLINES, SEND_WINDOW, BEST_EMAILS, EVENTS, MEMES, RULES_PAGE, TRACK_PAGES, TRACK_REMEMBER, ENTER_FORM } from './data.js'
 import * as I from './icons.jsx'
+import ViewStory from './ViewStory.jsx'
+import ViewChat from './ViewChat.jsx'
 
 const GMAIL_LOGO = '/logo.png'
 
@@ -638,8 +640,9 @@ const ENTER_STEPS = [
 ]
 
 function ViewEnter({ onEnter }) {
-  const [ui, setUi] = useState('maps') // 'maps' | 'classroom'
+  const [ui, setUi] = useState('maps') // 'maps' | 'classroom' | 'story' | 'chat'
   const [active, setActive] = useState(0) // active route stop in the Maps UI
+  const [expanded, setExpanded] = useState(false) // is a step's detail (form) open?
   const [panelW, setPanelW] = useState(420) // draggable width of the directions panel
 
   const startDrag = (e) => {
@@ -868,16 +871,24 @@ function ViewEnter({ onEnter }) {
   // ---------------- MAPS SHELL (full Google Maps clone) ----------------
   // Map coordinates (0–100 viewBox) for the 3 route stops. Spread wide so the
   // blue dot's glide between stops reads as a long, visible animation.
+  // Route waypoints mirror the reference map: Tea stalls → Vivek Public School → destination.
   const STOPS = [
-    { x: 13, y: 15 }, // 1 · Register
-    { x: 50, y: 50 }, // 2 · Send cold emails
-    { x: 87, y: 86 }, // 3 · Submit (destination)
+    { x: 51, y: 27 }, // 1 · Register      (Tea stalls)
+    { x: 42, y: 49 }, // 2 · Send cold emails (Vivek Public School)
+    { x: 33, y: 78 }, // 3 · Submit (destination pin — sits at the route's end)
   ]
-  const ROUTE_D = `M${STOPS[0].x} ${STOPS[0].y} C 22 30, 32 36, ${STOPS[1].x} ${STOPS[1].y} C 64 62, 76 70, ${STOPS[2].x} ${STOPS[2].y}`
+  // The purple path: down from Tea stalls, past the school, then the hard left to the pin.
+  const ROUTE_D = 'M51 27 L46.5 36 L43 41 L42 49 L41.3 60 L41 67 L40.3 73 L34.5 75.4 L33 78'
   const ETA = ['2 min', '1 min', 'Arrive']
   const NAV_ICON = ['straight', 'turn_right', 'place']
   const lastStop = STOPS.length - 1
-  const dot = STOPS[active]
+  // Address strings shown in the directions panel (truncated with an ellipsis by CSS).
+  const TRIP = [
+    'Your inbox',
+    'Sending cold emails',
+    'In the competition',
+  ]
+  const openStop = (i) => { setActive(i); setExpanded(true) }
 
   const StepDetail = (i) => {
     if (i === 0) {
@@ -913,71 +924,105 @@ function ViewEnter({ onEnter }) {
     </svg>
   )
 
+  // Exact Google-Maps destination pin: solid red teardrop balloon hovering
+  // above a white target dot (white ring + dark center) planted on the route.
+  const PinExact = ({ size = 44 }) => (
+    <svg width={size} height={Math.round(size * 1.46)} viewBox="0 0 30 44" style={{ display: 'block' }}>
+      {/* ground shadow under the target dot */}
+      <ellipse cx="15" cy="40.5" rx="6.6" ry="2" fill="rgba(0,0,0,.30)" />
+      {/* target dot — white ring + dark center, sits on the road */}
+      <circle cx="15" cy="38" r="6.3" fill="#fff" />
+      <circle cx="15" cy="38" r="3.2" fill="#202124" />
+      {/* red teardrop balloon floating above the dot */}
+      <path fill="#ea4335" d="M15 1.5C9.2 1.5 4.5 6.2 4.5 12c0 7.3 8.9 15.1 10 16.1.3.27.7.27 1 0C16.6 27.1 25.5 19.3 25.5 12 25.5 6.2 20.8 1.5 15 1.5z" />
+      <circle cx="15" cy="12" r="3.7" fill="#b31412" />
+    </svg>
+  )
+
+  // Route waypoint marker — white disc with a dark ring + center, like Maps stops.
+  const WayDot = ({ size = 17 }) => (
+    <svg width={size} height={size} viewBox="0 0 17 17" style={{ display: 'block' }}>
+      <circle cx="8.5" cy="8.5" r="7" fill="#fff" stroke="#3c4043" strokeWidth="2.4" />
+      <circle cx="8.5" cy="8.5" r="2.7" fill="#3c4043" />
+    </svg>
+  )
+
   const Maps = () => (
     <div className="enter-canvas gmaps">
       <div className="gmaps-app">
-        {/* ---- LEFT: directions panel (drag the handle to resize) ---- */}
-        <div className="gmaps-panel" style={{ width: panelW }}>
-          <div className="gmaps-trip">
-            <div className="gmaps-trip-rail" aria-hidden="true">
-              <span className="gmaps-trip-o" />
-              <span className="gmaps-trip-line" />
-              <span className="gmaps-trip-d"><I.M name="place" size={18} /></span>
+        {/* ---- LEFT: directions panel — Google Maps directions clone ---- */}
+        <div className="gmaps-panel gmd" style={{ width: panelW }}>
+          {/* travel-mode tabs */}
+          <div className="gmd-modes">
+            <span className="gmd-mode is-dim" title="Directions"><I.M name="directions" size={22} /></span>
+            <span className="gmd-mode is-active" title="Driving"><I.M name="directions_car" size={22} /><i>3 min</i></span>
+            <span className="gmd-mode" title="Two-wheeler"><I.M name="two_wheeler" size={22} /><i>3 min</i></span>
+            <span className="gmd-mode" title="Transit"><I.M name="directions_transit" size={22} /></span>
+            <span className="gmd-mode" title="Walking"><I.M name="directions_walk" size={22} /><i>17 min</i></span>
+            <span className="gmd-mode is-dim" title="Cycling"><I.M name="directions_bike" size={22} /></span>
+            <button className="gmd-close" title="Collapse" onClick={() => setExpanded(false)}><I.M name="close" size={22} /></button>
+          </div>
+          <div className="gmd-compare"><span /></div>
+
+          {/* origin → waypoint → destination */}
+          <div className="gmd-trip">
+            <div className="gmd-rail" aria-hidden="true">
+              <span className="gmd-o" /><span className="gmd-dotline" />
+              <span className="gmd-o" /><span className="gmd-dotline" />
+              <span className="gmd-pin"><I.M name="location_on" size={24} /></span>
             </div>
-            <div className="gmaps-trip-fields">
-              <div className="gmaps-field">Your inbox</div>
-              <div className="gmaps-field gmaps-field-d">In the competition</div>
+            <div className="gmd-fields">
+              {TRIP.map((t, i) => (
+                <button key={i} className={'gmd-field' + (active === i && expanded ? ' is-active' : '')} onClick={() => openStop(i)}>
+                  <span>{t}</span>
+                </button>
+              ))}
             </div>
-            <button className="gmaps-swap" title="Reverse" tabIndex={-1}><I.M name="swap_vert" size={18} /></button>
           </div>
 
-          <div className="gmaps-modes">
-            <span className="gmaps-mode is-active" title="Best route"><I.M name="directions_car" size={20} /></span>
-            <span className="gmaps-mode" title="Transit"><I.M name="directions_transit" size={20} /></span>
-            <span className="gmaps-mode" title="Walk"><I.M name="directions_walk" size={20} /></span>
-            <span className="gmaps-mode" title="Cycle"><I.M name="directions_bike" size={20} /></span>
-            <span className="gmaps-mode" title="Flight"><I.M name="flight" size={20} /></span>
-          </div>
-
-          <div className="gmaps-route-card">
-            <div className="gmaps-route-info">
-              <div className="gmaps-route-time">~5 min <span className="gmaps-route-dist">3 stops</span></div>
-              <div className="gmaps-route-best">Fastest way in</div>
+          {/* inline step detail (registration form / actions) — opens on field click */}
+          {expanded && (
+            <div className="gmd-detail">
+              <div className="gmd-detail-h">
+                <span className="gmd-detail-step">Stop {active + 1} · {ENTER_STEPS[active].title}</span>
+                <button className="gmd-detail-x" title="Close" onClick={() => setExpanded(false)}><I.M name="expand_less" size={20} /></button>
+              </div>
+              {StepDetail(active)}
             </div>
-            <button className="gmaps-start" onClick={() => (active >= lastStop ? onEnter() : setActive(active + 1))}>
-              <I.M name={active >= lastStop ? 'send' : 'navigation'} size={18} />
-              <span className="gmaps-start-text">
-                <span className="gmaps-start-eyebrow">{active >= lastStop ? "You've arrived" : "You're here"}</span>
-                <span className="gmaps-start-step">{active >= lastStop ? 'Open submission' : `Stop ${active + 1}: ${ENTER_STEPS[active].title}`}</span>
-              </span>
-            </button>
+          )}
+
+          <div className="gmd-band" />
+
+          <div className="gmd-routecard">
+            <div className="gmd-routetop">
+              <span className="gmd-routecar"><I.M name="directions_car" size={24} /></span>
+              <div className="gmd-routemain">
+                <div className="gmd-routetitle">via The Procedure</div>
+                <div className="gmd-routesub">Fastest way in</div>
+              </div>
+              <div className="gmd-routeeta"><b>~5 min</b><span>3 stops</span></div>
+            </div>
+            <div className="gmd-routelinks">
+              <button onClick={() => openStop(0)}>Details</button>
+              <button onClick={onEnter}>Preview</button>
+            </div>
           </div>
 
-          <div className="gmaps-via">via The Procedure</div>
-          <div className="gmaps-divider" />
-
-          <div className="gmaps-steplist">
-            {ENTER_STEPS.map((s, i) => {
-              const open = active === i
-              const done = i === 0 && submitted
-              return (
-                <div key={s.n} className={'gmaps-steprow' + (open ? ' is-open' : '') + (done ? ' is-done' : '')}>
-                  <button className="gmaps-step-head" onClick={() => setActive(i)} aria-expanded={open}>
-                    <span className="gmaps-step-nav"><I.M name={done ? 'check' : NAV_ICON[i]} size={20} /></span>
-                    <span className="gmaps-step-main">
-                      <span className="gmaps-step-title">{s.title}</span>
-                      <span className="gmaps-step-sub">Stop {s.n} · {ETA[i]}</span>
-                    </span>
-                    <span className="gmaps-step-chev"><I.M name={open ? 'expand_less' : 'expand_more'} size={20} /></span>
-                  </button>
-                  {open && <div className="gmaps-step-detail">{StepDetail(i)}</div>}
-                </div>
-              )
-            })}
+          <div className="gmd-band" />
+          <div className="gmd-explore">
+            <div className="gmd-explore-h">The Procedure · 3 steps</div>
+            <div className="gmd-cats">
+              {ENTER_STEPS.map((s, i) => (
+                <button key={s.n} className="gmd-cat" onClick={() => openStop(i)}>
+                  <span className="gmd-cat-ic" style={{ background: ['#1a73e8', '#1e8e3e', '#d93025'][i] }}><I.M name={s.icon} size={24} /></span>
+                  {['Register', 'Send', 'Submit'][i]}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="gmaps-divider" />
-          <div className="gmaps-due">
+          <div className="gmd-band" />
+          <div className="gmd-due">
             <I.M name="schedule" size={16} /> Registration closes Jul 6 · Submit reply by Jul 7
           </div>
         </div>
@@ -987,52 +1032,106 @@ function ViewEnter({ onEnter }) {
           <span className="gmaps-resizer-grip" />
         </div>
 
-        {/* ---- RIGHT: map canvas ---- */}
+        {/* ---- RIGHT: map canvas — Amritsar (Tea stalls → Vivek Public School → destination) ---- */}
         <div className="gmaps-map">
-          <div className="gmaps-land" aria-hidden="true">
-            <span className="gmaps-park gmaps-park-1" />
-            <span className="gmaps-park gmaps-park-2" />
-            <span className="gmaps-water" />
-            <span className="gmaps-road gmaps-road-1" />
-            <span className="gmaps-road gmaps-road-2" />
-            <span className="gmaps-road gmaps-road-3" />
-          </div>
-
-          <svg className="gmaps-route-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <path d={ROUTE_D} className="gmaps-route-casing" vectorEffect="non-scaling-stroke" />
-            <path d={ROUTE_D} className="gmaps-route-line" vectorEffect="non-scaling-stroke" />
+          <svg className="gmaps-canvas" viewBox="0 0 100 100" preserveAspectRatio="none">
+            {/* base land + lighter built-up / airport zones */}
+            <rect x="0" y="0" width="100" height="100" fill="#cfe8c6" />
+            <path d="M52 74 L100 66 L100 100 L46 100 Z" fill="#eceff0" />
+            <ellipse cx="93" cy="46" rx="13" ry="22" fill="#bfe1b3" />
+            <ellipse cx="17" cy="92" rx="16" ry="12" fill="#bfe1b3" />
+            <path d="M0 13 L25 17 L21 41 L0 45 Z" fill="#dde3ea" />
+            {/* canal shadowing the route */}
+            <path className="gmaps-canal" d="M50 24 L43 40 L41 50 L40.4 67 L39.5 74 L31 78" vectorEffect="non-scaling-stroke" />
+            {/* minor road network */}
+            <g className="gmaps-minor">
+              <path d="M0 31 L40 23 L72 11" vectorEffect="non-scaling-stroke" />
+              <path d="M4 56 L46 48 L82 41" vectorEffect="non-scaling-stroke" />
+              <path d="M9 81 L52 73 L92 65" vectorEffect="non-scaling-stroke" />
+              <path d="M31 -2 L36 42 L40 102" vectorEffect="non-scaling-stroke" />
+              <path d="M61 28 L66 70 L72 102" vectorEffect="non-scaling-stroke" />
+              <path d="M79 33 L85 76 L91 102" vectorEffect="non-scaling-stroke" />
+              <path d="M50 60 L100 52" vectorEffect="non-scaling-stroke" />
+              <path d="M53 84 L100 77" vectorEffect="non-scaling-stroke" />
+              <path d="M63 44 L99 39" vectorEffect="non-scaling-stroke" />
+              <path d="M70 90 L100 84" vectorEffect="non-scaling-stroke" />
+              <path d="M46 90 L74 96" vectorEffect="non-scaling-stroke" />
+            </g>
+            {/* major highway: gray casing + traffic-coloured overlay */}
+            <path className="gmaps-hwy-case" d="M41 -2 L51 21 L61 43 L74 68 L89 102" vectorEffect="non-scaling-stroke" />
+            <path className="gmaps-hwy-ok"   d="M41 -2 L51 21 L61 43 L74 68 L89 102" vectorEffect="non-scaling-stroke" />
+            <path className="gmaps-hwy-slow" d="M49 17 L52 24" vectorEffect="non-scaling-stroke" />
+            <path className="gmaps-hwy-bad"  d="M73 66 L76 73" vectorEffect="non-scaling-stroke" />
+            <path className="gmaps-hwy-slow" d="M85 94 L88 100" vectorEffect="non-scaling-stroke" />
+            {/* purple route */}
+            <path className="gmaps-route-case" d={ROUTE_D} vectorEffect="non-scaling-stroke" />
+            <path className="gmaps-route-ln"   d={ROUTE_D} vectorEffect="non-scaling-stroke" />
           </svg>
 
+          {/* 354 highway shields */}
+          <span className="gmaps-shield" style={{ left: '44%', top: '15%' }}>9A</span>
+          <span className="gmaps-shield" style={{ left: '60.5%', top: '42%' }}>9A</span>
+
+          {/* POI labels */}
+          <div className="gmaps-lbl gmaps-lbl-muted" style={{ left: '6%', top: '17%', width: '21%' }}>Hudson Regional Airport</div>
+          <div className="gmaps-lbl gmaps-lbl-pa" style={{ left: '6.5%', top: '31%', width: '19%' }}>Terminal Access Rd</div>
+          <div className="gmaps-lbl gmaps-lbl-muted" style={{ left: '60%', top: '2%', width: '15%' }}>St. Mark's Chapel</div>
+          <span className="gmaps-poimk" style={{ left: '70%', top: '3.5%', background: '#9334e6' }}><I.M name="church" size={12} /></span>
+          <div className="gmaps-lbl gmaps-lbl-muted" style={{ left: '43.5%', top: '22.5%', width: '12%' }}>The Carlyle Hotel</div>
+          <span className="gmaps-poimk" style={{ left: '54%', top: '24%', background: '#c5221f' }}><I.M name="hotel" size={12} /></span>
+          <div className="gmaps-lbl gmaps-lbl-dark" style={{ left: '60%', top: '22%' }}>Joe's Coffee Cart</div>
+          <span className="gmaps-poimk" style={{ left: '66%', top: '26%', background: '#e0457b' }}><I.M name="hotel" size={12} /></span>
+          <div className="gmaps-lbl gmaps-lbl-dark" style={{ left: '52%', top: '44%' }}>Hudson Public School</div>
+          <div className="gmaps-lbl gmaps-lbl-park" style={{ left: '77.5%', top: '46%' }}>Riverside Park</div>
+          <div className="gmaps-lbl gmaps-lbl-purple" style={{ left: '61%', top: '70%', width: '11%' }}>Gramercy Garden Hotel</div>
+          <span className="gmaps-poimk" style={{ left: '69%', top: '73.5%', background: '#9c5d1e' }}><I.M name="hotel" size={12} /></span>
+          <div className="gmaps-lbl gmaps-lbl-purple" style={{ left: '33%', top: '85%' }}>Gotham Diner</div>
+          <span className="gmaps-poimk" style={{ left: '43%', top: '85.5%', background: '#e0457b' }}><I.M name="restaurant" size={12} /></span>
+          <div className="gmaps-lbl gmaps-lbl-dark2" style={{ left: '29%', top: '90%' }}>Greenpoint</div>
+          <div className="gmaps-lbl gmaps-lbl-purple" style={{ left: '64%', top: '92%' }}>Haven Rooftop</div>
+
+          {/* road-name labels rotated along the highway */}
+          <div className="gmaps-road-lbl" style={{ left: '63%', top: '55%' }}>Broadway</div>
+          <div className="gmaps-road-lbl" style={{ left: '75%', top: '75%' }}>Hudson Pkwy</div>
+          <div className="gmaps-road-lbl" style={{ left: '82%', top: '92%' }}>Canal St</div>
+
+          {/* 3 min / 1.3 km route badge */}
+          <div className="gmaps-eta" style={{ left: '33%', top: '58%' }}>
+            <I.M name="directions_car" size={15} />
+            <span><b>3 min</b><i>1.3 km</i></span>
+          </div>
+
+          {/* route stops + destination pin */}
           {STOPS.map((p, i) => {
             const isDest = i === lastStop
             return (
-              <button
-                key={i}
-                className={'gmaps-mpin' + (active === i ? ' is-active' : '')}
+              <button key={i}
+                className={'gmaps-mpin' + (isDest ? ' gmaps-mpin-dest' : ' gmaps-mpin-dot') + (active === i && expanded ? ' is-active' : '')}
                 style={{ left: p.x + '%', top: p.y + '%' }}
-                onClick={() => setActive(i)}
-              >
-                <MapPin size={isDest ? 42 : 34} fill={isDest ? '#ea4335' : '#1a73e8'} dark={isDest ? '#a50e0e' : '#0842a0'} />
+                onClick={() => openStop(i)}>
+                {isDest ? <PinExact size={44} /> : <WayDot size={17} />}
                 <span className="gmaps-mpin-tip">{ENTER_STEPS[i].title}</span>
               </button>
             )
           })}
 
-          {/* user "blue dot" — glides to the active stop */}
-          <span className="gmaps-bluedot" style={{ left: dot.x + '%', top: dot.y + '%' }}>
-            <span className="gmaps-bluedot-halo" />
-            <span className="gmaps-bluedot-core" />
-          </span>
+          {/* search-along-route + category chips */}
+          <div className="gmaps-srch"><I.M name="search" size={18} /><span>Search along the route…</span></div>
+          <div className="gmaps-chips">
+            <span className="gmaps-chip"><I.M name="local_gas_station" size={15} /> Gas</span>
+            <span className="gmaps-chip"><I.M name="ev_station" size={15} /> EV charging</span>
+            <span className="gmaps-chip"><I.M name="hotel" size={15} /> Hotels</span>
+          </div>
 
+          {/* controls */}
+          <button className="gmaps-pegman" title="Street View" tabIndex={-1}><I.M name="directions_walk" size={20} /></button>
+          <button className="gmaps-myloc" title="Your location" onClick={() => openStop(0)}><I.M name="my_location" size={20} /></button>
           <div className="gmaps-ctrl gmaps-zoom">
             <button className="gmaps-ctrl-btn" tabIndex={-1}><I.M name="add" size={18} /></button>
             <span className="gmaps-ctrl-sep" />
             <button className="gmaps-ctrl-btn" tabIndex={-1}><I.M name="remove" size={18} /></button>
           </div>
-          <button className="gmaps-myloc" title="Your location" onClick={() => setActive(0)}>
-            <I.M name="my_location" size={20} />
-          </button>
-          <div className="gmaps-attr">Map data ©2026 thecold.email</div>
+          <div className="gmaps-attr">Map data ©2026 · 200 m</div>
         </div>
       </div>
     </div>
@@ -1047,8 +1146,14 @@ function ViewEnter({ onEnter }) {
         <button className={'enter-uitab' + (ui === 'classroom' ? ' is-active' : '')} onClick={() => setUi('classroom')}>
           <I.M name="school" size={18} /> Classroom
         </button>
+        <button className={'enter-uitab' + (ui === 'story' ? ' is-active' : '')} onClick={() => setUi('story')}>
+          <I.M name="auto_stories" size={18} /> The Story
+        </button>
+        <button className={'enter-uitab' + (ui === 'chat' ? ' is-active' : '')} onClick={() => setUi('chat')}>
+          <I.M name="forum" size={18} /> Team Chat
+        </button>
       </div>
-      {ui === 'maps' ? Maps() : Classroom()}
+      {ui === 'maps' ? Maps() : ui === 'classroom' ? Classroom() : ui === 'story' ? <ViewStory /> : <ViewChat />}
     </div>
   )
 }

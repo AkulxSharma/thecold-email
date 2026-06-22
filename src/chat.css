@@ -1,0 +1,87 @@
+/* Google Chat 1:1 DM clone — namespaced gchat- to avoid collisions */
+
+.gchat-dm { background: #fff; font-family: 'Roboto', Arial, sans-serif; color: #1f1f1f; padding: 0; }
+
+/* ---------- header ---------- */
+.gchat-hd { display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 14px; border-bottom: 1px solid #ededed; position: sticky; top: 0; background: #fff; z-index: 5; }
+.gchat-hd-l { display: flex; align-items: center; gap: 4px; }
+.gchat-hd-r { display: flex; align-items: center; gap: 2px; background: #f5f6f8; border-radius: 22px; padding: 2px 4px; }
+.gchat-ic { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px;
+  border: 0; background: transparent; color: #5f6368; border-radius: 50%; cursor: pointer; }
+.gchat-ic:hover { background: rgba(60,64,67,.08); }
+.gchat-hd-av { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; margin: 0 4px;
+  background: linear-gradient(135deg, #5b8def, #8e5bef); color: #fff; font: 600 12px 'Roboto', sans-serif;
+  display: flex; align-items: center; justify-content: center; }
+.gchat-hd-name { display: flex; align-items: center; gap: 2px; border: 0; background: transparent;
+  font: 500 18px 'Google Sans','Product Sans','Roboto',sans-serif; color: #1f1f1f; cursor: pointer; padding: 4px 6px; border-radius: 8px; }
+.gchat-hd-name .msym { color: #5f6368; }
+.gchat-hd-name:hover { background: #f5f6f8; }
+
+/* ---------- conversation ---------- */
+.gchat-conv { flex: 1; padding: 28px 16px 8px; max-width: 980px; width: 100%; margin: 0 auto; }
+
+.gchat-intro { display: flex; flex-direction: column; align-items: center; text-align: center; margin: 24px 0 18px; }
+.gchat-intro-av { width: 64px; height: 64px; border-radius: 50%; margin-bottom: 12px;
+  background: linear-gradient(135deg, #5b8def, #8e5bef); color: #fff; font: 600 24px 'Roboto', sans-serif;
+  display: flex; align-items: center; justify-content: center; }
+.gchat-intro-name { font: 400 22px 'Google Sans','Product Sans','Roboto',sans-serif; color: #1f1f1f; }
+.gchat-intro-email { font: 400 13px 'Roboto', sans-serif; color: #5f6368; margin-top: 4px; }
+.gchat-intro-sub { font: 400 13px 'Roboto', sans-serif; color: #5f6368; margin-top: 2px; }
+
+.gchat-history { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 18px;
+  font: 500 11px 'Roboto', sans-serif; letter-spacing: .8px; color: #5f6368; }
+.gchat-history .msym { color: #5f6368; }
+.gchat-history-sub { text-align: center; font: 400 12px 'Roboto', sans-serif; color: #80868b; margin-top: 4px; }
+.gchat-day { text-align: center; font: 400 12px 'Roboto', sans-serif; color: #5f6368; margin: 22px 0 14px; }
+
+/* ---------- message rows ---------- */
+.gchat-row { display: flex; margin: 12px 0; }
+.gchat-row-out { flex-direction: column; align-items: flex-end; }
+.gchat-row-in { gap: 12px; align-items: flex-start; }
+.gchat-row-av { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; margin-top: 18px;
+  background: linear-gradient(135deg, #5b8def, #8e5bef); color: #fff; font: 600 12px 'Roboto', sans-serif;
+  display: flex; align-items: center; justify-content: center; }
+.gchat-row-body { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+
+.gchat-meta { font: 400 12px 'Roboto', sans-serif; color: #80868b; margin-bottom: 2px; }
+.gchat-meta b { font-weight: 500; color: #1f1f1f; margin-right: 6px; }
+.gchat-meta-r { text-align: right; }
+
+.gchat-bubble { max-width: 460px; padding: 9px 14px; border-radius: 16px; font: 400 14px 'Roboto', sans-serif;
+  line-height: 1.4; word-break: break-word; }
+.gchat-bubble-in { background: #f1f3f4; color: #1f1f1f; border-top-left-radius: 4px; }
+.gchat-bubble-in + .gchat-bubble-in { border-top-left-radius: 16px; }
+.gchat-bubble-out { background: #e8eef6; color: #1f1f1f; border-top-right-radius: 4px; }
+.gchat-bubble a { color: #1a73e8; text-decoration: underline; }
+.gchat-bubble-cut { opacity: .9; }
+
+/* smart-reply chips */
+.gchat-chips { display: flex; gap: 10px; margin: 10px 0 18px 44px; }
+.gchat-chip { background: #fff; border: 1px solid #dadce0; border-radius: 16px; padding: 7px 16px;
+  font: 500 13px 'Roboto', sans-serif; color: #1a73e8; cursor: pointer; }
+.gchat-chip:hover { background: #f8fbff; border-color: #c6dafc; }
+
+/* ---------- composer ---------- */
+.gchat-composer { display: flex; align-items: center; gap: 10px; padding: 12px 18px 16px;
+  max-width: 980px; width: 100%; margin: 0 auto; }
+.gchat-plus { width: 40px; height: 40px; border-radius: 50%; border: 0; flex-shrink: 0;
+  background: #d3e3fd; color: #0b57d0; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.gchat-plus:hover { background: #c2d7fa; }
+.gchat-input { flex: 1; display: flex; align-items: center; gap: 10px; min-height: 44px;
+  background: #f5f6f8; border-radius: 24px; padding: 6px 10px 6px 18px; }
+.gchat-input-ph { flex: 1; font: 400 14px 'Roboto', sans-serif; color: #80868b; }
+.gchat-input-tools { display: flex; align-items: center; gap: 2px; }
+.gchat-tool { width: 34px; height: 34px; border: 0; background: transparent; color: #5f6368;
+  border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.gchat-tool:hover { background: rgba(60,64,67,.08); }
+.gchat-tool-a { font: 600 16px 'Roboto', sans-serif; text-decoration: underline; }
+.gchat-send-caret { width: 30px; height: 40px; border: 0; background: transparent; color: #9aa0a6; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.gchat-send { width: 40px; height: 40px; border-radius: 50%; border: 0; flex-shrink: 0;
+  background: #e8eaed; color: #9aa0a6; display: flex; align-items: center; justify-content: center; cursor: default; }
+
+@media (max-width: 768px) {
+  .gchat-bubble { max-width: 70vw; }
+  .gchat-hd-r { display: none; }
+}

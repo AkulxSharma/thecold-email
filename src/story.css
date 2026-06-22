@@ -1,0 +1,330 @@
+/* ── The Story / Manifesto page ──────────────────────────────────────────
+   Editorial, text-forward layout. All classes are namespaced `story-`
+   to avoid collisions with the app's global styles.                      */
+
+.story-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background: #fff;
+  color: #1f1f1f;
+  padding: 0 24px 120px;
+  box-sizing: border-box;
+}
+
+.story-measure {
+  width: 100%;
+  max-width: 680px;
+}
+
+/* ── Masthead ── */
+.story-masthead {
+  padding: 96px 0 48px;
+  text-align: center;
+  border-bottom: 1px solid #ececec;
+}
+
+.story-eyebrow {
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #9aa0a6;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 28px;
+}
+
+.story-wordmark {
+  font-family: 'Google Sans', 'Product Sans', 'Roboto', sans-serif;
+  font-size: clamp(40px, 7vw, 64px);
+  line-height: 1.04;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: #202124;
+}
+
+.story-wordmark .story-accent { color: #1a73e8; }
+
+.story-tagline {
+  font-family: 'Google Sans', 'Product Sans', 'Roboto', sans-serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: #5f6368;
+  margin: 20px 0 0;
+}
+
+/* ── Generic section rhythm ── */
+.story-section {
+  padding: 64px 0 0;
+}
+
+.story-kicker {
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #1a73e8;
+  margin: 0 0 16px;
+}
+
+.story-h2 {
+  font-family: 'Google Sans', 'Product Sans', 'Roboto', sans-serif;
+  font-size: clamp(28px, 4.4vw, 38px);
+  line-height: 1.12;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  color: #202124;
+  margin: 0 0 24px;
+}
+
+.story-p {
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-size: 19px;
+  line-height: 1.72;
+  color: #3c4043;
+  margin: 0 0 22px;
+}
+
+.story-p:last-child { margin-bottom: 0; }
+
+.story-lead {
+  font-size: 21px;
+  color: #202124;
+}
+
+.story-em { color: #1a73e8; font-style: normal; }
+
+/* ── Manifesto pull-quotes ── */
+.story-manifesto {
+  padding: 80px 0 8px;
+}
+
+.story-quote {
+  font-family: 'Google Sans', 'Product Sans', 'Roboto', sans-serif;
+  font-size: clamp(26px, 4vw, 34px);
+  line-height: 1.28;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: #202124;
+  margin: 0;
+  padding: 40px 0;
+  border-bottom: 1px solid #ececec;
+}
+
+.story-quote:first-child { padding-top: 8px; }
+
+.story-quote-final {
+  color: #1a73e8;
+  border-bottom: none;
+  font-size: clamp(28px, 4.6vw, 40px);
+}
+
+/* ── Numbered steps ── */
+.story-steps {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  counter-reset: story-step;
+}
+
+.story-step {
+  display: flex;
+  gap: 22px;
+  align-items: baseline;
+  padding: 22px 0;
+  border-top: 1px solid #ececec;
+}
+
+.story-step:first-child { border-top: none; }
+
+.story-step-num {
+  counter-increment: story-step;
+  font-family: 'Google Sans', 'Product Sans', 'Roboto', sans-serif;
+  font-size: 30px;
+  font-weight: 400;
+  color: #c5c9cd;
+  min-width: 44px;
+  line-height: 1.3;
+}
+.story-step-num::before { content: counter(story-step, decimal-leading-zero); }
+
+.story-step-body { flex: 1; }
+
+.story-step-title {
+  font-family: 'Google Sans', 'Product Sans', 'Roboto', sans-serif;
+  font-size: 21px;
+  font-weight: 500;
+  color: #202124;
+  margin: 0 0 6px;
+}
+
+.story-step-text {
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
+  color: #5f6368;
+  margin: 0;
+}
+
+/* ── Timeline ── */
+.story-timeline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.story-timeline-card {
+  flex: 1 1 240px;
+  border: 1px solid #e8eaed;
+  border-radius: 16px;
+  padding: 24px 26px;
+  background: #fafbfc;
+}
+
+.story-timeline-label {
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #9aa0a6;
+  margin: 0 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.story-timeline-dates {
+  font-family: 'Google Sans', 'Product Sans', 'Roboto', sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: #202124;
+  margin: 0 0 6px;
+}
+
+.story-timeline-note {
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #5f6368;
+  margin: 0;
+}
+
+/* ── Tracks ── */
+.story-tracks {
+  margin-top: 8px;
+}
+
+.story-track {
+  display: flex;
+  gap: 18px;
+  padding: 26px 0;
+  border-top: 1px solid #ececec;
+}
+
+.story-track:first-child { border-top: none; }
+
+.story-track-icon {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e8f0fe;
+  color: #1a73e8;
+}
+
+.story-track-body { flex: 1; }
+
+.story-track-name {
+  font-family: 'Google Sans', 'Product Sans', 'Roboto', sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: #202124;
+  margin: 2px 0 6px;
+}
+
+.story-track-desc {
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
+  color: #5f6368;
+  margin: 0;
+}
+
+/* ── Prizes ── */
+.story-prizes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.story-prize {
+  flex: 1 1 240px;
+  border-radius: 16px;
+  padding: 32px 28px;
+  border: 1px solid #e8eaed;
+  background: #fafbfc;
+}
+
+.story-prize-grand {
+  background: linear-gradient(135deg, #1a73e8, #1557b0);
+  border-color: transparent;
+  color: #fff;
+}
+
+.story-prize-amount {
+  font-family: 'Google Sans', 'Product Sans', 'Roboto', sans-serif;
+  font-size: 42px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin: 0 0 4px;
+  color: #202124;
+}
+
+.story-prize-grand .story-prize-amount { color: #fff; }
+
+.story-prize-label {
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  color: #5f6368;
+  margin: 0;
+}
+
+.story-prize-grand .story-prize-label { color: rgba(255, 255, 255, 0.88); }
+
+/* ── Closing ── */
+.story-close {
+  padding: 96px 0 0;
+  text-align: center;
+}
+
+.story-close .story-quote-final {
+  padding: 0 0 28px;
+}
+
+.story-signoff {
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9aa0a6;
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .story-wrap { padding: 0 18px 80px; }
+  .story-masthead { padding: 56px 0 36px; }
+  .story-section { padding: 48px 0 0; }
+  .story-p { font-size: 18px; }
+}
