@@ -242,6 +242,14 @@ export const MEMES = [
   { name: 'Corporate Era',    hi: 'champ',   email: 'circleback@synergy.com',     img: '/memes/IMG-20260619-WA0021.jpg', tip: "Let's circle back, but actually. Respect their calendar: get to the ask before sentence two." },
 ]
 
+// Pick one meme avatar per page load and reuse it everywhere (topbar + chat
+// read receipts) so the "current website pfp" is consistent across the session.
+let _sessionMeme = null
+export function sessionMeme() {
+  if (!_sessionMeme) _sessionMeme = MEMES[Math.floor(Math.random() * MEMES.length)]
+  return _sessionMeme
+}
+
 // The Rule page (v2.0 spec) — list content; headings/copy live inline in ViewRule.
 export const RULES_PAGE = {
   chips: ['No Impersonation', 'No Lying', 'No Existing Relationship', 'No Mass-Blasting', 'BCC Required'],

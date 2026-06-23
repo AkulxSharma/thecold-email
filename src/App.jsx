@@ -1,9 +1,10 @@
 import { useState, useRef, useLayoutEffect, useEffect } from 'react'
 import { Routes, Route, Navigate, useNavigate, useParams, useLocation } from 'react-router-dom'
-import { EMAILS, TOPIC_NAMES, DEADLINES, SEND_WINDOW, BEST_EMAILS, EVENTS, MEMES, RULES_PAGE, TRACK_PAGES, TRACK_REMEMBER, ENTER_FORM } from './data.js'
+import { EMAILS, TOPIC_NAMES, DEADLINES, SEND_WINDOW, BEST_EMAILS, EVENTS, MEMES, RULES_PAGE, TRACK_PAGES, TRACK_REMEMBER, ENTER_FORM, sessionMeme } from './data.js'
 import * as I from './icons.jsx'
 import ViewStory from './ViewStory.jsx'
 import ViewChat from './ViewChat.jsx'
+import { insertSubmission } from './supabase.js'
 
 const GMAIL_LOGO = '/logo.png'
 
@@ -56,7 +57,7 @@ function viewToPath(view) {
 // ---------------- TOP BAR ----------------
 function TopBar({ onMenu, onLogo, onJemini, navigate }) {
   const [q, setQ] = useState('')
-  const [meme] = useState(() => MEMES[Math.floor(Math.random() * MEMES.length)])
+  const [meme] = useState(() => sessionMeme())
   const [pfpOpen, setPfpOpen] = useState(false)
   const [statusOpen, setStatusOpen] = useState(false)
   const statusRef = useRef(null)
@@ -640,6 +641,11 @@ const ENTER_STEPS = [
 ]
 
 function ViewEnter({ onEnter }) {
+  // Procedure page is now the chat-only registration flow. The Maps / Classroom
+  // / Story tabs + switcher below are kept (dead) for an end-of-project sweep.
+  return <ViewChat />
+
+  /* eslint-disable no-unreachable */
   const [ui, setUi] = useState('maps') // 'maps' | 'classroom' | 'story' | 'chat'
   const [active, setActive] = useState(0) // active route stop in the Maps UI
   const [expanded, setExpanded] = useState(false) // is a step's detail (form) open?
@@ -2931,13 +2937,13 @@ export default function App() {
     toastTimer.current = setTimeout(() => setToast(''), 2600)
   }
 
-  const submitEntry = ({ email, targetName, targetEmail, files }) => {
+  const submitEntry = ({ email, targetName, targetEmail, files, ...rest }) => {
     if (!email || !EMAIL_RE.test(email.trim())) { showToast('Enter a valid email for yourself first.'); return }
     if (!targetName || !targetName.trim()) { showToast('Add the name of the person you emailed.'); return }
     if (targetEmail && !EMAIL_RE.test(targetEmail.trim())) { showToast('That target email doesn’t look valid.'); return }
     if (!files || !files.length) { showToast('Attach a screenshot/PDF of the thread (paperclip).'); return }
-    // TODO(Akul): POST these fields to SUBMISSION_FORM_URL (Google Form) or
-    // redirect/embed for confirmation once the form URL is supplied.
+    // Persist the entry to Supabase (`submissions` table).
+    insertSubmission({ email, targetName, targetEmail, ...rest, files })
     setComposeOpen(false)
     showToast('Entry submitted. Good luck, go get the reply.')
   }
