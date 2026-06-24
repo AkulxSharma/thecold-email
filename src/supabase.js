@@ -15,12 +15,27 @@ function warnNoClient(what) {
   console.warn(`[supabase] ${what}: client not configured (set VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY) — skipping DB write`)
 }
 
+const normEmail = (e) => (e || '').trim().toLowerCase()
+
+// Registration gate. Calls the SECURITY DEFINER RPC `is_email_registered`,
+// which returns only a boolean. Returns:
+//   true  → this email is already registered
+//   false → not registered
+//   null  → unknown (no client configured, or the call errored) so callers
+//           can fall back to localStorage instead of hard-blocking.
+export async function isEmailRegistered(email) {
+  if (!supabase) { warnNoClient('isEmailRegistered'); return null }
+  const { data, error } = await supabase.rpc('is_email_registered', { p_email: normEmail(email) })
+  if (error) { console.error('[supabase] isEmailRegistered failed', error); return null }
+  return data === true
+}
+
 // Procedure-chat registration → `registrations` table.
 export async function insertRegistration(answers) {
   if (!supabase) { warnNoClient('insertRegistration'); return { skipped: true } }
   const row = {
     full_name: answers.full_name || null,
-    email: answers.email || null,
+    email: normEmail(answers.email) || null,
     country: answers.country || null,
     age_band: answers.age_band || null,
     company: answers.company || null,

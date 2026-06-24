@@ -4,7 +4,8 @@ import { EMAILS, TOPIC_NAMES, DEADLINES, SEND_WINDOW, BEST_EMAILS, EVENTS, MEMES
 import * as I from './icons.jsx'
 import ViewStory from './ViewStory.jsx'
 import ViewChat from './ViewChat.jsx'
-import { insertSubmission } from './supabase.js'
+import { insertSubmission, isEmailRegistered } from './supabase.js'
+import { getRegistration, isRegisteredLocal, setRegistration } from './registration.js'
 
 const GMAIL_LOGO = '/logo.png'
 
@@ -140,7 +141,7 @@ function Sidebar({ onCompose, goto, pathname, open }) {
   )
   return (
     <div className={`sidebar${open ? '' : ' sidebar-collapsed'}`}>
-      <div className="compose" onClick={onCompose}><I.Pencil /> Enter</div>
+      <div className="compose" onClick={onCompose}><I.Pencil /> Submit</div>
 
       <NavItem icon={<I.M name="inbox" />}         label="Home"           count="2047" active={isActive('overview')} onClick={() => goto('overview')} />
       <NavItem icon={<I.M name="star" />}          label="The Procedure"                      active={isActive('enter')}    onClick={() => goto('enter')} />
@@ -171,9 +172,18 @@ function Sidebar({ onCompose, goto, pathname, open }) {
 
 // ---------------- ENTRY FORM (Compose) ----------------
 const TRACK_OPTIONS = ['The Best Cold Email (overall)', 'The Unreachable', 'Best Subject Line', 'The Two-Liner', 'The Ask']
-function ComposeWindow({ onClose, onSend }) {
+// Route guard: the submission page is only reachable once registered on this
+// device. Unregistered visitors (incl. new devices) are sent to registration.
+function RequireRegistration({ children }) {
+  if (!isRegisteredLocal()) return <Navigate to="/the-procedure" replace />
+  return children
+}
+
+function ComposeWindow({ onClose, onSend, page }) {
   const [track, setTrack] = useState(TRACK_OPTIONS[0])
-  const [email, setEmail] = useState('')
+  // Email is prefilled from the registration record and locked, so the
+  // submit-time gate always checks the same email they registered with.
+  const [email, setEmail] = useState(() => getRegistration()?.email || '')
   const [targetName, setTargetName] = useState('')
   const [targetEmail, setTargetEmail] = useState('')
   const [subject, setSubject] = useState('')
@@ -182,7 +192,7 @@ function ComposeWindow({ onClose, onSend }) {
   const fileRef = useRef()
   const addFiles = (list) => setFiles(f => [...f, ...Array.from(list)])
   return (
-    <div className="compose-win">
+    <div className={'compose-win' + (page ? ' compose-win-page' : '')}>
       <div className="cw-head">
         <span className="cw-title">New Message</span>
         <div className="cw-head-icons">
@@ -195,7 +205,7 @@ function ComposeWindow({ onClose, onSend }) {
       {/* Entrant + target identity — always visible (these never collapse) */}
       <div className="cw-field">
         <span className="cw-label">Enter Your Email</span>
-        <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" />
+        <input type="email" value={email} readOnly title="Locked to the email you registered with" placeholder="you@example.com" />
       </div>
       <div className="cw-field">
         <span className="cw-label">Target Name</span>
@@ -640,10 +650,10 @@ const ENTER_STEPS = [
   { n: 3, icon: 'mark_email_read',  title: 'Submit the ones that reply', text: 'Only emails that get a real reply count. Attach a screenshot/PDF of any thread that landed a response and submit it.' },
 ]
 
-function ViewEnter({ onEnter }) {
+function ViewEnter({ onEnter, onRegistered }) {
   // Procedure page is now the chat-only registration flow. The Maps / Classroom
   // / Story tabs + switcher below are kept (dead) for an end-of-project sweep.
-  return <ViewChat />
+  return <ViewChat onRegistered={onRegistered} />
 
   /* eslint-disable no-unreachable */
   const [ui, setUi] = useState('maps') // 'maps' | 'classroom' | 'story' | 'chat'
@@ -2879,7 +2889,7 @@ function ViewPrizes({ onEnter, goto }) {
         <div className="gpay-balance-amt">$3,000</div>
         <div className="gpay-balance-sub">Win up to $1,000 for one great cold email</div>
         <div className="gpay-actions">
-          <button className="gpay-act" onClick={onEnter}><span className="gpay-act-ic"><I.M name="bolt" size={22} /></span>Enter</button>
+          <button className="gpay-act" onClick={onEnter}><span className="gpay-act-ic"><I.M name="bolt" size={22} /></span>Submit</button>
           <button className="gpay-act" onClick={() => goto && goto('tracks-home')}><span className="gpay-act-ic"><I.M name="emoji_events" size={22} /></span>Tracks</button>
           <button className="gpay-act" onClick={() => goto && goto('rule')}><span className="gpay-act-ic"><I.M name="receipt_long" size={22} /></span>Rules</button>
         </div>
@@ -2918,11 +2928,13 @@ function TrackRoute() {
 export default function App() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const [composeOpen, setComposeOpen] = useState(false)
   const [jeminiOpen, setJeminiOpen] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(() => typeof window === 'undefined' || window.innerWidth > 768)
   const [toast, setToast] = useState('')
   const toastTimer = useRef()
+  // Gmail-style "Message sent" snackbar shown after a successful submission.
+  const [sentSnack, setSentSnack] = useState(false)
+  const snackTimer = useRef()
 
   // Auto-collapse the sidebar on mobile, auto-expand back on desktop
   useEffect(() => {
@@ -2937,21 +2949,45 @@ export default function App() {
     toastTimer.current = setTimeout(() => setToast(''), 2600)
   }
 
-  const submitEntry = ({ email, targetName, targetEmail, files, ...rest }) => {
+  const showSentSnack = () => {
+    setSentSnack(true)
+    clearTimeout(snackTimer.current)
+    snackTimer.current = setTimeout(() => setSentSnack(false), 6000)
+  }
+
+  const submitEntry = async ({ email, targetName, targetEmail, files, ...rest }) => {
     if (!email || !EMAIL_RE.test(email.trim())) { showToast('Enter a valid email for yourself first.'); return }
     if (!targetName || !targetName.trim()) { showToast('Add the name of the person you emailed.'); return }
     if (targetEmail && !EMAIL_RE.test(targetEmail.trim())) { showToast('That target email doesn’t look valid.'); return }
     if (!files || !files.length) { showToast('Attach a screenshot/PDF of the thread (paperclip).'); return }
-    // Persist the entry to Supabase (`submissions` table).
-    insertSubmission({ email, targetName, targetEmail, ...rest, files })
-    setComposeOpen(false)
-    showToast('Entry submitted. Good luck, go get the reply.')
+    // Authoritative background gate: you can only submit if you're registered.
+    // null = couldn't reach the DB → fall back to the local registration flag.
+    const reg = await isEmailRegistered(email)
+    const ok = reg === null ? isRegisteredLocal() : reg
+    if (!ok) {
+      showToast('Register first — taking you to registration.')
+      navigate('/the-procedure')
+      return
+    }
+    // Persist the entry to Supabase (`submissions` table). Unlimited entries
+    // per person, but each must target a DIFFERENT person — a unique index on
+    // (lower(email), lower(target_name)) rejects a repeat target with 23505.
+    const { error } = await insertSubmission({ email, targetName, targetEmail, ...rest, files })
+    if (error) {
+      if (error.code === '23505') { showToast('You already submitted for that target — pick a different person.'); return }
+      showToast('Couldn’t save your entry. Try again in a moment.'); return
+    }
+    navigate('/')
+    showSentSnack()
   }
 
   // Navigate by internal view key — preserves every existing goto()/setView() call site.
   const goto = (view) => navigate(viewToPath(view))
   const goHome = () => navigate('/')
-  const onEnter = () => setComposeOpen(true)
+  // Every "Enter" CTA: registered on this device → submission page; else → register.
+  const onEnter = () => navigate(isRegisteredLocal() ? '/submit' : '/the-procedure')
+  // Called by the registration chat when a user finishes (or is already registered).
+  const onRegistered = (info) => { setRegistration(info); navigate('/submit') }
 
   return (
     <div onClick={() => jeminiOpen && setJeminiOpen(false)}>
@@ -2963,7 +2999,7 @@ export default function App() {
       />
       <div className="app">
         <Sidebar
-          onCompose={() => setComposeOpen(true)}
+          onCompose={onEnter}
           goto={goto}
           pathname={pathname}
           open={sidebarOpen}
@@ -2972,7 +3008,14 @@ export default function App() {
           <Routes>
             <Route path="/"               element={<ViewOverview onEnter={onEnter} goto={goto} />} />
             <Route path="/home"           element={<ViewOverview onEnter={onEnter} goto={goto} />} />
-            <Route path="/the-procedure"  element={<ViewEnter onEnter={onEnter} />} />
+            <Route path="/the-procedure"  element={<ViewEnter onEnter={onEnter} onRegistered={onRegistered} />} />
+            <Route path="/submit"         element={
+              <RequireRegistration>
+                <div className="submit-page">
+                  <ComposeWindow onClose={() => navigate('/')} onSend={submitEntry} page />
+                </div>
+              </RequireRegistration>
+            } />
             <Route path="/tracks"         element={<ViewTracksHome goto={goto} onEnter={onEnter} />} />
             <Route path="/tracks/:slug"   element={<TrackRoute />} />
             <Route path="/prize-pool"     element={<ViewPrizes onEnter={onEnter} goto={goto} />} />
@@ -2986,16 +3029,18 @@ export default function App() {
         </div>
       </div>
 
-      {composeOpen && (
-        <ComposeWindow
-          onClose={() => setComposeOpen(false)}
-          onSend={submitEntry}
-        />
-      )}
-
       <JeminiPanel open={jeminiOpen} onClose={() => setJeminiOpen(false)} />
 
       {toast && <div className="toast">{toast}</div>}
+      {sentSnack && (
+        <div className="sent-snack">
+          <span className="sent-snack-msg">Submission sent</span>
+          <button className="sent-snack-act" onClick={() => { setSentSnack(false); navigate('/') }}>View message</button>
+          <button className="sent-snack-x" aria-label="Dismiss" onClick={() => setSentSnack(false)}>
+            <I.M name="close" size={20} />
+          </button>
+        </div>
+      )}
     </div>
   )
 }

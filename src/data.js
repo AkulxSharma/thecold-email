@@ -250,6 +250,17 @@ export function sessionMeme() {
   return _sessionMeme
 }
 
+// The registration-chat persona pfp. Random, but GUARANTEED never the same as
+// the user's session pfp (topbar) — picked from the remaining memes.
+let _chatMeme = null
+export function chatMeme() {
+  if (!_chatMeme) {
+    const others = MEMES.filter(m => m !== sessionMeme())
+    _chatMeme = others[Math.floor(Math.random() * others.length)]
+  }
+  return _chatMeme
+}
+
 // The Rule page (v2.0 spec) — list content; headings/copy live inline in ViewRule.
 export const RULES_PAGE = {
   chips: ['No Impersonation', 'No Lying', 'No Existing Relationship', 'No Mass-Blasting', 'BCC Required'],

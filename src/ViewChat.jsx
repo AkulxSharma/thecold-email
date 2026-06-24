@@ -1,8 +1,9 @@
 import './chat.css'
 import { useState, useRef, useEffect } from 'react'
 import { M } from './icons'
-import { ENTER_FORM, sessionMeme } from './data.js'
-import { insertRegistration } from './supabase.js'
+import { ENTER_FORM, chatMeme } from './data.js'
+import { insertRegistration, isEmailRegistered } from './supabase.js'
+import { setRegistration } from './registration.js'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const URL_RE = /^https?:\/\/.+/i
@@ -67,24 +68,33 @@ function canonical(qq, text) {
 // registration chatbot: the opening script is untouched, the smart-reply
 // chips are live, and "How do I register?" walks the user through the
 // registration form one field at a time via the composer.
-export default function ViewChat() {
+export default function ViewChat({ onRegistered }) {
   const [msgs, setMsgs] = useState([])      // dynamic turns appended below the static script
   const [flow, setFlow] = useState(null)    // active question index, or null when not registering
   const [done, setDone] = useState(false)   // registration completed
   const [draft, setDraft] = useState('')
   const answers = useRef({})
   const endRef = useRef(null)
-  const pfp = sessionMeme()
+  const scrollRef = useRef(null)   // the scrollable panel itself
+  // Chat sender persona — random, GUARANTEED never the user's session pfp.
+  const pfp = chatMeme()
 
-  // read-receipt avatar = the website's current profile picture, shown only on
-  // the conversation's last message.
+  // read-receipt avatar = the chat persona (always matches the chat avatar
+  // above), shown only on the conversation's last message.
   const Receipt = () => (
     <span className="gchat-bubble-badge">
       <img src={pfp.img} alt="" onError={e => { e.currentTarget.style.display = 'none' }} />
     </span>
   )
 
-  useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }) }, [msgs, flow])
+  // Autoscroll the panel to the newest message. scrollIntoView on a sentinel is
+  // unreliable here (sticky composer overlaps it), so scroll the panel itself to
+  // its full height after layout settles.
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    requestAnimationFrame(() => { el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }) })
+  }, [msgs, flow, done])
 
   const botSay = (...texts) => setMsgs(m => [...m, ...texts.map(text => ({ side: 'in', text }))])
   const meSay = (text) => setMsgs(m => [...m, { side: 'out', text }])
@@ -113,6 +123,8 @@ export default function ViewChat() {
     const email = (answers.current.email || 'your inbox').trim()
     setFlow(null)
     setDone(true)
+    // Remember this device as registered so the Enter-gate routes to /submit.
+    setRegistration({ email: answers.current.email, full_name: answers.current.full_name })
     // Persist to Supabase, then trigger the Make automation → confirmation email.
     insertRegistration(answers.current)
     notifyMake({ ...answers.current, event: 'thecold.email', registeredAt: new Date().toISOString() })
@@ -123,7 +135,15 @@ export default function ViewChat() {
     )
   }
 
-  const send = () => {
+  const alreadyRegistered = (email) => {
+    setFlow(null)
+    setDone(true)
+    setRegistration({ email })
+    botSay(`Looks like ${email} is already registered — no need to do it twice. ✅`,
+      'Taking you straight to your submission. Tap the button below to continue.')
+  }
+
+  const send = async () => {
     const text = draft.trim()
     if (!text) return
     setDraft('')
@@ -137,6 +157,14 @@ export default function ViewChat() {
 
     answers.current[qq.name] = canonical(qq, text)
 
+    // Dedup: as soon as we have a valid email, check the DB. If this person is
+    // already registered (e.g. returning on a new device), skip the rest and
+    // send them to submission. null = DB unreachable → just continue.
+    if (qq.type === 'email') {
+      const exists = await isEmailRegistered(text)
+      if (exists === true) { alreadyRegistered(answers.current[qq.name]); return }
+    }
+
     const next = flow + 1
     if (next >= QUESTIONS.length) { finishRegistration(); return }
     setFlow(next)
@@ -146,7 +174,7 @@ export default function ViewChat() {
   const onSubmit = (e) => { e.preventDefault(); send() }
 
   return (
-    <div className="view-panel gchat-dm">
+    <div className="view-panel gchat-dm" ref={scrollRef}>
       {/* ---- conversation header ---- */}
       <div className="gchat-hd">
         <div className="gchat-hd-l">
@@ -258,12 +286,12 @@ export default function ViewChat() {
           </div>
         )}
 
-        {/* submit CTA — appears after Step 3, once registration is complete */}
+        {/* submit CTA — appears after Step 3 (or when already registered) */}
         {done && (
           <div className="gchat-submit-row">
-            <a className="gchat-submit-cta" href="mailto:judges@thecold.email?subject=thecold.email%20entry%20submission&body=Attach%20a%20screenshot%20or%20PDF%20of%20your%20replied%20cold-email%20thread%20here.">
-              <M name="send" size={18} /> Submit your entry
-            </a>
+            <button className="gchat-submit-cta" onClick={() => onRegistered && onRegistered({ email: answers.current.email, full_name: answers.current.full_name })}>
+              <M name="send" size={18} /> Continue to your submission
+            </button>
           </div>
         )}
 

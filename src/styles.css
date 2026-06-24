@@ -165,6 +165,16 @@ html, body, #root { font-family:'Roboto',Arial,sans-serif; color:var(--text); ba
 .reply-box .send-btn:hover { background:#0b4ec0; }
 
 .compose-win { position:fixed; bottom:0; right:60px; width:560px; background:#fff; border-radius:12px 12px 0 0; box-shadow:0 8px 24px rgba(0,0,0,.28); display:flex; flex-direction:column; z-index:100; max-height:92vh; }
+
+/* Submission overlays everything (sidebar + navbar) like Gmail's real compose,
+   over a dimmed + blurred backdrop. */
+.submit-page { position:fixed; inset:0; z-index:2000; background:rgba(15,23,42,.55);
+  backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); }
+.compose-win-page { position:fixed; top:60px; left:50%; transform:translateX(-50%);
+  width:min(1180px, 96vw); height:calc(100vh - 96px); right:auto; bottom:auto; max-height:none;
+  border-radius:12px; box-shadow:0 16px 48px rgba(0,0,0,.45); }
+.compose-win-page .cw-body { flex:1; }
+.compose-win-page .cw-body textarea { height:100%; }
 .cw-head { background:#f2f6fc; border-radius:12px 12px 0 0; padding:10px 16px; display:flex; align-items:center; }
 .cw-title { font-size:14px; font-weight:500; color:#202124; }
 .cw-head-icons { margin-left:auto; display:flex; align-items:center; gap:4px; }
@@ -216,6 +226,18 @@ html, body, #root { font-family:'Roboto',Arial,sans-serif; color:var(--text); ba
 .cw-trash:hover { background:rgba(0,0,0,.06); }
 
 .toast { position:fixed; bottom:24px; left:24px; background:#323232; color:#fff; padding:14px 20px; border-radius:8px; font-size:14px; z-index:200; }
+
+/* Gmail "Message sent" snackbar — bottom-left, white, no Undo */
+.sent-snack { position:fixed; bottom:24px; left:24px; z-index:300; display:flex; align-items:center; gap:18px;
+  background:#fff; color:#3c4043; padding:8px 8px 8px 22px; border-radius:8px; font-size:14px;
+  box-shadow:0 3px 5px -1px rgba(0,0,0,.2), 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12);
+  font-family:'Google Sans','Roboto',Arial,sans-serif; animation:snack-in .18s ease-out; }
+.sent-snack-msg { padding:6px 0; }
+.sent-snack-act { background:none; border:none; cursor:pointer; color:#0b57d0; font-weight:500; font-size:14px; padding:6px 8px; border-radius:4px; font-family:inherit; }
+.sent-snack-act:hover { background:rgba(11,87,208,.08); }
+.sent-snack-x { background:none; border:none; cursor:pointer; color:#5f6368; display:flex; align-items:center; padding:8px; border-radius:50%; }
+.sent-snack-x:hover { background:rgba(60,64,67,.08); }
+@keyframes snack-in { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
 
 .jemini-panel { position:fixed; top:64px; right:16px; bottom:16px; width:400px; background:#fff; border-radius:24px; box-shadow:0 2px 16px rgba(0,0,0,.22); padding:8px 16px 14px; z-index:150; display:flex; flex-direction:column; transform:translateX(0); opacity:1; transition:transform .26s cubic-bezier(.2,.8,.2,1), opacity .2s ease; transform-origin:bottom right; }
 .jemini-closed { transform:translateX(calc(100% + 24px)) scale(.98); opacity:0; pointer-events:none; }
