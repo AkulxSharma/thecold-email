@@ -589,23 +589,39 @@ function ViewAbout() {
 }
 
 function ViewOverview({ onEnter, goto }) {
-  // Fade each post-hero section in as it scrolls into view (mirrors the hero fade-out).
+  // Scroll-linked fade: each post-hero section's opacity tracks how far it has
+  // entered the viewport, so you actually SEE it fade + rise in as you scroll
+  // (a one-shot transition finishes off-screen and is never seen).
   useEffect(() => {
+    const els = [...document.querySelectorAll('.home > section:not(.walhero), .home > footer')]
+    if (!els.length) return
+    const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduced) { els.forEach(el => { el.style.opacity = '1'; el.style.transform = 'none' }); return }
     const scroller = document.querySelector('.view-panel')
-    const els = document.querySelectorAll('.home > section:not(.walhero), .home > footer')
-    if (!els.length || typeof IntersectionObserver === 'undefined') {
-      els.forEach(el => el.classList.add('in'))
-      return
-    }
-    // Positive bottom margin starts the fade-in while the section is still ~20%
-    // below the fold — i.e. as the hero cards finish settling, not after a gap.
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target) }
+    const target = scroller || window
+    let raf = 0
+    const update = () => {
+      raf = 0
+      const sr = scroller ? scroller.getBoundingClientRect()
+        : { bottom: window.innerHeight, height: window.innerHeight }
+      const dist = sr.height * 0.42 // fade completes over the first ~42% of entry
+      els.forEach(el => {
+        const top = el.getBoundingClientRect().top
+        const entered = sr.bottom - top            // px the top has risen past the fold
+        const p = Math.max(0, Math.min(1, entered / dist))
+        el.style.opacity = String(p)
+        el.style.transform = `translateY(${(1 - p) * 28}px)`
       })
-    }, { root: scroller || null, rootMargin: '0px 0px 20% 0px', threshold: 0 })
-    els.forEach(el => io.observe(el))
-    return () => io.disconnect()
+    }
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update) }
+    update()
+    target.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    return () => {
+      target.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+    }
   }, [])
 
   return (
