@@ -1736,15 +1736,76 @@ function snippet(text) {
   return text.split('\n').map(l => l.trim()).filter(Boolean).slice(1).join(' ').slice(0, 90)
 }
 
+// Build a clean, standalone HTML page for one email thread
+function threadHtml(em) {
+  const esc = s => String(s ?? '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]))
+  const cleanSubject = em.subject.replace(/^\[PLACEHOLDER\]\s*/, '')
+  const msgs = [
+    { name: em.from, email: em.fromEmail, to: em.to ? `to ${em.to}` : 'to judges',
+      date: em.replyFrom ? em.date : 'Example entry', body: em.body },
+    { name: em.replyFrom || 'Recipient', email: em.replyEmail, to: 'to me',
+      date: em.replyDate || 'Real reply', body: em.reply },
+  ]
+  const msgHtml = msgs.map(m => `
+    <div class="msg">
+      <div class="who"><strong>${esc(m.name)}</strong>${m.email ? ` &lt;${esc(m.email)}&gt;` : ''}<span class="date">${esc(m.date)}</span></div>
+      <div class="to">${esc(m.to)}</div>
+      <div class="body">${esc(m.body)}</div>
+    </div>`).join('')
+  return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(cleanSubject)}</title>
+<style>
+  body { font-family: Arial, 'Helvetica Neue', sans-serif; color:#202124; margin:40px; max-width:720px; }
+  h1 { font-size:22px; font-weight:400; margin:0 0 8px; }
+  .brand { color:#5f6368; font-size:12px; margin:0 0 20px; }
+  .msg { border-top:1px solid #e0e0e0; padding:18px 0; }
+  .who { font-size:14px; }
+  .date { color:#5f6368; font-size:12px; margin-left:10px; }
+  .to { color:#5f6368; font-size:12px; margin:2px 0 12px; }
+  .body { white-space:pre-wrap; font-size:14px; line-height:1.6; }
+</style></head>
+<body><h1>${esc(cleanSubject)}</h1><div class="brand">thecold.email${em.tag ? ` · ${esc(em.tag)}` : ''}</div>${msgHtml}</body></html>`
+}
+
+// Open the email thread in a new tab (clean standalone page)
+function openThread(em) {
+  const w = window.open('', '_blank')
+  if (!w) return
+  w.document.open()
+  w.document.write(threadHtml(em))
+  w.document.close()
+  w.focus()
+}
+
+// Open the email thread in a new tab, then pop the print dialog
+function printThread(em) {
+  const w = window.open('', '_blank')
+  if (!w) return
+  w.document.open()
+  w.document.write(threadHtml(em))
+  w.document.close()
+  w.focus()
+  // give the new tab a moment to lay out before invoking the print dialog
+  setTimeout(() => w.print(), 250)
+}
+
 function ViewBest() {
   const [open, setOpen] = useState(null) // null = inbox list; index = open thread
   const [aiOpen, setAiOpen] = useState(true)
+  const [collapsedMsgs, setCollapsedMsgs] = useState(() => new Set()) // indices collapsed to first line
 
   // -------- Open thread (reading pane) --------
   if (open != null) {
     const em = BEST_EMAILS[open]
-    const initials = em.from.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
     const color = AVATAR_COLORS[open % AVATAR_COLORS.length]
+    const msgs = [
+      { name: em.from, email: em.fromEmail, av: color, img: em.avatar,
+        to: em.to ? `to ${em.to}` : 'to judges', date: em.replyFrom ? em.date : 'Example entry', body: em.body },
+      { name: em.replyFrom || 'Recipient', email: em.replyEmail, av: '#5f6368', img: em.replyAvatar,
+        to: 'to me', date: em.replyDate || '✓ Real reply', body: em.reply },
+    ]
+    const allCollapsed = msgs.length > 0 && collapsedMsgs.size >= msgs.length
+    const toggleAll = () => setCollapsedMsgs(allCollapsed ? new Set() : new Set(msgs.map((_, i) => i)))
+    const toggleMsg = (i) => setCollapsedMsgs(prev => { const n = new Set(prev); n.has(i) ? n.delete(i) : n.add(i); return n })
     return (
       <div className="view-panel gm-panel">
         {/* Dark Gmail toolbar */}
