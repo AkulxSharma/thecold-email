@@ -1563,6 +1563,8 @@ function ViewCalendar() {
         </div>
       </div>
 
+      {/* ---- Scrollable board: header + all-day + timed grid pan together on small screens ---- */}
+      <div className="gcalw-board">
       {/* ---- Day column headers ---- */}
       <div className="gcalw-header-row">
         {/* Gutter placeholder */}
@@ -1676,6 +1678,7 @@ function ViewCalendar() {
             })}
           </div>
         </div>
+      </div>
       </div>
 
       {/* ---- Event detail popup (Google Calendar style) ---- */}
