@@ -1366,10 +1366,13 @@ function ViewCalendar() {
     ? `${monDate.toLocaleString('en-US', { month: 'long' })} ${sunDate.getFullYear()}`
     : `${MONTH_ABBR[monDate.getMonth()]} – ${MONTH_ABBR[sunDate.getMonth()]} ${sunDate.getFullYear()}`
 
-  // Nav — clamp to at most one week either side of the base week
-  const baseWeek = weekStart(DEFAULT_WEEK)
-  const minWeekTs = addDays(baseWeek, -7).getTime()
-  const maxWeekTs = addDays(baseWeek,  7).getTime()
+  // Nav — span every event week, plus one buffer week before and after.
+  // Events run across 3 weeks → 5 navigable weeks total.
+  const eventTimes = events.map(e => parseDate(e.date).getTime())
+  const firstWeek = weekStart(new Date(Math.min(...eventTimes)))
+  const lastWeek  = weekStart(new Date(Math.max(...eventTimes)))
+  const minWeekTs = addDays(firstWeek, -7).getTime()
+  const maxWeekTs = addDays(lastWeek,   7).getTime()
   const atMin = monDate.getTime() <= minWeekTs
   const atMax = monDate.getTime() >= maxWeekTs
   const goPrev  = () => setMonDate(d => atMin ? d : addDays(d, -7))
