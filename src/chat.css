@@ -133,6 +133,23 @@
   border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .gchat-tool:hover { background: rgba(60,64,67,.08); }
 .gchat-tool-a { font: 600 16px 'Roboto', sans-serif; text-decoration: underline; }
+
+/* formatting + emoji popovers above the composer toolbar */
+.gchat-tool-wrap { position: relative; display: flex; }
+.gchat-fmt-pop, .gchat-emoji-pop { position: absolute; bottom: calc(100% + 8px); right: 0; z-index: 60;
+  background: #fff; border-radius: 12px; padding: 6px;
+  box-shadow: 0 1px 3px rgba(60,64,67,.3), 0 4px 16px rgba(60,64,67,.2); }
+.gchat-fmt-pop { display: flex; gap: 2px; }
+.gchat-fmt-pop button { width: 34px; height: 34px; border: 0; background: transparent; color: #444746;
+  border-radius: 8px; cursor: pointer; font: 600 15px 'Roboto', sans-serif;
+  display: flex; align-items: center; justify-content: center; }
+.gchat-fmt-pop button:hover { background: rgba(60,64,67,.08); }
+.gchat-fmt-pop .gchat-fmt-code { font: 600 12px 'Roboto Mono', monospace; }
+.gchat-emoji-pop { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2px; width: 252px; }
+.gchat-emoji-pop button { width: 38px; height: 38px; border: 0; background: transparent;
+  border-radius: 8px; cursor: pointer; font-size: 20px; line-height: 1;
+  display: flex; align-items: center; justify-content: center; }
+.gchat-emoji-pop button:hover { background: rgba(60,64,67,.1); }
 .gchat-send-caret { width: 30px; height: 40px; border: 0; background: transparent; color: #9aa0a6; cursor: pointer;
   display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .gchat-send { width: 40px; height: 40px; border-radius: 50%; border: 0; flex-shrink: 0;

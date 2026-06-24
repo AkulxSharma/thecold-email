@@ -5,6 +5,7 @@ import { ENTER_FORM, chatMeme } from './data.js'
 import { insertRegistration, isEmailRegistered } from './supabase.js'
 import { setRegistration } from './registration.js'
 
+const EMOJIS = ['😀','😁','😂','🤣','😊','😍','😎','😉','🙌','👍','🙏','🔥','🎉','💯','✅','❤️','👀','😅','🤝','✉️','💪','🚀','😬','🙃']
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const URL_RE = /^https?:\/\/.+/i
 const QUESTIONS = ENTER_FORM.questions
@@ -74,7 +75,10 @@ export default function ViewChat({ onRegistered }) {
   const [done, setDone] = useState(false)   // registration completed
   const [draft, setDraft] = useState('')
   const [cardOpen, setCardOpen] = useState(false)   // contact card popup
+  const [fmtOpen, setFmtOpen] = useState(false)     // formatting (A) popover
+  const [emojiOpen, setEmojiOpen] = useState(false) // emoji picker popover
   const answers = useRef({})
+  const inputRef = useRef(null)
   const endRef = useRef(null)
   const scrollRef = useRef(null)   // the scrollable panel itself
   // Chat sender persona — random, GUARANTEED never the user's session pfp.
@@ -99,6 +103,34 @@ export default function ViewChat({ onRegistered }) {
 
   const botSay = (...texts) => setMsgs(m => [...m, ...texts.map(text => ({ side: 'in', text }))])
   const meSay = (text) => setMsgs(m => [...m, { side: 'out', text }])
+
+  // Insert a string at the input caret (replacing any selection), then restore
+  // focus + caret. Used by the emoji picker.
+  const insertAtCaret = (text) => {
+    const el = inputRef.current
+    const start = el ? el.selectionStart : draft.length
+    const end = el ? el.selectionEnd : draft.length
+    setDraft(draft.slice(0, start) + text + draft.slice(end))
+    requestAnimationFrame(() => {
+      if (!el) return
+      const pos = start + text.length
+      el.focus(); el.setSelectionRange(pos, pos)
+    })
+  }
+  // Wrap the current selection (or insert empty markers at the caret) with a
+  // Google-Chat formatting mark: *bold*, _italic_, ~strike~, `code`.
+  const wrapSelection = (mark) => {
+    const el = inputRef.current
+    const start = el ? el.selectionStart : draft.length
+    const end = el ? el.selectionEnd : draft.length
+    const sel = draft.slice(start, end)
+    setDraft(draft.slice(0, start) + mark + sel + mark + draft.slice(end))
+    requestAnimationFrame(() => {
+      if (!el) return
+      const pos = sel ? start + mark.length + sel.length + mark.length : start + mark.length
+      el.focus(); el.setSelectionRange(pos, pos)
+    })
+  }
 
   const beginRegister = () => {
     meSay('How do I register?')
@@ -317,17 +349,36 @@ export default function ViewChat({ onRegistered }) {
         <button type="button" className="gchat-plus"><M name="add" size={22} /></button>
         <div className="gchat-input">
           <input
+            ref={inputRef}
             className="gchat-input-field"
             value={draft}
             onChange={e => setDraft(e.target.value)}
             placeholder={flow != null ? 'Type your answer…' : 'History is on'}
           />
           <div className="gchat-input-tools">
-            <button type="button" className="gchat-tool gchat-tool-a">A</button>
-            <button type="button" className="gchat-tool"><M name="mood" size={20} /></button>
-            <button type="button" className="gchat-tool"><M name="gif_box" size={20} /></button>
-            <button type="button" className="gchat-tool"><M name="upload" size={20} /></button>
-            <button type="button" className="gchat-tool"><M name="mic" size={20} /></button>
+            <div className="gchat-tool-wrap">
+              <button type="button" className="gchat-tool gchat-tool-a" title="Formatting"
+                onClick={() => { setFmtOpen(o => !o); setEmojiOpen(false) }}>A</button>
+              {fmtOpen && (
+                <div className="gchat-fmt-pop">
+                  <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => wrapSelection('*')} title="Bold"><b>B</b></button>
+                  <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => wrapSelection('_')} title="Italic"><i>I</i></button>
+                  <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => wrapSelection('~')} title="Strikethrough"><s>S</s></button>
+                  <button type="button" className="gchat-fmt-code" onMouseDown={e => e.preventDefault()} onClick={() => wrapSelection('`')} title="Code">&lt;/&gt;</button>
+                </div>
+              )}
+            </div>
+            <div className="gchat-tool-wrap">
+              <button type="button" className="gchat-tool" title="Emoji"
+                onClick={() => { setEmojiOpen(o => !o); setFmtOpen(false) }}><M name="mood" size={20} /></button>
+              {emojiOpen && (
+                <div className="gchat-emoji-pop">
+                  {EMOJIS.map(e => (
+                    <button key={e} type="button" onMouseDown={ev => ev.preventDefault()} onClick={() => insertAtCaret(e)}>{e}</button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
         <button type="button" className="gchat-send-caret"><M name="expand_more" size={18} /></button>
