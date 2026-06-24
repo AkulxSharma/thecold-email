@@ -181,8 +181,6 @@ export default function ViewChat({ onRegistered }) {
           <button className="gchat-ic" title="Back"><M name="arrow_back" size={20} /></button>
           <span className="gchat-hd-av"><img src={pfp.img} alt="" onError={e => { e.currentTarget.style.display = 'none' }} /></span>
           <button className="gchat-hd-name">{pfp.name} <M name="expand_more" size={20} /></button>
-          <button className="gchat-ic" title="Search"><M name="search" size={20} /></button>
-          <button className="gchat-ic" title="Open in new window"><M name="picture_in_picture_alt" size={20} /></button>
         </div>
         <div className="gchat-hd-r">
           <button className="gchat-ic" title="Call"><M name="videocam" size={20} /></button>
