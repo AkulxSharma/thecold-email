@@ -176,4 +176,8 @@
   .walhero-headline { top: 26% !important; }
   /* Drop the extra downward push so the card deck sits closer to the text. */
   .walhero-deck { transform: none !important; }
+  /* Shorten the scroll track: the fan finishes at ~82%, so a 200vh track left a
+     big empty gap before the next section. A shorter track tightens that up. */
+  .walhero { height: 150vh !important; }
+  .home-film { padding-top: 28px !important; }
 }
