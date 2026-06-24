@@ -141,7 +141,7 @@ function TopBar({ onMenu, onLogo, onJemini, navigate }) {
         {q && <div className="clear-x" onClick={() => setQ('')}><I.Close w={20} /></div>}
       </div>
       <div className="top-right">
-        <div className="jemini" onClick={e => { e.stopPropagation(); onJemini() }}><I.Spark /> Jemini</div>
+        <div className="jemini" onClick={e => { e.stopPropagation(); onJemini() }}><I.Spark /> ColdGPT</div>
         <div className="notif-wrap" ref={notifRef}>
           <div className="icon-btn" title="Announcements" style={{ cursor: 'pointer' }} onClick={() => setNotifOpen(o => !o)}>
             <I.Feedback />
@@ -400,7 +400,7 @@ function JeminiPanel({ onClose, open }) {
     <div className={`jemini-panel${open ? '' : ' jemini-closed'}`} onClick={e => e.stopPropagation()}>
       {/* toolbar */}
       <div className="jp-bar">
-        <span className="jp-bar-title">Jemini</span>
+        <span className="jp-bar-title">ColdGPT</span>
         <div className="jp-bar-icons">
           <span className="jp-bar-ic" title="New chat" onClick={() => setMsgs([])}><I.M name="add" size={20} /></span>
           <span className="jp-bar-ic" title="Expand"><I.M name="open_in_full" size={18} /></span>
