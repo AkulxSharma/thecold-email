@@ -5,7 +5,38 @@
 /* ---------- header ---------- */
 .gchat-hd { display: flex; align-items: center; justify-content: space-between;
   padding: 8px 14px; border-bottom: 1px solid #ededed; position: sticky; top: 0; background: #fff; z-index: 5; }
-.gchat-hd-l { display: flex; align-items: center; gap: 4px; }
+.gchat-hd-l { display: flex; align-items: center; gap: 4px; position: relative; }
+.gchat-hd-name { cursor: pointer; }
+
+/* ---------- contact card popup ---------- */
+.gchat-card-scrim { position: fixed; inset: 0; z-index: 40; }
+.gchat-card { position: absolute; top: 46px; left: 38px; z-index: 50; width: 300px;
+  background: #fff; border-radius: 16px; padding: 18px 18px 8px;
+  box-shadow: 0 1px 3px rgba(60,64,67,.3), 0 4px 16px rgba(60,64,67,.25); }
+.gchat-card-add { position: absolute; top: 12px; right: 12px; width: 34px; height: 34px;
+  border: 0; background: transparent; color: #444746; border-radius: 50%; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; }
+.gchat-card-add:hover { background: rgba(60,64,67,.08); }
+.gchat-card-top { display: flex; align-items: center; gap: 14px; padding-right: 28px; }
+.gchat-card-av { width: 64px; height: 64px; border-radius: 50%; flex-shrink: 0; overflow: hidden; }
+.gchat-card-av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gchat-card-name { font: 400 20px 'Google Sans','Product Sans','Roboto',sans-serif; color: #1f1f1f; line-height: 1.2; }
+.gchat-card-email { font: 400 13px 'Roboto',sans-serif; color: #5f6368; margin-top: 2px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gchat-card-quote { font: italic 400 13px 'Roboto',sans-serif; color: #444746; line-height: 1.4; margin: 14px 2px 0; }
+.gchat-card-actions { display: flex; align-items: center; gap: 8px; margin: 14px 0 6px; }
+.gchat-card-msg { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+  height: 40px; border: 0; border-radius: 20px; background: #d3e3fd; color: #041e49;
+  font: 500 14px 'Google Sans','Roboto',sans-serif; cursor: pointer; }
+.gchat-card-msg:hover { background: #c2d7f7; }
+.gchat-card-ico { width: 40px; height: 40px; flex-shrink: 0; border: 1px solid #c4c7c5;
+  border-radius: 50%; background: #fff; color: #444746; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; }
+.gchat-card-ico:hover { background: rgba(60,64,67,.06); }
+.gchat-card-detail { display: flex; align-items: center; gap: 6px; width: 100%;
+  border: 0; background: transparent; color: #0b57d0; cursor: pointer;
+  font: 500 14px 'Google Sans','Roboto',sans-serif; padding: 10px 2px; }
+.gchat-card-detail:hover { color: #0842a0; }
 .gchat-hd-r { display: flex; align-items: center; gap: 3px; }
 .gchat-ic { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px;
   border: 0; background: transparent; color: #5f6368; border-radius: 50%; cursor: pointer; }

@@ -73,6 +73,7 @@ export default function ViewChat({ onRegistered }) {
   const [flow, setFlow] = useState(null)    // active question index, or null when not registering
   const [done, setDone] = useState(false)   // registration completed
   const [draft, setDraft] = useState('')
+  const [cardOpen, setCardOpen] = useState(false)   // contact card popup
   const answers = useRef({})
   const endRef = useRef(null)
   const scrollRef = useRef(null)   // the scrollable panel itself
@@ -180,7 +181,30 @@ export default function ViewChat({ onRegistered }) {
         <div className="gchat-hd-l">
           <button className="gchat-ic" title="Back"><M name="arrow_back" size={20} /></button>
           <span className="gchat-hd-av"><img src={pfp.img} alt="" onError={e => { e.currentTarget.style.display = 'none' }} /></span>
-          <button className="gchat-hd-name">{pfp.name} <M name="expand_more" size={20} /></button>
+          <button className="gchat-hd-name" onClick={() => setCardOpen(o => !o)}>{pfp.name} <M name="expand_more" size={20} /></button>
+          {cardOpen && (
+            <>
+              <div className="gchat-card-scrim" onClick={() => setCardOpen(false)} />
+              <div className="gchat-card" role="dialog">
+                <button className="gchat-card-add" title="Add to contacts"><M name="person_add" size={20} /></button>
+                <div className="gchat-card-top">
+                  <span className="gchat-card-av"><img src={pfp.img} alt="" onError={e => { e.currentTarget.style.display = 'none' }} /></span>
+                  <div className="gchat-card-id">
+                    <div className="gchat-card-name">{pfp.name}</div>
+                    <div className="gchat-card-email">{pfp.email}</div>
+                  </div>
+                </div>
+                <div className="gchat-card-quote">“{pfp.tip}”</div>
+                <div className="gchat-card-actions">
+                  <button className="gchat-card-msg"><M name="chat_bubble" size={18} /> Message</button>
+                  <button className="gchat-card-ico" title="Email"><M name="mail" size={18} /></button>
+                  <button className="gchat-card-ico" title="Video call"><M name="videocam" size={18} /></button>
+                  <button className="gchat-card-ico" title="Schedule"><M name="calendar_today" size={18} /></button>
+                </div>
+                <button className="gchat-card-detail">Open detailed view <M name="open_in_new" size={16} /></button>
+              </div>
+            </>
+          )}
         </div>
         <div className="gchat-hd-r">
           <button className="gchat-ic" title="Call"><M name="videocam" size={20} /></button>
