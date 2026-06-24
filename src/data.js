@@ -590,32 +590,4 @@ Richard`,
     replyDate: 'May 9, 2024',
     reply: `What is the utility of it`,
   },
-  {
-    from: 'Jordan Rivera',
-    fromEmail: 'jordan@example.com',
-    stars: 548, views: 2510, tag: 'The Ask', date: 'Jul 6, 2026',
-    subject: '[PLACEHOLDER] Re: The talk you gave at SaaStr',
-    body: `Hi Sarah,
-
-Your SaaStr talk on pricing strategy changed how I think about freemium. I'm the founder of a B2B tool with 4,000 free users and 12 paying — your 1% rule made me realize I've been optimizing the wrong thing.
-
-I redesigned our onboarding based on your framework. Would love to share what happened (it's interesting). Worth a coffee?
-
-Jordan`,
-    reply: `Jordan — I love this. Yes, send me what you found. And yes to coffee, I'm in SF next month.
-
-Sarah`,
-  },
-  {
-    from: 'Morgan Liu',
-    fromEmail: 'morgan@example.com',
-    stars: 503, tag: 'The Two-Liner', date: 'Jul 5, 2026',
-    subject: '[PLACEHOLDER] Two sentences',
-    body: `Hi Marcus,
-
-I built a thing that cuts your video export time by ~60% — tested on your public YouTube exports. Want me to send it over?`,
-    reply: `Yes. Send it.
-
-M`,
-  },
 ]
