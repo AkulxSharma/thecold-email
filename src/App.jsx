@@ -496,6 +496,9 @@ function WalletHero({ onEnter, goto }) {
   // the text. Start the deck much closer to the headline on small screens.
   const mobile = typeof window !== 'undefined' && window.innerWidth <= 768
   const deckStartFactor = mobile ? 0.05 : 0.16
+  // Extra downward offset at the START only (rises away to 0) so the deck clears
+  // the subtext on desktop; the END stays vertically centered.
+  const deckStartPush = mobile ? 0 : 96
 
   // floating pill nav removed per request
   const pill = null
@@ -544,7 +547,7 @@ function WalletHero({ onEnter, goto }) {
 
         <div className="walhero-deck">
           {cards.map((topic, i) => {
-            const startOff = vh * deckStartFactor + i * 14
+            const startOff = vh * deckStartFactor + deckStartPush + i * 14
             const fanOff   = (i - 1.5) * 78
             const offY  = _lerp(startOff, fanOff, rise)
             const scale = _lerp(0.9, 1.0, rise)

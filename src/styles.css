@@ -2368,7 +2368,9 @@ html, body, #root {
   z-index: 20;
   will-change: transform, opacity;
   pointer-events: none;
-  transform: translateY(96px); /* pull the card deck down, away from the subtext */
+  /* No downward push: the symmetric fan then rests vertically centered in the
+     viewport at the end of the scroll animation. */
+  transform: translateY(0);
 }
 .walhero-deck .wcard { pointer-events: auto; }
 
