@@ -117,6 +117,18 @@ export default function ViewChat({ onRegistered }) {
       el.focus(); el.setSelectionRange(pos, pos)
     })
   }
+  // Prepend a marker (e.g. "- " or "> ") to the start of the line at the caret.
+  const prefixLines = (prefix) => {
+    const el = inputRef.current
+    const start = el ? el.selectionStart : draft.length
+    const lineStart = draft.lastIndexOf('\n', start - 1) + 1
+    setDraft(draft.slice(0, lineStart) + prefix + draft.slice(lineStart))
+    requestAnimationFrame(() => {
+      if (!el) return
+      const pos = start + prefix.length
+      el.focus(); el.setSelectionRange(pos, pos)
+    })
+  }
   // Wrap the current selection (or insert empty markers at the caret) with a
   // Google-Chat formatting mark: *bold*, _italic_, ~strike~, `code`.
   const wrapSelection = (mark) => {
@@ -348,6 +360,22 @@ export default function ViewChat({ onRegistered }) {
       <form className="gchat-composer" onSubmit={onSubmit}>
         <button type="button" className="gchat-plus"><M name="add" size={22} /></button>
         <div className="gchat-input">
+          {fmtOpen && (
+            <div className="gchat-fmtbar">
+              <button type="button" className="is-on" onMouseDown={e => e.preventDefault()} onClick={() => wrapSelection('*')} title="Bold"><M name="format_bold" size={20} /></button>
+              <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => wrapSelection('_')} title="Italic"><M name="format_italic" size={20} /></button>
+              <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => wrapSelection('_')} title="Underline"><M name="format_underlined" size={20} /></button>
+              <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => wrapSelection('*')} title="Text color"><M name="format_color_text" size={20} /></button>
+              <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => wrapSelection('~')} title="Strikethrough"><M name="format_strikethrough" size={20} /></button>
+              <span className="gchat-fmt-sep" />
+              <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => prefixLines('- ')} title="Bulleted list"><M name="format_list_bulleted" size={20} /></button>
+              <span className="gchat-fmt-sep" />
+              <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => prefixLines('> ')} title="Quote"><M name="format_quote" size={20} /></button>
+              <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => insertAtCaret('https://')} title="Insert link"><M name="link" size={20} /></button>
+              <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => wrapSelection('`')} title="Code"><M name="code" size={20} /></button>
+              <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => wrapSelection('```')} title="Code block"><M name="data_object" size={20} /></button>
+            </div>
+          )}
           <input
             ref={inputRef}
             className="gchat-input-field"
@@ -357,16 +385,8 @@ export default function ViewChat({ onRegistered }) {
           />
           <div className="gchat-input-tools">
             <div className="gchat-tool-wrap">
-              <button type="button" className="gchat-tool gchat-tool-a" title="Formatting"
+              <button type="button" className={'gchat-tool gchat-tool-a' + (fmtOpen ? ' is-on' : '')} title="Formatting"
                 onClick={() => { setFmtOpen(o => !o); setEmojiOpen(false) }}>A</button>
-              {fmtOpen && (
-                <div className="gchat-fmt-pop">
-                  <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => wrapSelection('*')} title="Bold"><b>B</b></button>
-                  <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => wrapSelection('_')} title="Italic"><i>I</i></button>
-                  <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => wrapSelection('~')} title="Strikethrough"><s>S</s></button>
-                  <button type="button" className="gchat-fmt-code" onMouseDown={e => e.preventDefault()} onClick={() => wrapSelection('`')} title="Code">&lt;/&gt;</button>
-                </div>
-              )}
             </div>
             <div className="gchat-tool-wrap">
               <button type="button" className="gchat-tool" title="Emoji"

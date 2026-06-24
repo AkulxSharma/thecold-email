@@ -122,7 +122,7 @@
 .gchat-plus { width: 40px; height: 40px; border-radius: 50%; border: 0; flex-shrink: 0;
   background: #d3e3fd; color: #0b57d0; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 .gchat-plus:hover { background: #c2d7fa; }
-.gchat-input { flex: 1; display: flex; align-items: center; gap: 10px; min-height: 44px;
+.gchat-input { position: relative; flex: 1; display: flex; align-items: center; gap: 10px; min-height: 44px;
   background: #f5f6f8; border-radius: 24px; padding: 6px 10px 6px 18px; }
 .gchat-input-ph { flex: 1; font: 400 14px 'Roboto', sans-serif; color: #80868b; }
 .gchat-input-field { flex: 1; min-width: 0; border: 0; background: transparent; outline: none;
@@ -136,14 +136,17 @@
 
 /* formatting + emoji popovers above the composer toolbar */
 .gchat-tool-wrap { position: relative; display: flex; }
-.gchat-fmt-pop { position: absolute; bottom: calc(100% + 8px); right: 0; z-index: 60;
-  background: #fff; border-radius: 12px; padding: 6px; display: flex; gap: 2px;
-  box-shadow: 0 1px 3px rgba(60,64,67,.3), 0 4px 16px rgba(60,64,67,.2); }
-.gchat-fmt-pop button { width: 34px; height: 34px; border: 0; background: transparent; color: #444746;
-  border-radius: 8px; cursor: pointer; font: 600 15px 'Roboto', sans-serif;
-  display: flex; align-items: center; justify-content: center; }
-.gchat-fmt-pop button:hover { background: rgba(60,64,67,.08); }
-.gchat-fmt-pop .gchat-fmt-code { font: 600 12px 'Roboto Mono', monospace; }
+/* full-width formatting toolbar above the input */
+.gchat-fmtbar { position: absolute; left: 0; right: 0; bottom: calc(100% + 8px); z-index: 60;
+  display: flex; align-items: center; gap: 2px; padding: 8px 12px;
+  background: #eef1fb; border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(60,64,67,.25), 0 4px 16px rgba(60,64,67,.2); }
+.gchat-fmtbar button { width: 36px; height: 36px; border: 0; background: transparent; color: #444746;
+  border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.gchat-fmtbar button:hover { background: rgba(60,64,67,.08); }
+.gchat-fmtbar button.is-on { background: #d3e3fd; color: #0b57d0; }
+.gchat-fmt-sep { width: 1px; height: 22px; background: #c4c7c5; margin: 0 8px; flex-shrink: 0; }
+.gchat-tool-a.is-on { background: #d3e3fd; color: #0b57d0; }
 .gchat-emoji-pop { position: absolute; bottom: calc(100% + 8px); right: 0; z-index: 60; }
 
 /* ---------- Google Chat emoji picker ---------- */
