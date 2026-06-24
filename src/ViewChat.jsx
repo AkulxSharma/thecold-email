@@ -359,7 +359,7 @@ export default function ViewChat({ onRegistered }) {
       {/* ---- composer ---- */}
       <form className="gchat-composer" onSubmit={onSubmit}>
         <button type="button" className="gchat-plus"><M name="add" size={22} /></button>
-        <div className="gchat-input">
+        <div className={'gchat-input' + (fmtOpen ? ' is-fmt' : '')}>
           {fmtOpen && (
             <div className="gchat-fmtbar">
               <button type="button" className="is-on" onMouseDown={e => e.preventDefault()} onClick={() => wrapSelection('*')} title="Bold"><M name="format_bold" size={20} /></button>
