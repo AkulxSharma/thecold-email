@@ -3136,7 +3136,11 @@ export default function App() {
   }
 
   // Navigate by internal view key — preserves every existing goto()/setView() call site.
-  const goto = (view) => navigate(viewToPath(view))
+  // On mobile, also collapse the sidebar drawer so the chosen page is visible.
+  const goto = (view) => {
+    navigate(viewToPath(view))
+    if (typeof window !== 'undefined' && window.innerWidth <= 768) setSidebarOpen(false)
+  }
   const goHome = () => navigate('/')
   // Every "Enter" CTA: registered on this device → submission page; else → register.
   const onEnter = () => navigate(isRegisteredLocal() ? '/submit' : '/the-procedure')
