@@ -4,8 +4,8 @@ import { M } from './icons'
 import { ENTER_FORM, chatMeme } from './data.js'
 import { insertRegistration, isEmailRegistered } from './supabase.js'
 import { setRegistration } from './registration.js'
+import EmojiPicker from './EmojiPicker.jsx'
 
-const EMOJIS = ['😀','😁','😂','🤣','😊','😍','😎','😉','🙌','👍','🙏','🔥','🎉','💯','✅','❤️','👀','😅','🤝','✉️','💪','🚀','😬','🙃']
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const URL_RE = /^https?:\/\/.+/i
 const QUESTIONS = ENTER_FORM.questions
@@ -373,9 +373,7 @@ export default function ViewChat({ onRegistered }) {
                 onClick={() => { setEmojiOpen(o => !o); setFmtOpen(false) }}><M name="mood" size={20} /></button>
               {emojiOpen && (
                 <div className="gchat-emoji-pop">
-                  {EMOJIS.map(e => (
-                    <button key={e} type="button" onMouseDown={ev => ev.preventDefault()} onClick={() => insertAtCaret(e)}>{e}</button>
-                  ))}
+                  <EmojiPicker onPick={insertAtCaret} />
                 </div>
               )}
             </div>

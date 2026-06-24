@@ -136,20 +136,39 @@
 
 /* formatting + emoji popovers above the composer toolbar */
 .gchat-tool-wrap { position: relative; display: flex; }
-.gchat-fmt-pop, .gchat-emoji-pop { position: absolute; bottom: calc(100% + 8px); right: 0; z-index: 60;
-  background: #fff; border-radius: 12px; padding: 6px;
+.gchat-fmt-pop { position: absolute; bottom: calc(100% + 8px); right: 0; z-index: 60;
+  background: #fff; border-radius: 12px; padding: 6px; display: flex; gap: 2px;
   box-shadow: 0 1px 3px rgba(60,64,67,.3), 0 4px 16px rgba(60,64,67,.2); }
-.gchat-fmt-pop { display: flex; gap: 2px; }
 .gchat-fmt-pop button { width: 34px; height: 34px; border: 0; background: transparent; color: #444746;
   border-radius: 8px; cursor: pointer; font: 600 15px 'Roboto', sans-serif;
   display: flex; align-items: center; justify-content: center; }
 .gchat-fmt-pop button:hover { background: rgba(60,64,67,.08); }
 .gchat-fmt-pop .gchat-fmt-code { font: 600 12px 'Roboto Mono', monospace; }
-.gchat-emoji-pop { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2px; width: 252px; }
-.gchat-emoji-pop button { width: 38px; height: 38px; border: 0; background: transparent;
-  border-radius: 8px; cursor: pointer; font-size: 20px; line-height: 1;
+.gchat-emoji-pop { position: absolute; bottom: calc(100% + 8px); right: 0; z-index: 60; }
+
+/* ---------- Google Chat emoji picker ---------- */
+.emojip { width: 360px; background: #f0f4f9; border-radius: 16px; overflow: hidden;
+  box-shadow: 0 1px 3px rgba(60,64,67,.3), 0 6px 22px rgba(60,64,67,.28); }
+.emojip-search { display: flex; align-items: center; gap: 8px; margin: 12px; padding: 0 14px;
+  height: 44px; background: #fff; border: 1px solid #d9dde3; border-radius: 24px; color: #5f6368; }
+.emojip-search input { flex: 1; border: 0; outline: 0; background: transparent;
+  font: 400 15px 'Roboto', sans-serif; color: #1f1f1f; }
+.emojip-tabs { display: flex; align-items: center; justify-content: space-between;
+  padding: 0 12px 4px; border-bottom: 1px solid #dde1e6; }
+.emojip-tabs button { width: 34px; height: 38px; border: 0; background: transparent; color: #5f6368;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  border-bottom: 2px solid transparent; }
+.emojip-tabs button:hover { color: #202124; }
+.emojip-tabs button.is-on { color: #0b57d0; border-bottom-color: #0b57d0; }
+.emojip-body { max-height: 290px; overflow-y: auto; padding: 4px 8px 10px; }
+.emojip-head { font: 500 11px 'Roboto', sans-serif; letter-spacing: .6px; color: #5f6368;
+  padding: 12px 6px 6px; }
+.emojip-none { font: 400 14px 'Roboto', sans-serif; color: #444746; padding: 4px 6px 10px; }
+.emojip-grid { display: grid; grid-template-columns: repeat(8, 1fr); }
+.emojip-cell { width: 100%; aspect-ratio: 1; border: 0; background: transparent; cursor: pointer;
+  font-size: 23px; line-height: 1; border-radius: 8px;
   display: flex; align-items: center; justify-content: center; }
-.gchat-emoji-pop button:hover { background: rgba(60,64,67,.1); }
+.emojip-cell:hover { background: rgba(60,64,67,.1); }
 .gchat-send-caret { width: 30px; height: 40px; border: 0; background: transparent; color: #9aa0a6; cursor: pointer;
   display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .gchat-send { width: 40px; height: 40px; border-radius: 50%; border: 0; flex-shrink: 0;
