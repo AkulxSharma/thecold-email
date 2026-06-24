@@ -186,7 +186,6 @@ export default function ViewChat({ onRegistered }) {
             <>
               <div className="gchat-card-scrim" onClick={() => setCardOpen(false)} />
               <div className="gchat-card" role="dialog">
-                <button className="gchat-card-add" title="Add to contacts"><M name="person_add" size={20} /></button>
                 <div className="gchat-card-top">
                   <span className="gchat-card-av"><img src={pfp.img} alt="" onError={e => { e.currentTarget.style.display = 'none' }} /></span>
                   <div className="gchat-card-id">
