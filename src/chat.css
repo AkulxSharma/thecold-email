@@ -11,7 +11,7 @@
 /* ---------- contact card popup ---------- */
 .gchat-card-scrim { position: fixed; inset: 0; z-index: 40; }
 .gchat-card { position: absolute; top: 46px; left: 38px; z-index: 50; width: 344px;
-  background: #fff; border-radius: 16px; padding: 18px 18px 8px;
+  background: #fff; border-radius: 16px; padding: 18px 18px 20px;
   box-shadow: 0 1px 3px rgba(60,64,67,.3), 0 4px 16px rgba(60,64,67,.25); }
 .gchat-card-add { position: absolute; top: 12px; right: 12px; width: 34px; height: 34px;
   border: 0; background: transparent; color: #444746; border-radius: 50%; cursor: pointer;

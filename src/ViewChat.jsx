@@ -195,10 +195,6 @@ export default function ViewChat({ onRegistered }) {
                   </div>
                 </div>
                 <div className="gchat-card-quote">“{pfp.tip}”</div>
-                <div className="gchat-card-actions">
-                  <button className="gchat-card-msg"><M name="chat_bubble" size={18} /> Message</button>
-                </div>
-                <button className="gchat-card-detail">Open detailed view <M name="open_in_new" size={16} /></button>
               </div>
             </>
           )}
