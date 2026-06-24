@@ -1,0 +1,133 @@
+/* =====================================================================
+   responsive/pages.css
+   Responsive overrides for: Track detail pages (Google Docs / Finance /
+   Classroom / Maps shells), Prizes (Google Pay), Rules, Story/About,
+   Winners, and the two fixed-width chat popovers (contact card + emoji
+   picker).
+
+   Scope: ONLY the selectors listed below. Base values are defined in
+   styles.css / chat.css / story.css; this file shrinks big paddings,
+   stacks multi-column layouts, and makes fixed-width popups/sidebars
+   viewport-relative so none of these views overflow horizontally.
+
+   Breakpoints: tablet <=900px, large phone <=600px, small phone <=400px.
+   !important is used so import order cannot defeat these overrides.
+   ===================================================================== */
+
+/* ─────────────────────────────────────────────────────────────────────
+   TABLET  (max-width: 900px)
+   ───────────────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+
+  /* Track detail — Google Docs doc page: trim oversized page padding */
+  .gdoc-page-wrap { padding: 12px 12px 64px !important; }
+  .gdoc-page { padding: 56px 48px 80px !important; }
+
+  /* Track detail — Google Finance: keep within viewport */
+  .gfin-wrap { max-width: 100% !important; padding: 24px 20px 56px !important; }
+
+  /* Track detail — Classroom shell: shrink banner padding */
+  .gclass-banner { padding: 30px 28px !important; }
+  .gclass-body { gap: 20px !important; }
+
+  /* Track detail — Maps shell: narrow the side panel a touch */
+  .gmaps-panel { width: 340px !important; }
+
+  /* Prizes — 2-col card grid is fine on tablet, just tighten gap */
+  .lp-cards { gap: 14px !important; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   LARGE PHONE  (max-width: 600px)
+   ───────────────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+
+  /* Track detail — Google Docs doc page */
+  .gdoc-page-wrap { padding: 8px 8px 48px !important; }
+  .gdoc-page { padding: 32px 22px 56px !important; width: 100% !important; }
+
+  /* Track detail — Google Finance */
+  .gfin-wrap { padding: 18px 16px 44px !important; }
+  .gfin-price { font-size: 28px !important; }
+  .gfin-svg { height: 200px !important; }
+
+  /* Track detail — Classroom shell: stack the 240px side column */
+  .gclass-banner { margin: 12px 12px 0 !important; padding: 24px 18px !important; min-height: 96px !important; }
+  .gclass-body { flex-direction: column !important; max-width: none !important; padding: 18px 14px !important; gap: 16px !important; }
+  .gclass-side { width: 100% !important; flex-shrink: 1 !important; }
+
+  /* Track detail — Maps shell: stack panel below map, full width */
+  .gmaps-app { flex-direction: column !important; height: auto !important; min-height: 0 !important; }
+  .gmaps-panel { width: 100% !important; flex-shrink: 1 !important; box-shadow: none !important; }
+
+  /* Prizes — collapse 2-col card grid to single column */
+  .lp-cards { grid-template-columns: 1fr !important; gap: 12px !important; }
+  .lp-card { padding: 18px !important; }
+
+  /* Prizes — Google Pay style: smaller balance + tighter action row */
+  .gpay-balance-amt { font-size: 64px !important; letter-spacing: -1px !important; }
+  .gpay-balance-sub { font-size: 18px !important; }
+  .gpay-actions { gap: 18px !important; }
+  .gpay-cards { padding: 4px 14px 16px !important; }
+
+  /* Rules — tighten badge / list rows so nothing overflows */
+  .rule-tags { gap: 6px !important; }
+  .rule-tags li { padding: 4px 10px !important; font-size: 12px !important; }
+  .rule-check li, .rule-x li { font-size: 13px !important; }
+
+  /* Story / About — full-width timeline + prize cards (were flex 1 1 240px) */
+  .story-wrap { padding: 0 16px 64px !important; }
+  .story-timeline-card { flex: 1 1 100% !important; padding: 20px 20px !important; }
+  .story-prize { flex: 1 1 100% !important; padding: 24px 20px !important; }
+  .story-step { gap: 14px !important; }
+  .story-p { font-size: 16px !important; }
+
+  /* Winners — slimmer card padding */
+  .winners-card { padding: 20px !important; }
+  .winners-row { padding: 10px 12px !important; }
+
+  /* Chat popovers — fixed-width contact card -> viewport relative */
+  .gchat-card {
+    width: 90vw !important;
+    max-width: 344px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+  }
+
+  /* Chat popovers — emoji picker -> viewport relative */
+  .emojip { width: 95vw !important; max-width: 360px !important; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   SMALL PHONE  (max-width: 400px)
+   ───────────────────────────────────────────────────────────────────── */
+@media (max-width: 400px) {
+
+  /* Track detail — Google Docs doc page: minimal side padding */
+  .gdoc-page { padding: 24px 14px 44px !important; }
+
+  /* Track detail — Google Finance */
+  .gfin-wrap { padding: 14px 12px 36px !important; }
+  .gfin-price { font-size: 24px !important; }
+
+  /* Track detail — Classroom shell */
+  .gclass-banner { padding: 20px 14px !important; }
+  .gclass-body { padding: 14px 10px !important; }
+
+  /* Prizes — Google Pay style: balance must fit narrow screens */
+  .gpay-balance-amt { font-size: 52px !important; }
+  .gpay-cards { padding: 4px 10px 14px !important; }
+
+  /* Story / About */
+  .story-wrap { padding: 0 12px 56px !important; }
+  .story-timeline-card { padding: 16px 16px !important; }
+  .story-prize { padding: 20px 16px !important; }
+  .story-p { font-size: 15px !important; }
+
+  /* Winners */
+  .winners-card { padding: 16px !important; }
+
+  /* Chat popovers — emoji 8-col grid is tight; keep near full width */
+  .gchat-card { width: 94vw !important; }
+  .emojip { width: 96vw !important; }
+}

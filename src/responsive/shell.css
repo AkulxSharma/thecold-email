@@ -1,0 +1,105 @@
+/* =====================================================================
+   responsive/shell.css  —  APP SHELL responsiveness only
+   ---------------------------------------------------------------------
+   Scope (this file owns ONLY the app-shell chrome):
+     - Top bar / global search row .........  .topbar .search .search-right
+     - "ColdGPT" pill ......................  .jemini  (in .top-right)
+     - Status pill / dot ...................  .status-pill .status-dot
+     - Notifications .......................  .notif-wrap .notif-menu .notif-badge
+     - Avatar / account card ...............  .avatar .avatar-ring .pfp-card
+     - Sidebar drawer + hamburger ..........  .sidebar .sidebar-collapsed .icon-btn .nav-item
+     - Marketing footer ....................  .home-footer + children
+
+   Base values were read from src/styles.css. Existing media queries in
+   styles.css already turn the sidebar into a fixed drawer and hide the
+   search/jemini/status-pill at <=768px; the rules below reinforce and
+   extend that across the required shell breakpoints. All declarations
+   use !important so CSS import order can never defeat them.
+
+   Breakpoints: tablet 900px, large phone 600px, small phone 400px.
+   Goal: no horizontal overflow, search shrinks then hides, top-right
+   items never wrap badly, sidebar is a true overlay drawer, footer
+   collapses to a single centered column on phones.
+   ===================================================================== */
+
+/* =====================  TABLET  (<= 900px)  ===================== */
+@media (max-width: 900px) {
+  /* Tighten the bar so nothing pushes off-screen. */
+  .topbar { padding: 0 8px !important; gap: 4px !important; }
+
+  /* Search keeps flexing but stops hogging width; it can shrink small. */
+  .search { max-width: 420px !important; min-width: 0 !important; }
+  .search-right .chip { display: none !important; } /* drop the "in:" / shortcut chips */
+
+  /* Keep the right cluster compact and on one line. */
+  .top-right { gap: 2px !important; flex: 0 0 auto !important; }
+  .jemini { padding: 0 12px !important; font-size: 14px !important; }
+  .status-pill { padding: 0 8px 0 10px !important; font-size: 13px !important; }
+
+  /* Footer: keep centered, allow social links to wrap. */
+  .home .home-footer { padding: 36px 20px 48px !important; }
+  .home-footer-socials { flex-wrap: wrap !important; justify-content: center !important; gap: 16px !important; }
+}
+
+/* Sidebar becomes an overlay drawer only where it auto-collapses (<=768, matches the JS threshold).
+   On 769–900px tablets it stays a static column so it never floats over content. */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed !important; top: 64px !important; left: 0 !important; bottom: 0 !important;
+    z-index: 120 !important; background: #f6f8fc !important;
+    box-shadow: 2px 0 16px rgba(0, 0, 0, .20) !important;
+  }
+  .sidebar.sidebar-collapsed { box-shadow: none !important; pointer-events: none !important; }
+}
+
+/* =====================  LARGE PHONE  (<= 600px)  ===================== */
+@media (max-width: 600px) {
+  /* Strip the bar down to logo + hamburger + avatar. */
+  .topbar { padding: 0 4px !important; gap: 2px !important; }
+  .topbar .search { display: none !important; }
+  .topbar .jemini,
+  .topbar .status-pill,
+  .topbar .status-wrap { display: none !important; }
+
+  /* Right cluster: only the notifications bell + avatar remain. */
+  .top-right { margin-left: auto !important; gap: 0 !important; }
+
+  /* Hamburger / icon buttons slightly smaller to save room. */
+  .icon-btn { width: 42px !important; height: 42px !important; }
+  .nav-item { height: 36px !important; } /* easier touch targets in the drawer */
+
+  /* Drawer takes most of the screen but never the whole width. */
+  .sidebar { width: 280px !important; max-width: 84vw !important; padding: 8px !important; }
+  .sidebar.sidebar-collapsed { width: 0 !important; padding-left: 0 !important; padding-right: 0 !important; }
+
+  /* Notification + account popovers must not run off the right edge. */
+  .notif-menu { width: auto !important; left: 8px !important; right: 8px !important; }
+  .pfp-card { right: 8px !important; left: auto !important; max-width: calc(100vw - 16px) !important; }
+
+  /* Footer stacks to a single centered column. */
+  .home .home-footer { padding: 32px 16px 44px !important; gap: 14px !important; }
+  .home-footer-socials {
+    flex-direction: column !important; align-items: center !important; gap: 10px !important;
+  }
+  .home-footer-sponsors { text-align: center !important; }
+}
+
+/* =====================  SMALL PHONE  (<= 400px)  ===================== */
+@media (max-width: 400px) {
+  .topbar { height: 56px !important; }
+  .app { height: calc(100vh - 56px) !important; } /* match shorter bar so nothing clips */
+  .sidebar { top: 56px !important; width: 260px !important; max-width: 88vw !important; }
+
+  .logo img { height: 44px !important; }
+  .icon-btn { width: 40px !important; height: 40px !important; }
+  .avatar { width: 30px !important; height: 30px !important; }
+  .avatar-ring { width: 38px !important; height: 38px !important; }
+
+  /* Keep the bell badge readable but snug to the avatar cluster. */
+  .notif-badge { min-width: 14px !important; height: 14px !important; }
+
+  /* Footer breathes a little less; links comfortably tappable. */
+  .home .home-footer { padding: 28px 12px 40px !important; }
+  .home-footer-link { font-size: 15px !important; }
+  .home-footer-wordmark { font-size: 16px !important; }
+}

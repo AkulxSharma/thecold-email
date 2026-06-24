@@ -1,0 +1,170 @@
+/* ==========================================================================
+   responsive/home.css — Responsive overrides for the HOME / LANDING / OVERVIEW
+   page only. Base rules live in src/styles.css.
+
+   Scope (this slice only):
+     - Hero: .home-hero, .home-tagline (headline), .home-sub, hero prize callout
+     - Track columns grid: .home-track-cols (4 -> 2 -> 1), .home-track-col
+     - WalletHero / wallet cards: .wcard, .walhero-*, .walhero-static-cards
+     - Prize CTA / sections: .home-prize-btn, .home-prize-*, .home section/footer
+
+   Breakpoints: tablet <=900, large phone <=600, small phone <=400.
+   !important is used so import order cannot defeat these overrides.
+   Goals: headline scales down (no overflow), card grids collapse 4->2->1,
+   no horizontal overflow, comfortable padding on phones.
+   ========================================================================== */
+
+/* ------------------------------------------------------------------ TABLET */
+@media (max-width: 900px) {
+  /* keep all home sections within the viewport */
+  .home section,
+  .home footer {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* hero */
+  .home-hero {
+    padding: 64px 20px 40px !important;
+  }
+  .home-tagline {
+    font-size: 36px !important;
+    max-width: 100% !important;
+  }
+  .home-sub {
+    font-size: 16px !important;
+    max-width: 100% !important;
+  }
+  .home-prize-callout {
+    flex: 0 0 auto !important;
+  }
+
+  /* track columns: 4 -> 2 */
+  .home-track-cols {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 32px !important;
+    max-width: 100% !important;
+  }
+
+  /* prize teaser */
+  .home-prize-big {
+    font-size: 48px !important;
+  }
+
+  /* wallet cards never wider than the viewport */
+  .wcard {
+    width: min(340px, 86vw) !important;
+  }
+}
+
+/* ------------------------------------------------------------ LARGE PHONE */
+@media (max-width: 600px) {
+  .home section,
+  .home footer {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* hero */
+  .home-hero {
+    padding: 48px 16px 32px !important;
+  }
+  .home-tagline {
+    font-size: 28px !important;
+    letter-spacing: -.5px !important;
+  }
+  .home-sub {
+    font-size: 15px !important;
+  }
+  .home-hero .lp-cta {
+    height: 52px !important;
+    padding: 0 32px !important;
+    font-size: 16px !important;
+  }
+  .home-prize-callout {
+    padding: 22px 18px !important;
+  }
+  .home-prize-amount {
+    font-size: 40px !important;
+  }
+
+  /* track columns: 2 -> 1 */
+  .home-track-cols {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+    max-width: 100% !important;
+  }
+  .home-track-col {
+    align-items: flex-start !important;
+  }
+
+  /* prize teaser / CTA */
+  .home-prize-teaser {
+    padding: 44px 16px !important;
+  }
+  .home-prize-big {
+    font-size: 40px !important;
+    letter-spacing: -1px !important;
+  }
+  .home-prize-desc {
+    max-width: 100% !important;
+  }
+  .home-prize-btn {
+    padding: 10px 18px !important;
+  }
+
+  /* wallet hero / cards */
+  .walhero-static {
+    padding: 64px 16px 48px !important;
+  }
+  .walhero-static-cards {
+    width: 90% !important;
+  }
+  .wcard {
+    width: min(320px, 90vw) !important;
+    height: 72px !important;
+    padding: 0 18px !important;
+  }
+  .walhero-enter-pill {
+    right: 12px !important;
+    bottom: 12px !important;
+  }
+}
+
+/* ------------------------------------------------------------ SMALL PHONE */
+@media (max-width: 400px) {
+  .home-hero {
+    padding: 40px 12px 28px !important;
+  }
+  .home-tagline {
+    font-size: 24px !important;
+  }
+  .home-sub {
+    font-size: 14px !important;
+  }
+  .home-hero .lp-cta {
+    width: 100% !important;
+    padding: 0 20px !important;
+  }
+  .home-prize-amount {
+    font-size: 34px !important;
+  }
+
+  .home-track-cols {
+    gap: 24px !important;
+  }
+
+  .home-prize-big {
+    font-size: 34px !important;
+  }
+  .home-prize-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .wcard {
+    width: min(280px, 92vw) !important;
+    height: 66px !important;
+    gap: 12px !important;
+  }
+}

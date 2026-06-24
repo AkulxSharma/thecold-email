@@ -1,0 +1,152 @@
+/* =====================================================================
+   email.css — Responsive overrides for the email reader, inbox list,
+   Compose window, and ColdGPT (.jemini-*) assistant panel.
+
+   Slice owner: reader (.gm-*), inbox list (.bx-* / .ai-overview / .ai-ov-*),
+   compose (.compose-win / .cw-*), ColdGPT panel (.jemini-panel / .jp-*).
+
+   Base values live in src/styles.css; these rules only adapt them to small
+   viewports. !important is used throughout so import order can't defeat them.
+
+   Breakpoints:  tablet  <= 900px
+                 phone   <= 600px
+                 small   <= 400px
+   Goals: no horizontal overflow; reader usable at 390px; fixed-width
+   popups (560px compose, 400px panel) become viewport-relative; the sender
+   row and the dark toolbar degrade gracefully.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   TABLET  (<= 900px)
+   --------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  /* Reader: keep the thread fluid, trim outer padding so text breathes. */
+  .gm-thread { max-width: 100% !important; padding: 16px 18px 32px !important; }
+
+  /* Compose: shrink the fixed 560px popup toward the viewport. */
+  .compose-win { width: min(560px, 94vw) !important; right: 16px !important; }
+
+  /* ColdGPT panel: shrink the fixed 400px panel. */
+  .jemini-panel { width: min(400px, 80vw) !important; }
+
+  /* Inbox list: tighten row padding. */
+  .bx-row { padding: 0 16px !important; }
+  .ai-overview { margin: 14px 16px !important; }
+}
+
+/* ---------------------------------------------------------------------
+   LARGE PHONE  (<= 600px)
+   --------------------------------------------------------------------- */
+@media (max-width: 600px) {
+  /* ---- Email reader ---- */
+  .gm-thread { padding: 12px 12px 28px !important; }
+
+  /* Dark toolbar: allow wrap, drop spacing, hide non-essential icons. */
+  .gm-topbar { padding: 6px 8px !important; flex-wrap: wrap !important; gap: 4px !important; }
+  .gm-topbar-left, .gm-topbar-right { gap: 0 !important; }
+  /* Trim the toolbar: keep only the first three icons on each side. */
+  .gm-topbar-left .gm-tic:nth-child(n+4),
+  .gm-topbar-right .gm-tic:nth-child(n+4) { display: none !important; }
+  .gm-tic { padding: 6px !important; }
+  .gm-count { font-size: 12px !important; margin-right: 4px !important; }
+
+  /* Subject heading: let it wrap instead of being clipped to one line. */
+  .gm-subject-bar { padding: 6px 0 14px !important; }
+  .gm-subject {
+    font-size: 19px !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+  }
+
+  /* Message: shrink avatar gap, let the sender row stack. */
+  .gm-msg { gap: 10px !important; padding: 14px 0 !important; }
+  .gm-msg-top { flex-wrap: wrap !important; gap: 4px !important; }
+  .gm-msg-actions { gap: 0 !important; }
+  .gm-body { font-size: 14px !important; margin-top: 12px !important; }
+
+  /* Footer reply/forward buttons wrap and tighten. */
+  .gm-foot { flex-wrap: wrap !important; gap: 8px !important; padding-top: 16px !important; }
+  .gm-foot-btn { padding: 8px 16px !important; }
+
+  /* ---- Inbox list ---- */
+  .bx-row { padding: 0 12px !important; gap: 8px !important; }
+  /* Shrink the fixed 160px sender column. */
+  .bx-sender { flex: 0 0 110px !important; }
+  /* Hide secondary stat columns to save width. */
+  .bx-stat-views { display: none !important; }
+  .bx-stat-star { width: 36px !important; }
+  .bx-tag { display: none !important; }
+
+  /* AI overview card. */
+  .ai-overview { margin: 12px 12px !important; padding: 12px 14px !important; }
+  .ai-overview .ai-text, .ai-ov-body { font-size: 13px !important; }
+  .ai-ov-title, .ai-overview .ai-title { font-size: 15px !important; }
+
+  /* ---- Compose window: become near-full-width sheet. ---- */
+  .compose-win {
+    width: 95vw !important;
+    right: 2.5vw !important;
+    left: auto !important;
+    max-height: 90vh !important;
+    border-radius: 12px 12px 0 0 !important;
+  }
+  .cw-head { padding: 9px 12px !important; }
+  .cw-field { padding: 8px 12px !important; }
+  .cw-body { padding: 10px 12px !important; }
+
+  /* ---- ColdGPT panel: become near-full-width. ---- */
+  .jemini-panel {
+    width: 95vw !important;
+    right: 2.5vw !important;
+    left: auto !important;
+    top: 56px !important;
+    bottom: 12px !important;
+    border-radius: 18px !important;
+    padding: 8px 12px 12px !important;
+  }
+  .jp-greet { font-size: 24px !important; }
+  .jp-msg { max-width: 92% !important; }
+}
+
+/* ---------------------------------------------------------------------
+   SMALL PHONE  (<= 400px)  — usable down to ~360px
+   --------------------------------------------------------------------- */
+@media (max-width: 400px) {
+  /* Reader. */
+  .gm-thread { padding: 10px 10px 24px !important; }
+  /* Keep only the first two toolbar icons per side. */
+  .gm-topbar-left .gm-tic:nth-child(n+3),
+  .gm-topbar-right .gm-tic:nth-child(n+3) { display: none !important; }
+  .gm-subject { font-size: 18px !important; }
+  .gm-msg { gap: 8px !important; }
+  /* Stack the footer buttons full width for easy tapping. */
+  .gm-foot-btn { flex: 1 1 100% !important; justify-content: center !important; }
+
+  /* Inbox list: drop the sender column entirely; snippet takes over. */
+  .bx-sender { display: none !important; }
+  .bx-stat-star { display: none !important; }
+  .bx-row { padding: 0 10px !important; }
+
+  /* AI overview. */
+  .ai-overview { margin: 10px 10px !important; padding: 10px 12px !important; }
+
+  /* Compose + panel: full viewport width, no rounding fuss. */
+  .compose-win {
+    width: 100vw !important;
+    right: 0 !important;
+    left: 0 !important;
+    border-radius: 0 !important;
+    max-height: 92vh !important;
+  }
+  .jemini-panel {
+    width: 100vw !important;
+    right: 0 !important;
+    left: 0 !important;
+    top: 52px !important;
+    bottom: 0 !important;
+    border-radius: 0 !important;
+  }
+  .jp-greet { font-size: 21px !important; }
+  .jp-chip { font-size: 12px !important; padding: 6px 12px !important; }
+}
