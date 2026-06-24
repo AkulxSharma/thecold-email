@@ -575,7 +575,7 @@ function ViewOverview({ onEnter, goto }) {
           </div>
           <div className="home-footer-socials">
             <a href="#" className="home-footer-link">X</a>
-            <a href="#" className="home-footer-link">Instagram</a>
+            <a href="https://instagram.com/thecold.email" className="home-footer-link" target="_blank" rel="noopener noreferrer">Instagram</a>
             <a href="#" className="home-footer-link">LinkedIn</a>
             <a href="https://www.tiktok.com/@thecold.email" className="home-footer-link" target="_blank" rel="noopener noreferrer">TikTok</a>
           </div>
