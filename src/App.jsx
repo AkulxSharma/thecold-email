@@ -55,8 +55,30 @@ function viewToPath(view) {
   return VIEW_TO_PATH[view] || '/'
 }
 
+// Date-driven event status for the "Active" presence pill. Phases switch by the
+// real calendar date; the dropdown shows a live countdown to the next milestone.
+function eventPhase(now = new Date()) {
+  const d = (y, m, day) => new Date(y, m - 1, day)
+  const day0 = (dt) => new Date(dt.getFullYear(), dt.getMonth(), dt.getDate())
+  const today = day0(now)
+  const daysTo = (target) => Math.round((day0(target) - today) / 86400000)
+  const fmt = (n, noun) => n <= 0 ? `${noun} today` : `${noun} in ${n} day${n === 1 ? '' : 's'}`
+
+  const open = d(2026, 6, 24), regClose = d(2026, 6, 30), subClose = d(2026, 7, 7)
+  const judge = d(2026, 7, 8), winners = d(2026, 7, 10)
+
+  if (today < open)        return { label: 'Upcoming',          color: '#1a73e8', note: fmt(daysTo(open), 'Registration opens') }
+  if (today <= regClose)   return { label: 'Registration open', color: '#1e8e3e', note: fmt(daysTo(regClose), 'Registration closes') }
+  if (today <= subClose)   return { label: 'Submissions open',  color: '#f9ab00', note: fmt(daysTo(subClose), 'Submissions close') }
+  if (today < winners)     return { label: 'Judging',           color: '#e8710a', note: fmt(daysTo(winners), 'Winners announced') }
+  if (today.getTime() === day0(winners).getTime())
+                           return { label: 'Winners announced', color: '#1e8e3e', note: 'Winners are live today 🎉' }
+  return { label: 'Event ended', color: '#9aa0a6', note: 'Thanks for playing — see you next round.' }
+}
+
 // ---------------- TOP BAR ----------------
 function TopBar({ onMenu, onLogo, onJemini, navigate }) {
+  const phase = eventPhase()
   const [q, setQ] = useState('')
   const [meme] = useState(() => sessionMeme())
   const [pfpOpen, setPfpOpen] = useState(false)
@@ -84,11 +106,11 @@ function TopBar({ onMenu, onLogo, onJemini, navigate }) {
         <div className="icon-btn" title="Feedback" style={{ cursor: 'pointer' }} onClick={() => { window.location.href = 'mailto:judges@thecold.email?subject=Feedback%20on%20thecold.email' }}><I.Feedback /></div>
         <div className="status-wrap" ref={statusRef}>
           <div className={`status-pill${statusOpen ? ' open' : ''}`} onClick={() => setStatusOpen(o => !o)}>
-            <span className="status-dot" /> Active <I.CaretDown />
+            <span className="status-dot" style={{ background: phase.color }} /> {phase.label} <I.CaretDown />
           </div>
           {statusOpen && (
             <div className="status-menu">
-              <div className="status-menu-note"><span className="status-dot" /> Registration opens Jun 24</div>
+              <div className="status-menu-note"><span className="status-dot" style={{ background: phase.color }} /> {phase.note}</div>
               <div className="status-menu-sep" />
               <div className="status-menu-item" onClick={() => statusGo('/the-procedure')}>The Procedure</div>
               <div className="status-menu-item" onClick={() => statusGo('/calendar')}>Event Calendar</div>
