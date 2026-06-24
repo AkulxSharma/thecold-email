@@ -1834,22 +1834,19 @@ function ViewBest() {
             <div className="gm-subject-left">
               <h2 className="gm-subject">{em.subject}</h2>
               <span className="gm-important" title="Important"><I.M name="label_important" size={18} /></span>
-              <span className="gm-label-chip">Inbox <I.M name="close" size={14} /></span>
+              <span className="gm-label-chip">{em.tag || 'Inbox'} <I.M name="close" size={14} /></span>
             </div>
             <div className="gm-subject-right">
-              <span className="gm-ic" title="Collapse all"><I.M name="unfold_less" size={20} /></span>
-              <span className="gm-ic" title="Print all"><I.M name="print" size={20} /></span>
-              <span className="gm-ic" title="In new window"><I.M name="open_in_new" size={20} /></span>
+              <span className="gm-ic" title={allCollapsed ? 'Expand all' : 'Collapse all'} onClick={toggleAll}><I.M name={allCollapsed ? 'unfold_more' : 'unfold_less'} size={20} /></span>
+              <span className="gm-ic" title="Print all" onClick={() => printThread(em)}><I.M name="print" size={20} /></span>
+              <span className="gm-ic" title="In new window" onClick={() => openThread(em)}><I.M name="open_in_new" size={20} /></span>
             </div>
           </div>
 
           {/* Messages */}
-          {[
-            { name: em.from, email: em.fromEmail, av: color, img: em.avatar,
-              to: em.to ? `to ${em.to}` : 'to judges', date: em.replyFrom ? em.date : 'Example entry', body: em.body },
-            { name: em.replyFrom || 'Recipient', email: em.replyEmail, av: '#5f6368', img: em.replyAvatar,
-              to: 'to me', date: em.replyDate || '✓ Real reply', body: em.reply },
-          ].map((m, i) => (
+          {msgs.map((m, i) => {
+            const isCollapsed = collapsedMsgs.has(i)
+            return (
             <div className="gm-msg" key={i}>
               {m.img
                 ? <img className="gm-avatar gm-avatar-img" src={m.img} alt={m.name} />
@@ -1857,7 +1854,7 @@ function ViewBest() {
                     {m.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
                   </div>}
               <div className="gm-msg-main">
-                <div className="gm-msg-top">
+                <div className="gm-msg-top gm-msg-top-toggle" onClick={() => toggleMsg(i)} title={isCollapsed ? 'Expand' : 'Collapse'}>
                   <div className="gm-msg-who">
                     <div className="gm-msg-l1">
                       <span className="gm-from">{m.name}</span>
@@ -1865,7 +1862,7 @@ function ViewBest() {
                     </div>
                     <div className="gm-to">{m.to} <I.M name="arrow_drop_down" size={16} /></div>
                   </div>
-                  <div className="gm-msg-actions">
+                  <div className="gm-msg-actions" onClick={e => e.stopPropagation()}>
                     <span className="gm-date">{m.date}</span>
                     <span className="gm-ic" title="Star"><I.M name="star_border" size={18} /></span>
                     <span className="gm-ic" title="React"><I.M name="add_reaction" size={18} /></span>
@@ -1873,10 +1870,18 @@ function ViewBest() {
                     <span className="gm-ic" title="More"><I.M name="more_vert" size={18} /></span>
                   </div>
                 </div>
-                <div className="gm-body">{m.body}</div>
+                <div
+                  className={isCollapsed ? 'gm-body gm-body-collapsed' : 'gm-body'}
+                  onClick={isCollapsed ? () => toggleMsg(i) : undefined}
+                >
+                  {isCollapsed
+                    ? (m.body.split('\n').map(l => l.trim()).filter(Boolean)[0] || '')
+                    : m.body}
+                </div>
               </div>
             </div>
-          ))}
+            )
+          })}
 
           {/* Footer actions */}
           <div className="gm-foot">

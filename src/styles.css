@@ -832,7 +832,7 @@ html, body, #root {
 .gm-tsep-bar { width: 1px; height: 22px; background: rgba(60,64,67,.2); margin: 0 8px; }
 .gm-count { color: #5f6368; font-size: 13px; margin-right: 8px; white-space: nowrap; }
 
-.gm-thread { max-width: 1100px; margin: 0 auto; padding: 20px 28px 40px; }
+.gm-thread { width: 100%; max-width: 1100px; margin: 0 auto; padding: 20px 28px 40px; }
 
 .gm-subject-bar { display: flex; align-items: center; justify-content: space-between; padding: 8px 0 18px; }
 .gm-subject-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
@@ -842,10 +842,11 @@ html, body, #root {
 .gm-label-chip .msym { color: #5f6368; cursor: pointer; }
 .gm-subject-right { display: flex; align-items: center; gap: 4px; flex: none; }
 
-.gm-ic { display: inline-flex; align-items: center; justify-content: center; color: #5f6368; padding: 8px; border-radius: 50%; cursor: pointer; }
+.gm-ic { display: inline-flex; align-items: center; justify-content: center; color: #5f6368; padding: 8px; border-radius: 50%; cursor: pointer; user-select: none; -webkit-user-select: none; }
 .gm-ic:hover { background: rgba(60,64,67,.08); }
 
 .gm-msg { display: flex; gap: 16px; padding: 18px 0; border-top: 1px solid #f1f3f4; }
+.gm-msg-top-toggle { cursor: pointer; }
 .gm-msg:first-of-type { border-top: none; }
 .gm-avatar { width: 40px; height: 40px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; color: #fff; font: 500 16px 'Roboto',Arial,sans-serif; }
 .gm-avatar-img { object-fit: cover; }
@@ -859,6 +860,7 @@ html, body, #root {
 .gm-msg-actions { display: flex; align-items: center; gap: 2px; flex: none; }
 .gm-date { font-size: 13px; color: #5f6368; margin-right: 6px; white-space: nowrap; }
 .gm-body { font-size: 14px; color: #202124; line-height: 1.7; white-space: pre-wrap; margin-top: 14px; }
+.gm-body-collapsed { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #5f6368; margin-top: 6px; cursor: pointer; }
 
 .gm-foot { display: flex; align-items: center; gap: 12px; padding: 22px 0 0; border-top: 1px solid #f1f3f4; margin-top: 4px; }
 .gm-foot-btn { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #dadce0; border-radius: 999px; padding: 8px 20px; font: 500 14px 'Roboto',Arial,sans-serif; color: #3c4043; cursor: pointer; }
