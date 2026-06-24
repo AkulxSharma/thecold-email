@@ -76,14 +76,47 @@ function eventPhase(now = new Date()) {
   return { label: 'Event ended', color: '#9aa0a6', note: 'Thanks for playing — see you next round.' }
 }
 
+// Event announcements feed (the bell dropdown). Each item is tied to a date;
+// the feed orders them most-relevant-first and tags each Now / past / upcoming.
+const ANNOUNCEMENTS = [
+  { date: '2026-06-24', color: '#1e8e3e', title: 'Registration is open', body: 'Send your first cold email and start collecting real replies.' },
+  { date: '2026-06-30', color: '#f9ab00', title: 'Last day to register', body: 'Registration closes at end of day — get in now.' },
+  { date: '2026-07-01', color: '#1a73e8', title: 'Submissions are open', body: 'Submit the cold emails that earned a genuine reply.' },
+  { date: '2026-07-07', color: '#d93025', title: 'Submissions close today', body: 'Final call — get your reply in before the deadline.' },
+  { date: '2026-07-08', color: '#e8710a', title: 'Judging has begun', body: 'The judges are reading every entry against the rubric.' },
+  { date: '2026-07-10', color: '#1e8e3e', title: 'Winners announced', body: 'See who wrote the cold emails that got the reply.' },
+]
+function buildAnnouncements(now = new Date()) {
+  const day0 = (dt) => new Date(dt.getFullYear(), dt.getMonth(), dt.getDate())
+  const today = day0(now)
+  const items = ANNOUNCEMENTS.map(a => {
+    const [y, m, d] = a.date.split('-').map(Number)
+    const dt = new Date(y, m - 1, d)
+    const diff = Math.round((day0(dt) - today) / 86400000)
+    let when, status
+    if (diff === 0) { when = 'Now'; status = 'now' }
+    else if (diff < 0) { when = diff === -1 ? 'Yesterday' : `${-diff} days ago`; status = 'past' }
+    else { when = diff === 1 ? 'Tomorrow' : `in ${diff} days`; status = 'upcoming' }
+    return { ...a, dt, diff, when, status }
+  })
+  const past = items.filter(i => i.diff <= 0).sort((a, b) => b.dt - a.dt)
+  const future = items.filter(i => i.diff > 0).sort((a, b) => a.dt - b.dt)
+  const ordered = [...past, ...future]
+  const unread = items.filter(i => i.status === 'now').length || (past.length && past[0].diff >= -1 ? 1 : 0)
+  return { ordered, unread }
+}
+
 // ---------------- TOP BAR ----------------
 function TopBar({ onMenu, onLogo, onJemini, navigate }) {
   const phase = eventPhase()
+  const feed = buildAnnouncements()
   const [q, setQ] = useState('')
   const [meme] = useState(() => sessionMeme())
   const [pfpOpen, setPfpOpen] = useState(false)
   const [statusOpen, setStatusOpen] = useState(false)
+  const [notifOpen, setNotifOpen] = useState(false)
   const statusRef = useRef(null)
+  const notifRef = useRef(null)
   // Close the status menu on any outside click (lightest pattern: document listener).
   useEffect(() => {
     if (!statusOpen) return
@@ -91,6 +124,12 @@ function TopBar({ onMenu, onLogo, onJemini, navigate }) {
     document.addEventListener('mousedown', onDoc)
     return () => document.removeEventListener('mousedown', onDoc)
   }, [statusOpen])
+  useEffect(() => {
+    if (!notifOpen) return
+    const onDoc = (e) => { if (notifRef.current && !notifRef.current.contains(e.target)) setNotifOpen(false) }
+    document.addEventListener('mousedown', onDoc)
+    return () => document.removeEventListener('mousedown', onDoc)
+  }, [notifOpen])
   const statusGo = (path) => { setStatusOpen(false); navigate(path) }
   return (
     <div className="topbar">
@@ -103,7 +142,32 @@ function TopBar({ onMenu, onLogo, onJemini, navigate }) {
       </div>
       <div className="top-right">
         <div className="jemini" onClick={e => { e.stopPropagation(); onJemini() }}><I.Spark /> Jemini</div>
-        <div className="icon-btn" title="Feedback" style={{ cursor: 'pointer' }} onClick={() => { window.location.href = 'mailto:judges@thecold.email?subject=Feedback%20on%20thecold.email' }}><I.Feedback /></div>
+        <div className="notif-wrap" ref={notifRef}>
+          <div className="icon-btn" title="Announcements" style={{ cursor: 'pointer' }} onClick={() => setNotifOpen(o => !o)}>
+            <I.Feedback />
+            {feed.unread > 0 && <span className="notif-badge">{feed.unread}</span>}
+          </div>
+          {notifOpen && (
+            <div className="notif-menu">
+              <div className="notif-head">
+                <span>Announcements</span>
+                <span className="notif-head-pill"><span className="status-dot" style={{ background: phase.color }} /> {phase.label}</span>
+              </div>
+              <div className="notif-list">
+                {feed.ordered.map((a, i) => (
+                  <div key={i} className={`notif-item notif-${a.status}`}>
+                    <span className="notif-dot" style={{ background: a.color }} />
+                    <div className="notif-body">
+                      <div className="notif-title">{a.title}{a.status === 'now' && <span className="notif-live">LIVE</span>}</div>
+                      <div className="notif-sub">{a.body}</div>
+                      <div className="notif-when">{a.when}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
         <div className="status-wrap" ref={statusRef}>
           <div className={`status-pill${statusOpen ? ' open' : ''}`} onClick={() => setStatusOpen(o => !o)}>
             <span className="status-dot" style={{ background: phase.color }} /> {phase.label} <I.CaretDown />
