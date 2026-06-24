@@ -78,10 +78,6 @@ function TopBar({ onMenu, onLogo, onJemini, navigate }) {
         <div className="icon-btn" style={{ width: 40, height: 40 }}><I.Search /></div>
         <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search mail" />
         {q && <div className="clear-x" onClick={() => setQ('')}><I.Close w={20} /></div>}
-        <div className="search-right">
-          <div className="chip"><I.PersonOutline /> From</div>
-          <div className="chip"><I.People /> To <span className="kbd">⌘K</span></div>
-        </div>
       </div>
       <div className="top-right">
         <div className="jemini" onClick={e => { e.stopPropagation(); onJemini() }}><I.Spark /> Jemini</div>
