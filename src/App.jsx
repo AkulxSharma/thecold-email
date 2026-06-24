@@ -597,11 +597,13 @@ function ViewOverview({ onEnter, goto }) {
       els.forEach(el => el.classList.add('in'))
       return
     }
+    // Positive bottom margin starts the fade-in while the section is still ~20%
+    // below the fold — i.e. as the hero cards finish settling, not after a gap.
     const io = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target) }
       })
-    }, { root: scroller || null, rootMargin: '0px 0px -8% 0px', threshold: 0.1 })
+    }, { root: scroller || null, rootMargin: '0px 0px 20% 0px', threshold: 0 })
     els.forEach(el => io.observe(el))
     return () => io.disconnect()
   }, [])
