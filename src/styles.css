@@ -1846,6 +1846,21 @@ html, body, #root {
 .home { width: 100%; }
 .home section, .home footer { max-width: 880px; margin: 0 auto; }
 
+/* Scroll-reveal: post-hero sections fade + rise in as they enter view
+   (the .walhero hero is excluded — it has its own scroll animation). */
+.home > section:not(.walhero), .home > footer {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.3,1);
+}
+.home > section:not(.walhero).in, .home > footer.in {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .home > section:not(.walhero), .home > footer { opacity: 1; transform: none; transition: none; }
+}
+
 /* 1 — HERO */
 .home-hero {
   display: flex;
