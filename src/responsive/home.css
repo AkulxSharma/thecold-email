@@ -174,4 +174,6 @@
    it's clearly visible on first paint. It still rises/fades on scroll. */
 @media (max-width: 768px) {
   .walhero-headline { top: 26% !important; }
+  /* Drop the extra downward push so the card deck sits closer to the text. */
+  .walhero-deck { transform: none !important; }
 }

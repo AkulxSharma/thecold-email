@@ -492,6 +492,10 @@ function WalletHero({ onEnter, goto }) {
   }, [reduced])
 
   const cards = TRACK_TEASERS.slice(0, 4)
+  // Phones are tall: the vh-proportional start offset pushes the deck far below
+  // the text. Start the deck much closer to the headline on small screens.
+  const mobile = typeof window !== 'undefined' && window.innerWidth <= 768
+  const deckStartFactor = mobile ? 0.05 : 0.16
 
   // floating pill nav removed per request
   const pill = null
@@ -540,7 +544,7 @@ function WalletHero({ onEnter, goto }) {
 
         <div className="walhero-deck">
           {cards.map((topic, i) => {
-            const startOff = vh * 0.16 + i * 14
+            const startOff = vh * deckStartFactor + i * 14
             const fanOff   = (i - 1.5) * 78
             const offY  = _lerp(startOff, fanOff, rise)
             const scale = _lerp(0.9, 1.0, rise)
