@@ -168,3 +168,10 @@
     gap: 12px !important;
   }
 }
+
+/* Scroll-hero headline sits at 38% of the viewport by default, which lands too
+   low on tall phones (and behind iOS Safari's toolbar) — anchor it higher so
+   it's clearly visible on first paint. It still rises/fades on scroll. */
+@media (max-width: 768px) {
+  .walhero-headline { top: 26% !important; }
+}

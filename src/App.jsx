@@ -462,14 +462,9 @@ function WalletHero({ onEnter, goto }) {
   const [vh, setVh] = useState(() => (typeof window !== 'undefined' ? window.innerHeight : 800))
   const reduced = typeof window !== 'undefined'
     && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  // On phones the scroll-pinned hero centers the headline in a full-viewport stage,
-  // leaving a blank top half on first paint — use the top-aligned static hero instead.
-  const smallScreen = typeof window !== 'undefined'
-    && window.matchMedia && window.matchMedia('(max-width: 768px)').matches
-  const staticHero = reduced || smallScreen
 
   useEffect(() => {
-    if (staticHero) return
+    if (reduced) return
     const outer = outerRef.current
     if (!outer) return
     const scroller = outer.closest('.view-panel') || window
@@ -494,15 +489,15 @@ function WalletHero({ onEnter, goto }) {
       scroller.removeEventListener('scroll', onScroll)
       if (raf) cancelAnimationFrame(raf)
     }
-  }, [staticHero])
+  }, [reduced])
 
   const cards = TRACK_TEASERS.slice(0, 4)
 
   // floating pill nav removed per request
   const pill = null
 
-  // ----- static hero: reduced-motion OR small screens (avoids blank-top on phones) -----
-  if (staticHero) {
+  // ----- reduced motion: static STATE A only -----
+  if (reduced) {
     return (
       <section className="walhero walhero-static">
         {pill}
