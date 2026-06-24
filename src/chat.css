@@ -17,7 +17,7 @@
   background: #8133c9; color: #fff; font: 600 12px 'Roboto', sans-serif;
   display: flex; align-items: center; justify-content: center; }
 .gchat-hd-av::after { content: ''; position: absolute; right: -1px; bottom: -1px; width: 10px; height: 10px;
-  border-radius: 50%; background: #fff; border: 2px solid #fff; box-shadow: 0 0 0 1px #d6d6d6; }
+  border-radius: 50%; background: #1e8e3e; border: 2px solid #fff; box-shadow: 0 0 0 1px #d6d6d6; }
 .gchat-hd-name { display: flex; align-items: center; gap: 2px; border: 0; background: transparent;
   font: 400 22px 'Google Sans','Product Sans','Roboto',sans-serif; color: #1f1f1f; cursor: pointer; padding: 4px 6px; border-radius: 8px; }
 .gchat-hd-name .msym { color: #5f6368; }
