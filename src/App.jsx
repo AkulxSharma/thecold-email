@@ -3099,8 +3099,16 @@ function ViewPrizes({ onEnter, goto }) {
   const drag = useRef({ down: false, startX: 0, scroll: 0 })
   const onDown = (e) => {
     const el = rowRef.current; if (!el) return
-    drag.current = { down: true, startX: e.pageX, scroll: el.scrollLeft }
+    drag.current = { down: true, startX: e.pageX, startY: e.pageY, scroll: el.scrollLeft }
     el.classList.add('dragging')
+  }
+  // Distinguish a tap (navigate) from a drag/scroll: only navigate if the pointer
+  // barely moved between mousedown and the click.
+  const onCardClick = (p, e) => {
+    const dx = e.pageX - (drag.current.startX || 0)
+    const dy = e.pageY - (drag.current.startY || 0)
+    if (Math.hypot(dx, dy) > 8) return        // it was a drag/scroll — suppress nav
+    if (p.topic && goto) goto('track-' + p.topic)
   }
   const onMove = (e) => {
     const el = rowRef.current; if (!el || !drag.current.down) return
@@ -3131,6 +3139,7 @@ function ViewPrizes({ onEnter, goto }) {
         onMouseDown={onDown} onMouseMove={onMove} onMouseUp={endDrag} onMouseLeave={endDrag}>
         {passes.map((p, i) => (
           <div className={`gpay-card${p.grand ? ' gpay-card-grand' : ''}`} key={i}
+            onClick={(e) => onCardClick(p, e)}
             style={{ background: `linear-gradient(135deg, ${p.c1}, ${p.c2})` }}>
             <div className="gpay-card-top">
               <span className="gpay-card-name">{p.name}</span>
