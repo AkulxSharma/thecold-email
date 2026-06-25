@@ -217,6 +217,18 @@ export default function ViewChat({ onRegistered, autoRegister = false }) {
     setFlow(0)
   }
 
+  // Auto-start registration when launched from Submit (unregistered user). Fires
+  // once: jump to the latest message and kick off beginRegister() as if the user
+  // had tapped "How do I register?".
+  const didAuto = useRef(false)
+  useEffect(() => {
+    if (!autoRegister || didAuto.current) return
+    didAuto.current = true
+    const el = scrollRef.current
+    if (el) requestAnimationFrame(() => { el.scrollTo({ top: el.scrollHeight }) })
+    beginRegister()
+  }, [autoRegister])
+
   const showTracks = () => {
     meSay('Show me the tracks')
     botSay('Four tracks — pick whichever fits your email:',
