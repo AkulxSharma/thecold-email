@@ -53,6 +53,16 @@
      so hide them — keep the inline marks (strike/underline/circle/box). */
   .mkd-note, .mkd-arrow, .mkd-comment { display: none !important; }
 
+  /* Track detail — Docs menu bar (File … Help) must not clip "Extensions"/
+     "Help"; let it scroll horizontally so every menu stays reachable. */
+  .gdoc-menubar {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .gdoc-menu { flex: 0 0 auto !important; }
+  .gdoc-menubar::-webkit-scrollbar { display: none !important; }
+
   /* Track detail — Google Finance */
   .gfin-wrap { padding: 18px 16px 44px !important; }
   .gfin-price { font-size: 28px !important; }
