@@ -2645,7 +2645,7 @@ const sectionLen = (data, section) => ({
   mistakes: data.mistakes.length, scoring: data.scoring.length,
 }[section] ?? 0)
 
-function TrackMarkedDoc({ data, title, topic }) {
+function TrackMarkedDoc({ data, title, topic, preview = false }) {
   const decor = TRACK_DECOR[topic] || DEFAULT_DECOR
   // Inline marks → lookup by `${section}:${idx}`. Indices are clamped to this
   // track's real array length so a mark never targets a line that doesn't exist.
@@ -2728,12 +2728,17 @@ function TrackMarkedDoc({ data, title, topic }) {
 
   const titleCls = decor.title.type === 'circle' ? 'mkd-circle' : `mkd-title-${decor.title.type}`
 
-  return (
-    <DocFrame title={title} canvasClass="mkd-canvas" pageClass="mkd-page">
-      {() => (<div className="mkd-doc-inner" ref={pageRef}>
+  // In preview mode comment bubbles are hidden (a true Google-Docs preview shows
+  // the page, not the off-sheet review thread); all other margin marks remain.
+  const marginItems = preview ? decor.margin.filter(m => m.kind !== 'comment') : decor.margin
+
+  // The document body — identical markup/formatting in the full page and the
+  // scaled-to-fit preview, so previews match the real page exactly.
+  const docBody = (
+    <div className="mkd-doc-inner" ref={pageRef}>
           {/* Decoration layer: each track declares its own set in TRACK_DECOR;
               positioned by measured section anchors so they reflow with the text. */}
-          {decor.margin.map((m, i) => <MarginItem key={i} m={m} />)}
+          {marginItems.map((m, i) => <MarginItem key={i} m={m} />)}
 
           <h1 className={`gdoc-h1 ${titleCls}`} style={{ '--c': decor.title.color }} ref={setAnchor('title')}>{title}</h1>
 
@@ -2781,7 +2786,18 @@ function TrackMarkedDoc({ data, title, topic }) {
             <span className="gdoc-prize-icon"><I.M name="emoji_events" size={22} /></span>
             <p className="gdoc-p gdoc-prize-text"><strong className="mkd-hl mkd-hl-y">$500</strong> for the winning entry. Every qualifying entry is also automatically considered for the Best Cold Email ($1,000 grand prize).</p>
           </div>
-      </div>)}
+      </div>
+  )
+
+  // Preview: render the real page sheet (.gdoc-page formatting) and let the
+  // .gdocs-docprev wrapper scale it to fit the thumbnail — exact main-page look.
+  if (preview) {
+    return <div className="gdoc-page mkd-page gdocs-docprev-page">{docBody}</div>
+  }
+
+  return (
+    <DocFrame title={title} canvasClass="mkd-canvas" pageClass="mkd-page">
+      {() => docBody}
     </DocFrame>
   )
 }
@@ -2800,83 +2816,20 @@ const DOCS_ICON = (
 function ViewTracksHome({ goto, onEnter }) {
   const topics = ['unreachable', 'subject', 'twoliner', 'ask']
   const dates = ['Opened 9:22 PM', 'Jun 19, 2026', 'Jun 17, 2026', 'Jun 17, 2026']
-  // Thumbnail = faithful 1:1 miniature of the real marked-up Google Doc track
-  // page (TrackMarkedDoc). EVERY track uses this single preview, rendering its
-  // OWN content from TRACK_PAGES[t]: same section order/headings, the closed
-  // hand-drawn circle around the title (.gmini-mkd-circle ↔ .mkd-circle), the
-  // yellow highlight on The Goal, green highlight on the first How It's Won
-  // line, the strike+edit on Rewards, ▸ marks on Judges (first underlined),
-  // • bullets on Strong Entries / Common Mistakes, a scoring row, the prize
-  // callout, plus handwritten margin notes, a hand arrow and a Google-Docs
-  // comment bubble — all scaled to thumbnail size. Decoration clips at the
-  // frame edge (thumbnails are overflow:hidden). Copy comes from TRACK_PAGES[t];
-  // only tiny decorative labels are hardcoded.
-  const mini = (t, lg) => {
-    const d = TRACK_PAGES[t]
-    const name = TOPIC_NAMES[t]
-    const cls = `gmini${lg ? ' gmini-lg' : ''}`
-    return (
-      <div className={`${cls} gmini-mkd`}>
-        {/* decorative margin notes + arrow + comment bubble (mirror TrackMarkedDoc) */}
-        <span className="gmini-mkd-note gmini-mkd-note-1">&lt;- start here</span>
-        <span className="gmini-mkd-note gmini-mkd-note-2">love this!!</span>
-        <HandArrow className="gmini-mkd-arrow gmini-mkd-arrow-1" />
-        <HandArrow className="gmini-mkd-arrow gmini-mkd-arrow-2" />
-        <div className="gmini-mkd-comment">
-          <span className="gmini-mkd-comment-av">AR</span>
-          <div className="gmini-mkd-comment-body"><b>Aria</b><span>punchier?</span></div>
-        </div>
-
-        <div className="gmini-mkd-h1 gmini-mkd-circle">{name}</div>
-
-        <div className="gmini-mkd-sub">The Goal</div>
-        <p className="gmini-mkd-p"><span className="gmini-mkd-hl gmini-mkd-hl-y"><RT>{d.goal}</RT></span></p>
-
-        <div className="gmini-mkd-sub">How It's Won</div>
-        {d.howWon.slice(0, 2).map((l, i) => (
-          <p className="gmini-mkd-p" key={i}>{i === 0 ? <span className="gmini-mkd-hl gmini-mkd-hl-g"><RT>{l}</RT></span> : <RT>{l}</RT>}</p>
-        ))}
-
-        <div className="gmini-mkd-sub">What This Track Rewards</div>
-        {d.rewards.slice(0, 2).map((l, i) => (
-          <p className="gmini-mkd-p" key={i}>{i === 1 ? <><span className="gmini-mkd-strike"><RT>{l}</RT></span> <span className="gmini-mkd-edit">tighten</span></> : <RT>{l}</RT>}</p>
-        ))}
-
-        <div className="gmini-mkd-sub">What Judges Look For</div>
-        <ul className="gmini-mkd-list">
-          {d.judges.slice(0, 3).map((l, i) => (
-            <li key={i}><span className="gmini-mkd-mark gmini-mkd-mark-tri">▸</span><span>{i === 0 ? <span className="gmini-mkd-underline"><RT>{l}</RT></span> : <RT>{l}</RT>}</span></li>
-          ))}
-        </ul>
-
-        <div className="gmini-mkd-sub">Strong Entries</div>
-        <ul className="gmini-mkd-list">
-          {d.strong.slice(0, 2).map((l, i) => (
-            <li key={i}><span className="gmini-mkd-mark gmini-mkd-mark-dot">•</span><span><RT>{l}</RT></span></li>
-          ))}
-        </ul>
-
-        <div className="gmini-mkd-sub">Common Mistakes</div>
-        <ul className="gmini-mkd-list">
-          {d.mistakes.slice(0, 2).map((l, i) => (
-            <li key={i}><span className="gmini-mkd-mark gmini-mkd-mark-dot">•</span><span><RT>{l}</RT></span></li>
-          ))}
-        </ul>
-
-        <div className="gmini-mkd-sub">Scoring</div>
-        <table className="gmini-mkd-table">
-          <tbody>
-            {d.scoring.slice(0, 2).map((s, i) => (
-              <tr key={i}><td>{s.label}</td><td className="gmini-mkd-table-pts">{s.pts}</td></tr>
-            ))}
-          </tbody>
-        </table>
-
-        <div className="gmini-mkd-sub">Prize</div>
-        <p className="gmini-mkd-p"><strong className="gmini-mkd-hl gmini-mkd-hl-y">$500</strong> for the winning entry.</p>
+  // Thumbnail = the REAL marked-up Google Doc track page (TrackMarkedDoc in
+  // preview mode), rendered at the exact main-page sheet width (816px) with the
+  // exact main-page formatting, then scaled down to the thumbnail width by a CSS
+  // transform — a true Google-Docs preview. The full document renders top-to-
+  // bottom from TRACK_PAGES[t]; comment bubbles are hidden in previews; all
+  // other handwritten margin marks remain. Decoration/overflow clips at the
+  // frame edge (thumbnails are overflow:hidden). Copy comes from TRACK_PAGES[t].
+  const mini = (t, lg) => (
+    <div className={`gdocs-docprev${lg ? ' gdocs-docprev-lg' : ''}`}>
+      <div className="gdocs-docprev-scale">
+        <TrackMarkedDoc data={TRACK_PAGES[t]} title={TOPIC_NAMES[t]} topic={t} preview />
       </div>
-    )
-  }
+    </div>
+  )
   return (
     <div className="view-panel gdocs-home">
       {/* Template gallery band */}
