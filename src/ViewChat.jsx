@@ -10,6 +10,24 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const URL_RE = /^https?:\/\/.+/i
 const QUESTIONS = ENTER_FORM.questions
 
+// Social profile — forgiving, FORMAT-only (static site: no live network checks).
+// Accepts a full/scheme-less URL (x.com/you, https://linkedin.com/in/you,
+// instagram.com/you, tiktok.com/@you), or a bare handle (@you / you). A bare
+// handle is normalized to the most common handle platform (X). Returns the
+// normalized profile URL, or null for obvious junk (spaces, neither url nor handle).
+const SOCIAL_DOMAIN_RE = /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}(\/\S*)?$/i
+const SOCIAL_HANDLE_RE = /^@?[A-Za-z0-9._]{1,40}$/
+function normalizeSocial(raw) {
+  const t = (raw || '').trim()
+  if (!t || /\s/.test(t)) return null
+  if (SOCIAL_DOMAIN_RE.test(t)) {
+    const url = /^https?:\/\//i.test(t) ? t : 'https://' + t
+    return url.replace(/\/+$/, '')
+  }
+  if (SOCIAL_HANDLE_RE.test(t)) return 'https://x.com/' + t.replace(/^@/, '')
+  return null
+}
+
 // Make.com custom-webhook URL — on successful registration the collected answers
 // are POSTed here, and the Make scenario (Webhook → Email) sends the user their
 // confirmation email. TODO(Akul): paste the webhook URL from your Make scenario.
@@ -43,6 +61,11 @@ function answerError(qq, text) {
     return Number.isInteger(n) && n >= 13 && n <= 120
       ? null : 'Please enter your age as a number between 13 and 120.'
   }
+  // Social accepts a bare handle OR any profile link — format check only.
+  if (qq.name === 'social') {
+    return normalizeSocial(t)
+      ? null : 'Drop a handle or a link — like @yourname, x.com/yourname, or linkedin.com/in/you.'
+  }
   switch (qq.type) {
     case 'email':
       return EMAIL_RE.test(t) ? null : 'That doesn’t look like a valid email — check for typos.'
@@ -66,6 +89,7 @@ function answerError(qq, text) {
 // Normalize a validated answer to its canonical form (matched option casing).
 function canonical(qq, text) {
   const t = text.trim()
+  if (qq.name === 'social') return normalizeSocial(t) || t
   if (qq.type === 'dropdown' || qq.type === 'radio') return qq.options.find(o => o.toLowerCase() === t.toLowerCase())
   if (qq.type === 'checkbox') return t.split(',').map(s => s.trim()).filter(Boolean).map(x => qq.options.find(o => o.toLowerCase() === x.toLowerCase()))
   return t

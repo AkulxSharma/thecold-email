@@ -549,7 +549,7 @@ export const ENTER_FORM = {
     { name: 'age',           q: 'How old are you?',                    type: 'short',     required: true,  ph: 'e.g. 21' },
     { name: 'company',       q: 'Where do you work or study?',         type: 'short',     required: false, ph: 'Company, school, or “solo”' },
     { name: 'position',      q: "What's your role there?",             type: 'short',     required: false, ph: 'Your title or what you do' },
-    { name: 'social',        q: 'Got a social link or handle?',        type: 'url',       required: false, ph: '@you or a profile link' },
+    { name: 'social',        q: 'Got a social handle or link? (X, LinkedIn, Instagram, TikTok…)', type: 'url', required: false, ph: '@you or a profile link' },
     { name: 'background',    q: "What's your background?",             type: 'checkbox',  required: false, options: ['Writing', 'Marketing', 'Sales', 'Builder'] },
     { name: 'why_joining',   q: 'Why are you joining thecold.email?',  type: 'paragraph', required: true,  ph: 'Tell us what brought you here.' },
     { name: 'what_you_want', q: 'What do you want to get out of this?', type: 'paragraph', required: true,  ph: 'What would make this worth it for you?' },
