@@ -287,26 +287,26 @@ function ComposeWindow({ onClose, onSend, page }) {
 
       {/* Entrant + target identity — always visible (these never collapse) */}
       <div className="cw-field">
-        <span className="cw-label">Enter Your Email</span>
+        <span className="cw-label">Enter Your Email :</span>
         <input type="email" value={email} readOnly title="Locked to the email you registered with" placeholder="you@example.com" />
       </div>
       <div className="cw-field">
-        <span className="cw-label">Target Name</span>
+        <span className="cw-label">Target Name :</span>
         <input value={targetName} onChange={e => setTargetName(e.target.value)} placeholder="Name of Person Emailed" />
       </div>
       <div className="cw-field">
-        <span className="cw-label">Target Email</span>
+        <span className="cw-label">Target Email :</span>
         <input type="email" value={targetEmail} onChange={e => setTargetEmail(e.target.value)} placeholder="Email Address of the Target" />
       </div>
       <div className="cw-field cw-field-fixed">
-        <span className="cw-label">To</span>
+        <span className="cw-label">To :</span>
         <span className="cw-to-chip"><I.M name="verified" size={16} /> judges@thecold.email</span>
         <span className="cw-to-note">Fixed destination</span>
       </div>
 
       {/* Track selection — custom-styled select */}
       <div className="cw-track">
-        <span className="cw-track-label">Track Selection</span>
+        <span className="cw-track-label">Track Selection :</span>
         <div className="cw-track-control">
           <select value={track} onChange={e => setTrack(e.target.value)} className="cw-track-select">
             {TRACK_OPTIONS.map(t => <option key={t}>{t}</option>)}
