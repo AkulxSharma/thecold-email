@@ -6,6 +6,7 @@ import ViewStory from './ViewStory.jsx'
 import ViewChat from './ViewChat.jsx'
 import { insertSubmission, isEmailRegistered } from './supabase.js'
 import { getRegistration, isRegisteredLocal, setRegistration } from './registration.js'
+import { loadReadState, saveReadState } from './bestState.js'
 
 const GMAIL_LOGO = '/logo.png'
 
@@ -1904,6 +1905,16 @@ function ViewBest() {
   const [open, setOpen] = useState(null) // null = inbox list; index = open thread
   const [aiOpen, setAiOpen] = useState(true)
   const [collapsedMsgs, setCollapsedMsgs] = useState(() => new Set()) // indices collapsed to first line
+  const [readState, setReadState] = useState(loadReadState)       // { [i]: true } — read rows
+
+  // Persist read map whenever it changes.
+  useEffect(() => { saveReadState(readState) }, [readState])
+
+  // Open a row and mark it read (Gmail-style).
+  const openEmail = (i) => {
+    setReadState(prev => (prev[i] ? prev : { ...prev, [i]: true }))
+    setOpen(i)
+  }
 
   // -------- Open thread (reading pane) --------
   if (open != null) {
@@ -2028,8 +2039,10 @@ function ViewBest() {
           </div>
         </div>
         <div className="bx-list">
-          {BEST_EMAILS.map((em, i) => (
-            <div className="bx-row" key={i} onClick={() => setOpen(i)}>
+          {BEST_EMAILS.map((em, i) => {
+            const isRead = !!readState[i]
+            return (
+            <div className={`bx-row ${isRead ? 'read' : 'unread'}`} key={i} onClick={() => openEmail(i)}>
               <span className="bx-check" onClick={e => e.stopPropagation()}><I.M name="check_box_outline_blank" size={18} /></span>
               <span className="bx-star-btn" onClick={e => e.stopPropagation()} title="Star"><I.M name="star" size={18} /></span>
               <span className="bx-sender">{em.from}</span>
@@ -2040,7 +2053,8 @@ function ViewBest() {
               </span>
               <span className="bx-date">{em.date}</span>
             </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </div>
