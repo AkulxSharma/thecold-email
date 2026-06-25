@@ -2915,7 +2915,14 @@ function ViewRule({ onEnter }) {
   ]
 
   const [order, setOrder] = useState(NOTES.map(n => n.id))
+  const [pinned, setPinned] = useState(() => new Set())  // pinned note ids
   const [expanded, setExpanded] = useState(null)   // note id or null
+  // Pin → jump the note to the front of `order` (top of the board). Pinning again unpins.
+  const togglePin = (id) => {
+    const wasPinned = pinned.has(id)
+    setPinned(prev => { const n = new Set(prev); wasPinned ? n.delete(id) : n.add(id); return n })
+    if (!wasPinned) setOrder(prev => [id, ...prev.filter(x => x !== id)])
+  }
   const dragId = useRef(null)
   const noteRefs = useRef(new Map())
   const boardRef = useRef(null)
@@ -3032,7 +3039,7 @@ function ViewRule({ onEnter }) {
               onDragEnd={e => { dragId.current = null; e.currentTarget.classList.remove('keep-dragging') }}
               onClick={() => setExpanded(n.id)}
             >
-              <span className="keep-note-pin" onClick={e => e.stopPropagation()} title="Pin note"><I.M name="keep" size={20} /></span>
+              <span className={`keep-note-pin${pinned.has(n.id) ? ' keep-pinned' : ''}`} onClick={e => { e.stopPropagation(); togglePin(n.id) }} title={pinned.has(n.id) ? 'Unpin note' : 'Pin note'}><I.M name="keep" size={20} /></span>
               <div className="keep-note-title">{n.title}</div>
               {n.render()}
               <div className="keep-note-tools" onClick={e => e.stopPropagation()}>
@@ -3054,7 +3061,7 @@ function ViewRule({ onEnter }) {
           <div className={`keep-modal keep-c-${expandedNote.color}`} onClick={e => e.stopPropagation()}>
             <div className="keep-modal-head">
               <div className="keep-note-title">{expandedNote.title}</div>
-              <span className="keep-modal-pin" title="Pin note"><I.M name="keep" size={20} /></span>
+              <span className={`keep-modal-pin${pinned.has(expandedNote.id) ? ' keep-pinned' : ''}`} onClick={e => { e.stopPropagation(); togglePin(expandedNote.id) }} title={pinned.has(expandedNote.id) ? 'Unpin note' : 'Pin note'}><I.M name="keep" size={20} /></span>
             </div>
             <div className="keep-modal-body">{expandedNote.render()}</div>
             <div className="keep-modal-toolbar">

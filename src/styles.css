@@ -2200,6 +2200,9 @@ html, body, #root {
 .keep-note-select .msym { background: #fff; border-radius: 50%; }
 .keep-note-pin { position: absolute; top: 10px; right: 12px; color: #3c4043; opacity: 0; transition: opacity .12s; cursor: pointer; padding: 4px; border-radius: 50%; }
 .keep-note-pin:hover { background: rgba(0,0,0,.08); }
+/* pinned state: keep the pin visible and fill the icon */
+.keep-note-pin.keep-pinned, .keep-modal-pin.keep-pinned { opacity: 1; }
+.keep-pinned .msym { font-variation-settings: 'FILL' 1; color: #1a73e8; }
 .keep-note-tools { display: flex; gap: 2px; align-items: center; height: 22px; margin-top: 2px; opacity: 0; transition: opacity .12s; }
 .keep-note-tools .msym { color: #5f6368; padding: 6px; border-radius: 50%; cursor: pointer; }
 .keep-note-tools .msym:hover { background: rgba(0,0,0,.08); }
