@@ -46,6 +46,13 @@
   .gdoc-page-wrap { padding: 8px 8px 48px !important; }
   .gdoc-page { padding: 32px 22px 56px !important; width: 100% !important; }
 
+  /* Track detail — Docs doodles: the handwritten margin notes, arrows and
+     comment bubbles live in the desktop 96px gutter (right: -84px /
+     left: calc(100% + 108px)). On phones there's no gutter, so they hang
+     off-screen and get clipped. They're decorative (pointer-events:none),
+     so hide them — keep the inline marks (strike/underline/circle/box). */
+  .mkd-note, .mkd-arrow, .mkd-comment { display: none !important; }
+
   /* Track detail — Google Finance */
   .gfin-wrap { padding: 18px 16px 44px !important; }
   .gfin-price { font-size: 28px !important; }
