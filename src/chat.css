@@ -92,6 +92,18 @@
 .gchat-bubble a { color: #0b57d0; text-decoration: underline; }
 .gchat-bubble-cut { opacity: .9; }
 
+/* typing indicator — three bouncing dots, Google-Chat style */
+.gchat-typing { display: inline-flex; align-items: center; gap: 5px; padding: 13px 16px; }
+.gchat-dot { width: 8px; height: 8px; border-radius: 50%; background: #9aa0a6; display: inline-block;
+  animation: gchat-bounce 1.3s infinite ease-in-out both; }
+.gchat-dot:nth-child(1) { animation-delay: -0.32s; }
+.gchat-dot:nth-child(2) { animation-delay: -0.16s; }
+.gchat-dot:nth-child(3) { animation-delay: 0s; }
+@keyframes gchat-bounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: .5; }
+  40% { transform: translateY(-4px); opacity: 1; }
+}
+
 /* tiny avatar overlapping bottom-right corner of a bubble (matches reference) */
 .gchat-bubble-badge { position: absolute; right: -9px; bottom: -5px; width: 22px; height: 22px;
   border-radius: 50%; border: 2px solid #fff; box-sizing: border-box; overflow: hidden;

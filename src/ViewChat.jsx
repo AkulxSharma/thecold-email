@@ -111,7 +111,33 @@ export default function ViewChat({ onRegistered, autoRegister = false }) {
     requestAnimationFrame(() => { el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }) })
   }, [msgs, flow, done])
 
-  const botSay = (...texts) => setMsgs(m => [...m, ...texts.map(text => ({ side: 'in', text }))])
+  // ---- one-by-one bot reveal -------------------------------------------------
+  // Bot replies don't drop in all at once: each queued text first shows an
+  // animated typing-dots bubble, waits a length-scaled beat (~0.6–1.4s), then
+  // swaps in place for the real bubble — then the next one starts. A unique id
+  // marks the placeholder so the swap stays put even if the user sends a message
+  // mid-reveal (order can't get corrupted). meSay (user) is always instant.
+  const botQueue = useRef([])     // pending bot texts waiting to be revealed
+  const botBusy = useRef(false)   // a reveal is currently in flight
+  const idSeq = useRef(0)         // monotonic id for placeholder bubbles
+
+  const pumpBot = () => {
+    if (botBusy.current) return
+    const text = botQueue.current.shift()
+    if (text == null) return
+    botBusy.current = true
+    const id = ++idSeq.current
+    setMsgs(m => [...m, { side: 'in', typing: true, id }])
+    // scale the typing delay by length, clamped to 0.6–1.4s
+    const delay = Math.min(1400, Math.max(600, text.length * 22))
+    setTimeout(() => {
+      setMsgs(m => m.map(x => (x.id === id ? { side: 'in', text, id } : x)))
+      botBusy.current = false
+      pumpBot()
+    }, delay)
+  }
+
+  const botSay = (...texts) => { botQueue.current.push(...texts); pumpBot() }
   const meSay = (text) => setMsgs(m => [...m, { side: 'out', text }])
 
   // Insert a string at the input caret (replacing any selection), then restore
@@ -340,7 +366,13 @@ export default function ViewChat({ onRegistered, autoRegister = false }) {
             <span className="gchat-row-av"><img src={pfp.img} alt="" onError={e => { e.currentTarget.style.display = 'none' }} /></span>
             <div className="gchat-row-body">
               <div className="gchat-meta"><b>{pfp.name}</b> Now</div>
-              <div className="gchat-bubble gchat-bubble-in"><Rich text={m.text} />{i === msgs.length - 1 && <Receipt />}</div>
+              {m.typing ? (
+                <div className="gchat-bubble gchat-bubble-in gchat-typing" aria-label="typing">
+                  <span className="gchat-dot" /><span className="gchat-dot" /><span className="gchat-dot" />
+                </div>
+              ) : (
+                <div className="gchat-bubble gchat-bubble-in"><Rich text={m.text} />{i === msgs.length - 1 && <Receipt />}</div>
+              )}
             </div>
           </div>
         ))}
