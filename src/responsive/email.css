@@ -50,8 +50,17 @@
   .gm-tic { padding: 6px !important; }
   .gm-count { font-size: 12px !important; margin-right: 4px !important; }
 
-  /* Subject heading: let it wrap instead of being clipped to one line. */
-  .gm-subject-bar { padding: 6px 0 14px !important; }
+  /* Subject heading: let it wrap instead of being clipped to one line.
+     Stack the bar so a multi-line subject sits above the action icons
+     instead of leaving them floating mid-right beside the wrapped text. */
+  .gm-subject-bar {
+    padding: 6px 0 14px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+  .gm-subject-left { flex-wrap: wrap !important; }
+  .gm-subject-right { align-self: flex-start !important; }
   .gm-subject {
     font-size: 19px !important;
     white-space: normal !important;
