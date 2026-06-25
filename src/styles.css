@@ -198,6 +198,13 @@ html, body, #root { font-family:'Roboto',Arial,sans-serif; color:var(--text); ba
 .compose-win-page .cw-body { flex:1; }
 .compose-win-page .cw-body textarea { height:100%; }
 .cw-head { background:#f2f6fc; border-radius:12px 12px 0 0; padding:10px 16px; display:flex; align-items:center; }
+/* Validation/error banner — sits at the TOP of the compose dialog, just under
+   the header, so feedback is right where the user is looking (not a far toast). */
+.cw-error-banner { display:flex; align-items:flex-start; gap:8px; margin:10px 16px 0; padding:10px 14px;
+  background:#fce8e6; color:#d93025; border:1px solid #f5c6c2; border-radius:8px; font-size:13.5px; }
+.cw-error-banner .msym { color:#d93025; flex:none; margin-top:1px; }
+.cw-error-list { display:flex; flex-direction:column; gap:3px; }
+.cw-error-item { line-height:1.35; }
 .cw-title { font-size:14px; font-weight:500; color:#202124; }
 .cw-head-icons { margin-left:auto; display:flex; align-items:center; gap:4px; }
 .cw-hi { cursor:pointer; color:#202124; width:28px; height:28px; display:flex; align-items:center; justify-content:center; border-radius:50%; }

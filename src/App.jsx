@@ -274,8 +274,32 @@ function ComposeWindow({ onClose, onSend, page }) {
   const [subject, setSubject] = useState('')
   const [body, setBody] = useState('')
   const [files, setFiles] = useState([])
+  // Validation/error messages shown in a banner at the TOP of the dialog.
+  const [errors, setErrors] = useState([])
   const fileRef = useRef()
   const addFiles = (list) => setFiles(f => [...f, ...Array.from(list)])
+
+  // Mirror submitEntry's synchronous field checks so errors surface at the top
+  // of the dialog (next to the fields) instead of as a far-away bottom toast.
+  const validate = () => {
+    const errs = []
+    if (!email || !EMAIL_RE.test(email.trim())) errs.push('Enter a valid email for yourself first.')
+    if (!targetName || !targetName.trim()) errs.push('Add the name of the person you emailed.')
+    if (targetEmail && !EMAIL_RE.test(targetEmail.trim())) errs.push('That target email doesn’t look valid.')
+    if (!files || !files.length) errs.push('Attach a screenshot/PDF of the thread (paperclip).')
+    return errs
+  }
+
+  const handleSend = async () => {
+    const errs = validate()
+    if (errs.length) { setErrors(errs); return }
+    setErrors([])
+    // onSend may return an async error message (registration gate, duplicate
+    // target, save failure) — show it in the same top banner.
+    const msg = await onSend({ track, email, targetName, targetEmail, subject, body, files })
+    if (msg) setErrors([msg])
+  }
+
   return (
     <div className={'compose-win' + (page ? ' compose-win-page' : '')}>
       <div className="cw-head">
@@ -286,6 +310,15 @@ function ComposeWindow({ onClose, onSend, page }) {
           <span className="cw-hi" title="Close" onClick={onClose}><I.M name="close" size={18} /></span>
         </div>
       </div>
+
+      {errors.length > 0 && (
+        <div className="cw-error-banner" role="alert">
+          <I.M name="error" size={18} />
+          <div className="cw-error-list">
+            {errors.map((e, i) => <div className="cw-error-item" key={i}>{e}</div>)}
+          </div>
+        </div>
+      )}
 
       {/* Entrant + target identity — always visible (these never collapse) */}
       <div className="cw-field">
@@ -343,7 +376,7 @@ function ComposeWindow({ onClose, onSend, page }) {
 
       {/* Submit row */}
       <div className="cw-actions">
-        <button className="cw-send" onClick={() => onSend({ track, email, targetName, targetEmail, subject, body, files })}>
+        <button className="cw-send" onClick={handleSend}>
           Submit
         </button>
         <div className="cw-act-icons">
@@ -3271,27 +3304,30 @@ export default function App() {
     snackTimer.current = setTimeout(() => setSentSnack(false), 6000)
   }
 
+  // Returns an error message string on failure (shown in the compose dialog's
+  // top banner by ComposeWindow), or undefined on success. Field-level checks
+  // are also done in ComposeWindow; these are the authoritative re-checks plus
+  // the async gate/DB errors that can only be known here.
   const submitEntry = async ({ email, targetName, targetEmail, files, ...rest }) => {
-    if (!email || !EMAIL_RE.test(email.trim())) { showToast('Enter a valid email for yourself first.'); return }
-    if (!targetName || !targetName.trim()) { showToast('Add the name of the person you emailed.'); return }
-    if (targetEmail && !EMAIL_RE.test(targetEmail.trim())) { showToast('That target email doesn’t look valid.'); return }
-    if (!files || !files.length) { showToast('Attach a screenshot/PDF of the thread (paperclip).'); return }
+    if (!email || !EMAIL_RE.test(email.trim())) return 'Enter a valid email for yourself first.'
+    if (!targetName || !targetName.trim()) return 'Add the name of the person you emailed.'
+    if (targetEmail && !EMAIL_RE.test(targetEmail.trim())) return 'That target email doesn’t look valid.'
+    if (!files || !files.length) return 'Attach a screenshot/PDF of the thread (paperclip).'
     // Authoritative background gate: you can only submit if you're registered.
     // null = couldn't reach the DB → fall back to the local registration flag.
     const reg = await isEmailRegistered(email)
     const ok = reg === null ? isRegisteredLocal() : reg
     if (!ok) {
-      showToast('Register first — taking you to registration.')
       navigate('/the-procedure', { state: { autoRegister: true } })
-      return
+      return 'Register first — taking you to registration.'
     }
     // Persist the entry to Supabase (`submissions` table). Unlimited entries
     // per person, but each must target a DIFFERENT person — a unique index on
     // (lower(email), lower(target_name)) rejects a repeat target with 23505.
     const { error } = await insertSubmission({ email, targetName, targetEmail, ...rest, files })
     if (error) {
-      if (error.code === '23505') { showToast('You already submitted for that target — pick a different person.'); return }
-      showToast('Couldn’t save your entry. Try again in a moment.'); return
+      if (error.code === '23505') return 'You already submitted for that target — pick a different person.'
+      return 'Couldn’t save your entry. Try again in a moment.'
     }
     navigate('/')
     showSentSnack()
