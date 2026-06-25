@@ -770,9 +770,43 @@ html, body, #root {
 @media (prefers-reduced-motion: reduce) {
   .ai-ov-collapse, .ai-ov-collapse-inner, .ai-ov-chevron .msym { transition: none; }
 }
+/* All / Starred filter tabs above the inbox list */
+.bx-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 4px 24px 10px;
+}
+.bx-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  background: transparent;
+  border-radius: 999px;
+  padding: 7px 16px;
+  font: 500 14px 'Google Sans','Roboto',Arial,sans-serif;
+  color: #444746;
+  cursor: pointer;
+}
+.bx-tab:hover { background: rgba(60,64,67,.08); }
+.bx-tab.active { background: #d3e3fd; color: #041e49; }
+.bx-tab .msym { font-size: 18px; }
 .bx-list {
   border-top: 1px solid #f1f3f4;
 }
+/* Empty state for the Starred filter */
+.bx-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 56px 24px;
+  text-align: center;
+  color: #5f6368;
+}
+.bx-empty .msym { color: #dadce0; }
+.bx-empty p { margin: 8px 0 0; font: 500 16px 'Google Sans','Roboto',Arial,sans-serif; color: #3c4043; }
+.bx-empty span { font-size: 13px; }
 .bx-row {
   display: flex;
   align-items: center;
@@ -799,6 +833,8 @@ html, body, #root {
 .bx-check { color: #5f6368; display: flex; align-items: center; flex-shrink: 0; }
 .bx-star-btn { color: #bdc1c6; display: flex; align-items: center; flex-shrink: 0; cursor: pointer; }
 .bx-star-btn:hover { color: #5f6368; }
+.bx-star-btn.starred { color: #f4b400; }
+.bx-star-btn.starred:hover { color: #f4b400; }
 .bx-stat {
   display: flex;
   align-items: center;
@@ -885,6 +921,7 @@ html, body, #root {
 
 .gm-ic { display: inline-flex; align-items: center; justify-content: center; color: #5f6368; padding: 8px; border-radius: 50%; cursor: pointer; user-select: none; -webkit-user-select: none; }
 .gm-ic:hover { background: rgba(60,64,67,.08); }
+.gm-ic.starred { color: #f4b400; }
 
 .gm-msg { display: flex; gap: 16px; padding: 18px 0; border-top: 1px solid #f1f3f4; }
 .gm-msg-top-toggle { cursor: pointer; }
