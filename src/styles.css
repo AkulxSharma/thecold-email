@@ -2302,7 +2302,8 @@ html, body, #root {
 /* expanded note modal (Keep-style) */
 .keep-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: flex; align-items: flex-start; justify-content: center; z-index: 400; padding: 56px 16px; overflow-y: auto; animation: keepFade .12s ease-out; }
 @keyframes keepFade { from { opacity: 0 } to { opacity: 1 } }
-.keep-modal { width: 100%; max-width: 640px; border-radius: 12px; border: 1px solid rgba(0,0,0,.12); box-shadow: 0 12px 40px rgba(0,0,0,.4); display: flex; flex-direction: column; max-height: calc(100vh - 112px); animation: keepPop .16s cubic-bezier(.2,.8,.3,1.2); cursor: default; }
+.keep-modal { width: 100%; max-width: 640px; border-radius: 12px; border: 1px solid rgba(0,0,0,.12); box-shadow: 0 12px 40px rgba(0,0,0,.4); display: flex; flex-direction: column; max-height: calc(100vh - 112px); cursor: default; will-change: transform, opacity; }
+@media (prefers-reduced-motion: reduce) { .keep-modal { will-change: auto; } }
 @keyframes keepPop { from { transform: scale(.97); opacity: 0 } to { transform: scale(1); opacity: 1 } }
 .keep-modal-head { display: flex; align-items: flex-start; gap: 12px; padding: 22px 24px 6px; }
 .keep-modal-head .keep-note-title { flex: 1; font-size: 22px; margin: 0; }

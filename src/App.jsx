@@ -2922,6 +2922,70 @@ function ViewRule({ onEnter }) {
   const [order, setOrder] = useState(NOTES.map(n => n.id))
   const [pinned, setPinned] = useState(() => new Set())  // pinned note ids
   const [expanded, setExpanded] = useState(null)   // note id or null
+  const [closing, setClosing] = useState(false)    // modal is playing its close FLIP
+  const originRect = useRef(null)                  // clicked card rect (FLIP "First")
+  const modalRef = useRef(null)
+  const keepReduced = typeof window !== 'undefined' && window.matchMedia
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  // Open: capture the clicked card's rect so the modal can grow from it (FLIP).
+  const openNote = (id, e) => {
+    originRect.current = e.currentTarget.getBoundingClientRect()
+    setExpanded(id)
+  }
+  // Close: play the reverse FLIP back to the card, then unmount.
+  const closeNote = () => {
+    if (keepReduced || !originRect.current || !modalRef.current) { setExpanded(null); return }
+    setClosing(true)
+  }
+
+  // FLIP open: start the modal at the card's rect (translate+scale), then animate
+  // to its natural centered size/position.
+  useLayoutEffect(() => {
+    if (!expanded || closing || keepReduced) return
+    const modal = modalRef.current
+    const first = originRect.current
+    if (!modal || !first) return
+    const last = modal.getBoundingClientRect()
+    const dx = first.left - last.left
+    const dy = first.top - last.top
+    const sx = first.width / last.width
+    const sy = first.height / last.height
+    modal.style.transformOrigin = 'top left'
+    modal.style.transition = 'none'
+    modal.style.opacity = '0.55'
+    modal.style.transform = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`
+    void modal.offsetWidth // force reflow so the start state is committed
+    requestAnimationFrame(() => {
+      if (!modalRef.current) return
+      modalRef.current.style.transition = 'transform 250ms cubic-bezier(.2,0,0,1), opacity 250ms ease'
+      modalRef.current.style.transform = 'translate(0, 0) scale(1)'
+      modalRef.current.style.opacity = '1'
+    })
+  }, [expanded, closing, keepReduced])
+
+  // FLIP close: animate the modal back down to the card's rect, then unmount.
+  useLayoutEffect(() => {
+    if (!closing) return
+    const modal = modalRef.current
+    const target = originRect.current
+    if (!modal || !target || keepReduced) { setExpanded(null); setClosing(false); return }
+    const last = modal.getBoundingClientRect()
+    const dx = target.left - last.left
+    const dy = target.top - last.top
+    const sx = target.width / last.width
+    const sy = target.height / last.height
+    modal.style.transformOrigin = 'top left'
+    modal.style.transition = 'transform 230ms cubic-bezier(.2,0,0,1), opacity 230ms ease'
+    requestAnimationFrame(() => {
+      if (!modalRef.current) return
+      modalRef.current.style.transform = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`
+      modalRef.current.style.opacity = '0.35'
+    })
+    const t = setTimeout(() => { setExpanded(null); setClosing(false) }, 250)
+    return () => clearTimeout(t)
+  }, [closing, keepReduced])
+
   // Pin → jump the note to the front of `order` (top of the board). Pinning again unpins.
   const togglePin = (id) => {
     const wasPinned = pinned.has(id)
@@ -3042,7 +3106,7 @@ function ViewRule({ onEnter }) {
               onDragOver={e => e.preventDefault()}
               onDrop={e => { e.preventDefault(); dragId.current = null }}
               onDragEnd={e => { dragId.current = null; e.currentTarget.classList.remove('keep-dragging') }}
-              onClick={() => setExpanded(n.id)}
+              onClick={(e) => openNote(n.id, e)}
             >
               <span className={`keep-note-pin${pinned.has(n.id) ? ' keep-pinned' : ''}`} onClick={e => { e.stopPropagation(); togglePin(n.id) }} title={pinned.has(n.id) ? 'Unpin note' : 'Pin note'}><I.M name="keep" size={20} /></span>
               <div className="keep-note-title">{n.title}</div>
@@ -3062,8 +3126,8 @@ function ViewRule({ onEnter }) {
 
       {/* Expanded note modal (Keep-style) */}
       {expandedNote && (
-        <div className="keep-overlay" onClick={() => setExpanded(null)}>
-          <div className={`keep-modal keep-c-${expandedNote.color}`} onClick={e => e.stopPropagation()}>
+        <div className="keep-overlay" onClick={closeNote}>
+          <div ref={modalRef} className={`keep-modal keep-c-${expandedNote.color}`} onClick={e => e.stopPropagation()}>
             <div className="keep-modal-head">
               <div className="keep-note-title">{expandedNote.title}</div>
               <span className={`keep-modal-pin${pinned.has(expandedNote.id) ? ' keep-pinned' : ''}`} onClick={e => { e.stopPropagation(); togglePin(expandedNote.id) }} title={pinned.has(expandedNote.id) ? 'Unpin note' : 'Pin note'}><I.M name="keep" size={20} /></span>
@@ -3079,7 +3143,7 @@ function ViewRule({ onEnter }) {
                 <I.M name="archive" size={18} />
                 <I.M name="more_vert" size={18} />
               </div>
-              <button className="keep-modal-close" onClick={() => setExpanded(null)}>Close</button>
+              <button className="keep-modal-close" onClick={closeNote}>Close</button>
             </div>
           </div>
         </div>
