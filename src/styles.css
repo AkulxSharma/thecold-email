@@ -2209,6 +2209,9 @@ html, body, #root {
 .keep-text { font-size: 14px; line-height: 1.55; color: #3c4043; margin: 0 0 10px; }
 .keep-support { font-size: 12.5px; line-height: 1.5; color: #5f6368; margin: 12px 0 0; font-style: italic; }
 .keep-mini-head { font-size: 12px; font-weight: 600; color: #5f6368; margin: 4px 0 8px; text-transform: uppercase; letter-spacing: .04em; }
+/* a section heading that follows a list (e.g. "Not allowed" under the Allowed list)
+   needs the same breathing room the first heading gets under the note title */
+.keep-list + .keep-mini-head { margin-top: 14px; }
 .keep-mini-head.keep-yes { color: #1e7e34; }
 .keep-mini-head.keep-no { color: #c5221f; }
 .keep-quote { font-family: 'Google Sans',sans-serif; font-size: 17px; font-style: italic; line-height: 1.5; margin: 14px 0 0; }
