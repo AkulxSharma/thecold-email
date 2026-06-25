@@ -37,6 +37,12 @@ function askText(qq) {
 function answerError(qq, text) {
   const t = text.trim()
   if (!t || t.toLowerCase() === 'skip') return 'This field is mandatory — please type a real answer (you can’t skip it).'
+  // Age is asked as an exact number, not a band.
+  if (qq.name === 'age') {
+    const n = Number(t)
+    return Number.isInteger(n) && n >= 13 && n <= 120
+      ? null : 'Please enter your age as a number between 13 and 120.'
+  }
   switch (qq.type) {
     case 'email':
       return EMAIL_RE.test(t) ? null : 'That doesn’t look like a valid email — check for typos.'

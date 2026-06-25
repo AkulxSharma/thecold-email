@@ -546,7 +546,7 @@ export const ENTER_FORM = {
     { name: 'full_name',     q: "What's your name?",                   type: 'short',     required: true,  ph: 'First and last name' },
     { name: 'email',         q: "What's the best email to reach you?", type: 'email',     required: true,  ph: 'you@example.com' },
     { name: 'country',       q: 'What country do you live in?',        type: 'short',     required: true,  ph: 'e.g. United States' },
-    { name: 'age_band',      q: 'How old are you?',                    type: 'radio',     required: true, options: ['Under 18', '18–24', '25–34', '35–44', '45+'] },
+    { name: 'age',           q: 'How old are you?',                    type: 'short',     required: true,  ph: 'e.g. 21' },
     { name: 'company',       q: 'Where do you work or study?',         type: 'short',     required: false, ph: 'Company, school, or “solo”' },
     { name: 'position',      q: "What's your role there?",             type: 'short',     required: false, ph: 'Your title or what you do' },
     { name: 'social',        q: 'Got a social link or handle?',        type: 'url',       required: false, ph: '@you or a profile link' },
