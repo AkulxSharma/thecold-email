@@ -69,7 +69,7 @@ function canonical(qq, text) {
 // registration chatbot: the opening script is untouched, the smart-reply
 // chips are live, and "How do I register?" walks the user through the
 // registration form one field at a time via the composer.
-export default function ViewChat({ onRegistered }) {
+export default function ViewChat({ onRegistered, autoRegister = false }) {
   const [msgs, setMsgs] = useState([])      // dynamic turns appended below the static script
   const [flow, setFlow] = useState(null)    // active question index, or null when not registering
   const [done, setDone] = useState(false)   // registration completed
@@ -95,9 +95,19 @@ export default function ViewChat({ onRegistered }) {
   // Autoscroll the panel to the newest message. scrollIntoView on a sentinel is
   // unreliable here (sticky composer overlaps it), so scroll the panel itself to
   // its full height after layout settles.
+  //
+  // The chat OPENS AT THE TOP on a normal load: we skip the very first effect run
+  // so the static welcome script isn't scrolled past. Subsequent message appends
+  // DO autoscroll. Exception: when autoRegister is set we start at the bottom
+  // (latest message) so the auto-started registration flow is in view.
+  const didFirstScroll = useRef(false)
   useEffect(() => {
     const el = scrollRef.current
     if (!el) return
+    if (!didFirstScroll.current) {
+      didFirstScroll.current = true
+      if (!autoRegister) return
+    }
     requestAnimationFrame(() => { el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }) })
   }, [msgs, flow, done])
 
