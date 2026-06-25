@@ -257,7 +257,8 @@ const TRACK_OPTIONS = ['The Best Cold Email (overall)', 'The Unreachable', 'Best
 // Route guard: the submission page is only reachable once registered on this
 // device. Unregistered visitors (incl. new devices) are sent to registration.
 function RequireRegistration({ children }) {
-  if (!isRegisteredLocal()) return <Navigate to="/the-procedure" replace />
+  // Hitting the submission URL while unregistered is a Submit action → auto-start registration.
+  if (!isRegisteredLocal()) return <Navigate to="/the-procedure" replace state={{ autoRegister: true }} />
   return children
 }
 
@@ -380,12 +381,35 @@ function jeminiAnswer(qRaw) {
 }
 
 const JEMINI_CHIPS = ['What are the tracks?', 'How do I enter?', "What's the rule?", 'Prizes?', 'Deadlines?']
+// Follow-up prompts surfaced after each reply so there's always a next thing to tap.
+const JEMINI_FOLLOWUPS = [
+  'How is it judged?',
+  'When are winners announced?',
+  'What counts as a real reply?',
+  "What's the grand prize?",
+  'Tell me about The Unreachable',
+  'Can I enter more than one track?',
+  'When does registration close?',
+]
+// Rotate a small set of context-relevant follow-ups so the chip row keeps changing.
+function followupChips(msgs) {
+  if (msgs.length === 0) return JEMINI_CHIPS
+  const turns = msgs.filter(m => m.role === 'you').length
+  const start = (turns * 2) % JEMINI_FOLLOWUPS.length
+  const out = []
+  for (let i = 0; i < 4; i++) out.push(JEMINI_FOLLOWUPS[(start + i) % JEMINI_FOLLOWUPS.length])
+  return out
+}
 
 function JeminiPanel({ onClose, open }) {
   const [msgs, setMsgs] = useState([])
   const [input, setInput] = useState('')
   const scrollRef = useRef()
   const started = msgs.length > 0
+  // Replies are synchronous, so the bot is "idle" whenever the last turn is its
+  // reply (or there are no messages yet) — that's when we re-offer the chips.
+  const idle = msgs.length === 0 || msgs[msgs.length - 1].role === 'bot'
+  const chips = followupChips(msgs)
 
   const send = (text) => {
     const t = (text ?? input).trim()
@@ -422,6 +446,11 @@ function JeminiPanel({ onClose, open }) {
         ) : (
           <div className="jp-msgs">
             {msgs.map((m, i) => <div key={i} className={`jp-msg jp-${m.role}`}>{m.text}</div>)}
+            {idle && (
+              <div className="jp-chips jp-chips-followup">
+                {chips.map(c => <span key={c} className="jp-chip" onClick={() => send(c)}>{c}</span>)}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -610,7 +639,9 @@ function ViewOverview({ onEnter, goto }) {
         const entered = sr.bottom - top            // px the top has risen past the fold
         const p = Math.max(0, Math.min(1, entered / dist))
         el.style.opacity = String(p)
-        el.style.transform = `translateY(${(1 - p) * 28}px)`
+        // translate + a subtle size-scale so every revealed section (incl. .home-film)
+        // gets the same gentle "grow in" entrance, not just a vertical slide.
+        el.style.transform = `translateY(${(1 - p) * 28}px) scale(${0.96 + p * 0.04})`
       })
     }
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(update) }
@@ -777,7 +808,11 @@ const ENTER_STEPS = [
 function ViewEnter({ onEnter, onRegistered }) {
   // Procedure page is now the chat-only registration flow. The Maps / Classroom
   // / Story tabs + switcher below are kept (dead) for an end-of-project sweep.
-  return <ViewChat onRegistered={onRegistered} />
+  // When the user landed here via a Submit action while unregistered, the
+  // redirect sets location.state.autoRegister so the chat auto-starts registration.
+  const { state } = useLocation()
+  const autoRegister = !!(state && state.autoRegister)
+  return <ViewChat onRegistered={onRegistered} autoRegister={autoRegister} />
 
   /* eslint-disable no-unreachable */
   const [ui, setUi] = useState('maps') // 'maps' | 'classroom' | 'story' | 'chat'
@@ -1944,15 +1979,18 @@ function ViewBest() {
           <div className="ai-ov-head">
             <span className="ai-ov-spark"><I.Spark size={20} /></span>
             <span className="ai-ov-title">AI Overview</span>
-            <span className="ai-ov-chevron" onClick={() => setAiOpen(o => !o)} title={aiOpen ? 'Collapse' : 'Expand'}>
-              <I.M name={aiOpen ? 'expand_less' : 'expand_more'} size={22} />
+            <span className={`ai-ov-chevron${aiOpen ? ' open' : ''}`} onClick={() => setAiOpen(o => !o)} title={aiOpen ? 'Collapse' : 'Expand'}>
+              <I.M name="expand_more" size={22} />
             </span>
           </div>
-          {aiOpen && (
-            <p className="ai-ov-body">
-              These are example cold emails, the best of thecold.email, proven by who actually replied. Akul will replace them with the real winning entries.
-            </p>
-          )}
+          {/* Body stays mounted; the grid-rows trick animates height + opacity. */}
+          <div className={`ai-ov-collapse${aiOpen ? ' open' : ''}`}>
+            <div className="ai-ov-collapse-inner">
+              <p className="ai-ov-body">
+                These are example cold emails, the best of thecold.email, proven by who actually replied. Akul will replace them with the real winning entries.
+              </p>
+            </div>
+          </div>
         </div>
         <div className="bx-list">
           {BEST_EMAILS.map((em, i) => (
@@ -2887,7 +2925,78 @@ function ViewRule({ onEnter }) {
   ]
 
   const [order, setOrder] = useState(NOTES.map(n => n.id))
+  const [pinned, setPinned] = useState(() => new Set())  // pinned note ids
   const [expanded, setExpanded] = useState(null)   // note id or null
+  const [closing, setClosing] = useState(false)    // modal is playing its close FLIP
+  const originRect = useRef(null)                  // clicked card rect (FLIP "First")
+  const modalRef = useRef(null)
+  const keepReduced = typeof window !== 'undefined' && window.matchMedia
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  // Open: capture the clicked card's rect so the modal can grow from it (FLIP).
+  const openNote = (id, e) => {
+    originRect.current = e.currentTarget.getBoundingClientRect()
+    setExpanded(id)
+  }
+  // Close: play the reverse FLIP back to the card, then unmount.
+  const closeNote = () => {
+    if (keepReduced || !originRect.current || !modalRef.current) { setExpanded(null); return }
+    setClosing(true)
+  }
+
+  // FLIP open: start the modal at the card's rect (translate+scale), then animate
+  // to its natural centered size/position.
+  useLayoutEffect(() => {
+    if (!expanded || closing || keepReduced) return
+    const modal = modalRef.current
+    const first = originRect.current
+    if (!modal || !first) return
+    const last = modal.getBoundingClientRect()
+    const dx = first.left - last.left
+    const dy = first.top - last.top
+    const sx = first.width / last.width
+    const sy = first.height / last.height
+    modal.style.transformOrigin = 'top left'
+    modal.style.transition = 'none'
+    modal.style.opacity = '0.55'
+    modal.style.transform = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`
+    void modal.offsetWidth // force reflow so the start state is committed
+    requestAnimationFrame(() => {
+      if (!modalRef.current) return
+      modalRef.current.style.transition = 'transform 250ms cubic-bezier(.2,0,0,1), opacity 250ms ease'
+      modalRef.current.style.transform = 'translate(0, 0) scale(1)'
+      modalRef.current.style.opacity = '1'
+    })
+  }, [expanded, closing, keepReduced])
+
+  // FLIP close: animate the modal back down to the card's rect, then unmount.
+  useLayoutEffect(() => {
+    if (!closing) return
+    const modal = modalRef.current
+    const target = originRect.current
+    if (!modal || !target || keepReduced) { setExpanded(null); setClosing(false); return }
+    const last = modal.getBoundingClientRect()
+    const dx = target.left - last.left
+    const dy = target.top - last.top
+    const sx = target.width / last.width
+    const sy = target.height / last.height
+    modal.style.transformOrigin = 'top left'
+    modal.style.transition = 'transform 230ms cubic-bezier(.2,0,0,1), opacity 230ms ease'
+    requestAnimationFrame(() => {
+      if (!modalRef.current) return
+      modalRef.current.style.transform = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`
+      modalRef.current.style.opacity = '0.35'
+    })
+    const t = setTimeout(() => { setExpanded(null); setClosing(false) }, 250)
+    return () => clearTimeout(t)
+  }, [closing, keepReduced])
+
+  // Pin → jump the note to the front of `order` (top of the board). Pinning again unpins.
+  const togglePin = (id) => {
+    const wasPinned = pinned.has(id)
+    setPinned(prev => { const n = new Set(prev); wasPinned ? n.delete(id) : n.add(id); return n })
+    if (!wasPinned) setOrder(prev => [id, ...prev.filter(x => x !== id)])
+  }
   const dragId = useRef(null)
   const noteRefs = useRef(new Map())
   const boardRef = useRef(null)
@@ -3002,9 +3111,9 @@ function ViewRule({ onEnter }) {
               onDragOver={e => e.preventDefault()}
               onDrop={e => { e.preventDefault(); dragId.current = null }}
               onDragEnd={e => { dragId.current = null; e.currentTarget.classList.remove('keep-dragging') }}
-              onClick={() => setExpanded(n.id)}
+              onClick={(e) => openNote(n.id, e)}
             >
-              <span className="keep-note-pin" onClick={e => e.stopPropagation()} title="Pin note"><I.M name="keep" size={20} /></span>
+              <span className={`keep-note-pin${pinned.has(n.id) ? ' keep-pinned' : ''}`} onClick={e => { e.stopPropagation(); togglePin(n.id) }} title={pinned.has(n.id) ? 'Unpin note' : 'Pin note'}><I.M name="keep" size={20} /></span>
               <div className="keep-note-title">{n.title}</div>
               {n.render()}
               <div className="keep-note-tools" onClick={e => e.stopPropagation()}>
@@ -3022,11 +3131,11 @@ function ViewRule({ onEnter }) {
 
       {/* Expanded note modal (Keep-style) */}
       {expandedNote && (
-        <div className="keep-overlay" onClick={() => setExpanded(null)}>
-          <div className={`keep-modal keep-c-${expandedNote.color}`} onClick={e => e.stopPropagation()}>
+        <div className="keep-overlay" onClick={closeNote}>
+          <div ref={modalRef} className={`keep-modal keep-c-${expandedNote.color}`} onClick={e => e.stopPropagation()}>
             <div className="keep-modal-head">
               <div className="keep-note-title">{expandedNote.title}</div>
-              <span className="keep-modal-pin" title="Pin note"><I.M name="keep" size={20} /></span>
+              <span className={`keep-modal-pin${pinned.has(expandedNote.id) ? ' keep-pinned' : ''}`} onClick={e => { e.stopPropagation(); togglePin(expandedNote.id) }} title={pinned.has(expandedNote.id) ? 'Unpin note' : 'Pin note'}><I.M name="keep" size={20} /></span>
             </div>
             <div className="keep-modal-body">{expandedNote.render()}</div>
             <div className="keep-modal-toolbar">
@@ -3039,7 +3148,7 @@ function ViewRule({ onEnter }) {
                 <I.M name="archive" size={18} />
                 <I.M name="more_vert" size={18} />
               </div>
-              <button className="keep-modal-close" onClick={() => setExpanded(null)}>Close</button>
+              <button className="keep-modal-close" onClick={closeNote}>Close</button>
             </div>
           </div>
         </div>
@@ -3064,8 +3173,16 @@ function ViewPrizes({ onEnter, goto }) {
   const drag = useRef({ down: false, startX: 0, scroll: 0 })
   const onDown = (e) => {
     const el = rowRef.current; if (!el) return
-    drag.current = { down: true, startX: e.pageX, scroll: el.scrollLeft }
+    drag.current = { down: true, startX: e.pageX, startY: e.pageY, scroll: el.scrollLeft }
     el.classList.add('dragging')
+  }
+  // Distinguish a tap (navigate) from a drag/scroll: only navigate if the pointer
+  // barely moved between mousedown and the click.
+  const onCardClick = (p, e) => {
+    const dx = e.pageX - (drag.current.startX || 0)
+    const dy = e.pageY - (drag.current.startY || 0)
+    if (Math.hypot(dx, dy) > 8) return        // it was a drag/scroll — suppress nav
+    if (p.topic && goto) goto('track-' + p.topic)
   }
   const onMove = (e) => {
     const el = rowRef.current; if (!el || !drag.current.down) return
@@ -3087,7 +3204,7 @@ function ViewPrizes({ onEnter, goto }) {
         <div className="gpay-actions">
           <button className="gpay-act" onClick={onEnter}><span className="gpay-act-ic"><I.M name="bolt" size={22} /></span>Submit</button>
           <button className="gpay-act" onClick={() => goto && goto('tracks-home')}><span className="gpay-act-ic"><I.M name="emoji_events" size={22} /></span>Tracks</button>
-          <button className="gpay-act" onClick={() => goto && goto('rule')}><span className="gpay-act-ic"><I.M name="receipt_long" size={22} /></span>Rules</button>
+          <button className="gpay-act" onClick={() => goto && goto('rule')}><span className="gpay-act-ic"><I.M name="rule" size={22} /></span>Rules</button>
         </div>
       </div>
 
@@ -3096,6 +3213,7 @@ function ViewPrizes({ onEnter, goto }) {
         onMouseDown={onDown} onMouseMove={onMove} onMouseUp={endDrag} onMouseLeave={endDrag}>
         {passes.map((p, i) => (
           <div className={`gpay-card${p.grand ? ' gpay-card-grand' : ''}`} key={i}
+            onClick={(e) => onCardClick(p, e)}
             style={{ background: `linear-gradient(135deg, ${p.c1}, ${p.c2})` }}>
             <div className="gpay-card-top">
               <span className="gpay-card-name">{p.name}</span>
@@ -3162,7 +3280,7 @@ export default function App() {
     const ok = reg === null ? isRegisteredLocal() : reg
     if (!ok) {
       showToast('Register first — taking you to registration.')
-      navigate('/the-procedure')
+      navigate('/the-procedure', { state: { autoRegister: true } })
       return
     }
     // Persist the entry to Supabase (`submissions` table). Unlimited entries
@@ -3185,7 +3303,10 @@ export default function App() {
   }
   const goHome = () => navigate('/')
   // Every "Enter" CTA: registered on this device → submission page; else → register.
-  const onEnter = () => navigate(isRegisteredLocal() ? '/submit' : '/the-procedure')
+  const onEnter = () => navigate(
+    isRegisteredLocal() ? '/submit' : '/the-procedure',
+    isRegisteredLocal() ? undefined : { state: { autoRegister: true } }
+  )
   // Called by the registration chat when a user finishes (or is already registered).
   const onRegistered = (info) => { setRegistration(info); navigate('/submit') }
 

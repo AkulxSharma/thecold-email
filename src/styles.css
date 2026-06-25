@@ -273,6 +273,7 @@ html, body, #root { font-family:'Roboto',Arial,sans-serif; color:var(--text); ba
 .jp-greet { font-family:'Google Sans','Product Sans',Arial,sans-serif; font-size:30px; line-height:1.25; color:#1a73e8; font-weight:400; }
 .jp-help { display:flex; align-items:center; justify-content:center; gap:8px; font-size:14px; color:#444746; margin-top:28px; text-align:left; }
 .jp-chips { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:24px; }
+.jp-chips-followup { justify-content:flex-start; margin-top:2px; }
 .jp-chip { font-size:13px; color:#1a73e8; border:1px solid #d2e3fc; background:#f8fbff; border-radius:16px; padding:7px 14px; cursor:pointer; }
 .jp-chip:hover { background:#e8f0fe; }
 .jp-msgs { display:flex; flex-direction:column; gap:12px; padding:8px 2px; }
@@ -734,6 +735,23 @@ html, body, #root {
   color: #444746;
   cursor: pointer;
 }
+.ai-ov-chevron .msym { transition: transform .28s cubic-bezier(.2,0,0,1); }
+.ai-ov-chevron.open .msym { transform: rotate(180deg); }
+/* Google-style smooth collapse: animate the grid row from 0fr to 1fr (height)
+   while the inner clips overflow and fades in. */
+.ai-ov-collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows .28s cubic-bezier(.2,0,0,1);
+}
+.ai-ov-collapse.open { grid-template-rows: 1fr; }
+.ai-ov-collapse-inner {
+  overflow: hidden;
+  min-height: 0;
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+.ai-ov-collapse.open .ai-ov-collapse-inner { opacity: 1; }
 .ai-ov-body {
   display: block;
   width: 100%;
@@ -741,6 +759,9 @@ html, body, #root {
   font-size: 14px;
   color: #1f1f1f;
   line-height: 1.55;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ai-ov-collapse, .ai-ov-collapse-inner, .ai-ov-chevron .msym { transition: none; }
 }
 .bx-list {
   border-top: 1px solid #f1f3f4;
@@ -1851,7 +1872,8 @@ html, body, #root {
    (the .walhero hero is excluded — it has its own scroll animation). */
 .home > section:not(.walhero), .home > footer {
   opacity: 0;
-  transform: translateY(28px);
+  transform: translateY(28px) scale(.96);
+  transform-origin: center top;
   will-change: opacity, transform;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -2190,7 +2212,7 @@ html, body, #root {
 .keep-board { position: relative; width: calc(100% - 48px); max-width: 1200px; margin: 0 auto 60px; }
 
 /* note card — natural (uneven) heights, like real Keep */
-.keep-note { position: absolute; top: 0; left: 0; box-sizing: border-box; border: 1px solid rgba(0,0,0,.1); border-radius: 12px; padding: 16px 18px 6px; box-shadow: none; transition: transform 260ms cubic-bezier(.2,0,0,1), box-shadow .15s; cursor: move; will-change: transform; }
+.keep-note { position: absolute; top: 0; left: 0; box-sizing: border-box; border: 1px solid rgba(0,0,0,.1); border-radius: 12px; padding: 16px 18px 4px; box-shadow: none; transition: transform 260ms cubic-bezier(.2,0,0,1), box-shadow .15s; cursor: move; will-change: transform; }
 .keep-note:hover { box-shadow: 0 1px 2px rgba(60,64,67,.3), 0 2px 6px 2px rgba(60,64,67,.15); z-index: 2; }
 .keep-note.keep-dragging { opacity: .45; box-shadow: 0 6px 16px rgba(0,0,0,.3); z-index: 3; }
 
@@ -2199,7 +2221,10 @@ html, body, #root {
 .keep-note-select .msym { background: #fff; border-radius: 50%; }
 .keep-note-pin { position: absolute; top: 10px; right: 12px; color: #3c4043; opacity: 0; transition: opacity .12s; cursor: pointer; padding: 4px; border-radius: 50%; }
 .keep-note-pin:hover { background: rgba(0,0,0,.08); }
-.keep-note-tools { display: flex; gap: 2px; align-items: center; height: 30px; margin-top: 8px; opacity: 0; transition: opacity .12s; }
+/* pinned state: keep the pin visible and fill the icon */
+.keep-note-pin.keep-pinned, .keep-modal-pin.keep-pinned { opacity: 1; }
+.keep-pinned .msym { font-variation-settings: 'FILL' 1; color: #1a73e8; }
+.keep-note-tools { display: flex; gap: 2px; align-items: center; height: 22px; margin-top: 2px; opacity: 0; transition: opacity .12s; }
 .keep-note-tools .msym { color: #5f6368; padding: 6px; border-radius: 50%; cursor: pointer; }
 .keep-note-tools .msym:hover { background: rgba(0,0,0,.08); }
 .keep-note:hover .keep-note-select, .keep-note:hover .keep-note-pin, .keep-note:hover .keep-note-tools { opacity: 1; }
@@ -2208,6 +2233,9 @@ html, body, #root {
 .keep-text { font-size: 14px; line-height: 1.55; color: #3c4043; margin: 0 0 10px; }
 .keep-support { font-size: 12.5px; line-height: 1.5; color: #5f6368; margin: 12px 0 0; font-style: italic; }
 .keep-mini-head { font-size: 12px; font-weight: 600; color: #5f6368; margin: 4px 0 8px; text-transform: uppercase; letter-spacing: .04em; }
+/* a section heading that follows a list (e.g. "Not allowed" under the Allowed list)
+   needs the same breathing room the first heading gets under the note title */
+.keep-list + .keep-mini-head { margin-top: 14px; }
 .keep-mini-head.keep-yes { color: #1e7e34; }
 .keep-mini-head.keep-no { color: #c5221f; }
 .keep-quote { font-family: 'Google Sans',sans-serif; font-size: 17px; font-style: italic; line-height: 1.5; margin: 14px 0 0; }
@@ -2274,7 +2302,8 @@ html, body, #root {
 /* expanded note modal (Keep-style) */
 .keep-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: flex; align-items: flex-start; justify-content: center; z-index: 400; padding: 56px 16px; overflow-y: auto; animation: keepFade .12s ease-out; }
 @keyframes keepFade { from { opacity: 0 } to { opacity: 1 } }
-.keep-modal { width: 100%; max-width: 640px; border-radius: 12px; border: 1px solid rgba(0,0,0,.12); box-shadow: 0 12px 40px rgba(0,0,0,.4); display: flex; flex-direction: column; max-height: calc(100vh - 112px); animation: keepPop .16s cubic-bezier(.2,.8,.3,1.2); cursor: default; }
+.keep-modal { width: 100%; max-width: 640px; border-radius: 12px; border: 1px solid rgba(0,0,0,.12); box-shadow: 0 12px 40px rgba(0,0,0,.4); display: flex; flex-direction: column; max-height: calc(100vh - 112px); cursor: default; will-change: transform, opacity; }
+@media (prefers-reduced-motion: reduce) { .keep-modal { will-change: auto; } }
 @keyframes keepPop { from { transform: scale(.97); opacity: 0 } to { transform: scale(1); opacity: 1 } }
 .keep-modal-head { display: flex; align-items: flex-start; gap: 12px; padding: 22px 24px 6px; }
 .keep-modal-head .keep-note-title { flex: 1; font-size: 22px; margin: 0; }
@@ -2532,7 +2561,8 @@ html, body, #root {
 .gpay-cards.dragging .gpay-card { pointer-events: none; }
 /* auto-margin spacers center the row when it fits, but collapse to 0 (no start-clip) when it overflows */
 .gpay-cards::before, .gpay-cards::after { content: ''; margin: auto; }
-.gpay-card { flex: none; width: 300px; height: 180px; min-height: 180px; border-radius: 16px; padding: 18px; color: #fff; box-shadow: 0 2px 8px rgba(60,64,67,.24); display: flex; flex-direction: column; box-sizing: border-box; }
+.gpay-card { flex: none; width: 300px; height: 180px; min-height: 180px; border-radius: 16px; padding: 18px; color: #fff; box-shadow: 0 2px 8px rgba(60,64,67,.24); display: flex; flex-direction: column; box-sizing: border-box; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; }
+.gpay-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(60,64,67,.32); }
 .gpay-card-grand { box-shadow: 0 4px 16px rgba(0,0,0,.32); }
 .gpay-card-top { display: flex; align-items: flex-start; justify-content: space-between; }
 .gpay-card-name { font: 600 16px 'Google Sans','Roboto',Arial,sans-serif; }
