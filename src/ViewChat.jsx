@@ -10,6 +10,24 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const URL_RE = /^https?:\/\/.+/i
 const QUESTIONS = ENTER_FORM.questions
 
+// Social profile — forgiving, FORMAT-only (static site: no live network checks).
+// Accepts a full/scheme-less URL (x.com/you, https://linkedin.com/in/you,
+// instagram.com/you, tiktok.com/@you), or a bare handle (@you / you). A bare
+// handle is normalized to the most common handle platform (X). Returns the
+// normalized profile URL, or null for obvious junk (spaces, neither url nor handle).
+const SOCIAL_DOMAIN_RE = /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}(\/\S*)?$/i
+const SOCIAL_HANDLE_RE = /^@?[A-Za-z0-9._]{1,40}$/
+function normalizeSocial(raw) {
+  const t = (raw || '').trim()
+  if (!t || /\s/.test(t)) return null
+  if (SOCIAL_DOMAIN_RE.test(t)) {
+    const url = /^https?:\/\//i.test(t) ? t : 'https://' + t
+    return url.replace(/\/+$/, '')
+  }
+  if (SOCIAL_HANDLE_RE.test(t)) return 'https://x.com/' + t.replace(/^@/, '')
+  return null
+}
+
 // Make.com custom-webhook URL — on successful registration the collected answers
 // are POSTed here, and the Make scenario (Webhook → Email) sends the user their
 // confirmation email. TODO(Akul): paste the webhook URL from your Make scenario.
@@ -37,6 +55,17 @@ function askText(qq) {
 function answerError(qq, text) {
   const t = text.trim()
   if (!t || t.toLowerCase() === 'skip') return 'This field is mandatory — please type a real answer (you can’t skip it).'
+  // Age is asked as an exact number, not a band.
+  if (qq.name === 'age') {
+    const n = Number(t)
+    return Number.isInteger(n) && n >= 13 && n <= 120
+      ? null : 'Please enter your age as a number between 13 and 120.'
+  }
+  // Social accepts a bare handle OR any profile link — format check only.
+  if (qq.name === 'social') {
+    return normalizeSocial(t)
+      ? null : 'Drop a handle or a link — like @yourname, x.com/yourname, or linkedin.com/in/you.'
+  }
   switch (qq.type) {
     case 'email':
       return EMAIL_RE.test(t) ? null : 'That doesn’t look like a valid email — check for typos.'
@@ -60,6 +89,7 @@ function answerError(qq, text) {
 // Normalize a validated answer to its canonical form (matched option casing).
 function canonical(qq, text) {
   const t = text.trim()
+  if (qq.name === 'social') return normalizeSocial(t) || t
   if (qq.type === 'dropdown' || qq.type === 'radio') return qq.options.find(o => o.toLowerCase() === t.toLowerCase())
   if (qq.type === 'checkbox') return t.split(',').map(s => s.trim()).filter(Boolean).map(x => qq.options.find(o => o.toLowerCase() === x.toLowerCase()))
   return t
@@ -69,7 +99,7 @@ function canonical(qq, text) {
 // registration chatbot: the opening script is untouched, the smart-reply
 // chips are live, and "How do I register?" walks the user through the
 // registration form one field at a time via the composer.
-export default function ViewChat({ onRegistered }) {
+export default function ViewChat({ onRegistered, autoRegister = false }) {
   const [msgs, setMsgs] = useState([])      // dynamic turns appended below the static script
   const [flow, setFlow] = useState(null)    // active question index, or null when not registering
   const [done, setDone] = useState(false)   // registration completed
@@ -95,13 +125,49 @@ export default function ViewChat({ onRegistered }) {
   // Autoscroll the panel to the newest message. scrollIntoView on a sentinel is
   // unreliable here (sticky composer overlaps it), so scroll the panel itself to
   // its full height after layout settles.
+  //
+  // The chat OPENS AT THE TOP on a normal load: we skip the very first effect run
+  // so the static welcome script isn't scrolled past. Subsequent message appends
+  // DO autoscroll. Exception: when autoRegister is set we start at the bottom
+  // (latest message) so the auto-started registration flow is in view.
+  const didFirstScroll = useRef(false)
   useEffect(() => {
     const el = scrollRef.current
     if (!el) return
+    if (!didFirstScroll.current) {
+      didFirstScroll.current = true
+      if (!autoRegister) return
+    }
     requestAnimationFrame(() => { el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }) })
   }, [msgs, flow, done])
 
-  const botSay = (...texts) => setMsgs(m => [...m, ...texts.map(text => ({ side: 'in', text }))])
+  // ---- one-by-one bot reveal -------------------------------------------------
+  // Bot replies don't drop in all at once: each queued text first shows an
+  // animated typing-dots bubble, waits a length-scaled beat (~0.6–1.4s), then
+  // swaps in place for the real bubble — then the next one starts. A unique id
+  // marks the placeholder so the swap stays put even if the user sends a message
+  // mid-reveal (order can't get corrupted). meSay (user) is always instant.
+  const botQueue = useRef([])     // pending bot texts waiting to be revealed
+  const botBusy = useRef(false)   // a reveal is currently in flight
+  const idSeq = useRef(0)         // monotonic id for placeholder bubbles
+
+  const pumpBot = () => {
+    if (botBusy.current) return
+    const text = botQueue.current.shift()
+    if (text == null) return
+    botBusy.current = true
+    const id = ++idSeq.current
+    setMsgs(m => [...m, { side: 'in', typing: true, id }])
+    // scale the typing delay by length, clamped to 0.6–1.4s
+    const delay = Math.min(1400, Math.max(600, text.length * 22))
+    setTimeout(() => {
+      setMsgs(m => m.map(x => (x.id === id ? { side: 'in', text, id } : x)))
+      botBusy.current = false
+      pumpBot()
+    }, delay)
+  }
+
+  const botSay = (...texts) => { botQueue.current.push(...texts); pumpBot() }
   const meSay = (text) => setMsgs(m => [...m, { side: 'out', text }])
 
   // Insert a string at the input caret (replacing any selection), then restore
@@ -150,6 +216,18 @@ export default function ViewChat({ onRegistered }) {
     botSay('Awesome — let’s get you registered. I’ll ask a few quick things, just reply right here. 👇', askText(QUESTIONS[0]))
     setFlow(0)
   }
+
+  // Auto-start registration when launched from Submit (unregistered user). Fires
+  // once: jump to the latest message and kick off beginRegister() as if the user
+  // had tapped "How do I register?".
+  const didAuto = useRef(false)
+  useEffect(() => {
+    if (!autoRegister || didAuto.current) return
+    didAuto.current = true
+    const el = scrollRef.current
+    if (el) requestAnimationFrame(() => { el.scrollTo({ top: el.scrollHeight }) })
+    beginRegister()
+  }, [autoRegister])
 
   const showTracks = () => {
     meSay('Show me the tracks')
@@ -244,9 +322,12 @@ export default function ViewChat({ onRegistered }) {
         </div>
         <div className="gchat-hd-r">
           <button className="gchat-ic" title="Call"><M name="videocam" size={20} /></button>
-          <button className="gchat-ic" title="Files"><M name="folder_open" size={20} /></button>
-          <button className="gchat-ic" title="History"><M name="hourglass_empty" size={20} /></button>
-          <button className="gchat-ic" title="Pin"><M name="push_pin" size={20} /></button>
+          <span className="gchat-hd-div" />
+          <div className="gchat-hd-grp">
+            <button className="gchat-ic" title="Files"><M name="folder_open" size={20} /></button>
+            <button className="gchat-ic" title="History"><M name="hourglass_empty" size={20} /></button>
+            <button className="gchat-ic" title="Pin"><M name="push_pin" size={20} /></button>
+          </div>
         </div>
       </div>
 
@@ -330,7 +411,13 @@ export default function ViewChat({ onRegistered }) {
             <span className="gchat-row-av"><img src={pfp.img} alt="" onError={e => { e.currentTarget.style.display = 'none' }} /></span>
             <div className="gchat-row-body">
               <div className="gchat-meta"><b>{pfp.name}</b> Now</div>
-              <div className="gchat-bubble gchat-bubble-in"><Rich text={m.text} />{i === msgs.length - 1 && <Receipt />}</div>
+              {m.typing ? (
+                <div className="gchat-bubble gchat-bubble-in gchat-typing" aria-label="typing">
+                  <span className="gchat-dot" /><span className="gchat-dot" /><span className="gchat-dot" />
+                </div>
+              ) : (
+                <div className="gchat-bubble gchat-bubble-in"><Rich text={m.text} />{i === msgs.length - 1 && <Receipt />}</div>
+              )}
             </div>
           </div>
         ))}
