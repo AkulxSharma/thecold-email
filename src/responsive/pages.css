@@ -103,6 +103,13 @@
   .winners-card { padding: 20px !important; }
   .winners-row { padding: 10px 12px !important; }
 
+  /* Chat composer — the send button overflowed the right edge on phones
+     (plus + input + caret + send + gaps exceeded the row). Trim the
+     horizontal padding and gap so the flex input shrinks and the send
+     button stays fully on-screen. */
+  .gchat-composer { padding: 10px 8px 14px !important; gap: 4px !important; }
+  .gchat-send-caret { width: 24px !important; }
+
   /* Chat popovers — fixed-width contact card -> viewport relative */
   .gchat-card {
     width: 90vw !important;
