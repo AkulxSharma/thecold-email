@@ -98,6 +98,20 @@
     align-items: flex-start !important;
   }
 
+  /* "how it works" flow: stack the pills in a centered column and rotate the
+     connector arrows to point DOWN — pill, ↓, pill, ↓, pill. */
+  .home-flow {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+  .home-flow-step {
+    width: max-content !important;
+    max-width: 100% !important;
+  }
+  .home-flow > .msym {
+    transform: rotate(90deg) !important;
+  }
+
   /* prize teaser / CTA */
   .home-prize-teaser {
     padding: 44px 16px !important;
