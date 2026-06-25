@@ -257,7 +257,8 @@ const TRACK_OPTIONS = ['The Best Cold Email (overall)', 'The Unreachable', 'Best
 // Route guard: the submission page is only reachable once registered on this
 // device. Unregistered visitors (incl. new devices) are sent to registration.
 function RequireRegistration({ children }) {
-  if (!isRegisteredLocal()) return <Navigate to="/the-procedure" replace />
+  // Hitting the submission URL while unregistered is a Submit action → auto-start registration.
+  if (!isRegisteredLocal()) return <Navigate to="/the-procedure" replace state={{ autoRegister: true }} />
   return children
 }
 
@@ -807,7 +808,11 @@ const ENTER_STEPS = [
 function ViewEnter({ onEnter, onRegistered }) {
   // Procedure page is now the chat-only registration flow. The Maps / Classroom
   // / Story tabs + switcher below are kept (dead) for an end-of-project sweep.
-  return <ViewChat onRegistered={onRegistered} />
+  // When the user landed here via a Submit action while unregistered, the
+  // redirect sets location.state.autoRegister so the chat auto-starts registration.
+  const { state } = useLocation()
+  const autoRegister = !!(state && state.autoRegister)
+  return <ViewChat onRegistered={onRegistered} autoRegister={autoRegister} />
 
   /* eslint-disable no-unreachable */
   const [ui, setUi] = useState('maps') // 'maps' | 'classroom' | 'story' | 'chat'
@@ -3275,7 +3280,7 @@ export default function App() {
     const ok = reg === null ? isRegisteredLocal() : reg
     if (!ok) {
       showToast('Register first — taking you to registration.')
-      navigate('/the-procedure')
+      navigate('/the-procedure', { state: { autoRegister: true } })
       return
     }
     // Persist the entry to Supabase (`submissions` table). Unlimited entries
@@ -3298,7 +3303,10 @@ export default function App() {
   }
   const goHome = () => navigate('/')
   // Every "Enter" CTA: registered on this device → submission page; else → register.
-  const onEnter = () => navigate(isRegisteredLocal() ? '/submit' : '/the-procedure')
+  const onEnter = () => navigate(
+    isRegisteredLocal() ? '/submit' : '/the-procedure',
+    isRegisteredLocal() ? undefined : { state: { autoRegister: true } }
+  )
   // Called by the registration chat when a user finishes (or is already registered).
   const onRegistered = (info) => { setRegistration(info); navigate('/submit') }
 
