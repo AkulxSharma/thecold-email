@@ -130,15 +130,18 @@ export default function ViewChat({ onRegistered, autoRegister = false }) {
   // so the static welcome script isn't scrolled past. Subsequent message appends
   // DO autoscroll. Exception: when autoRegister is set we start at the bottom
   // (latest message) so the auto-started registration flow is in view.
-  const didFirstScroll = useRef(false)
+  // StrictMode-robust: never scroll on the initial/static render (msgs starts
+  // empty), only when a NEW message is actually appended. Tracking the previous
+  // length means a double-invoked effect can't sneak a scroll-to-bottom in.
+  // (autoRegister's jump-to-bottom is handled by the dedicated effect below.)
+  const prevLen = useRef(0)
   useEffect(() => {
     const el = scrollRef.current
     if (!el) return
-    if (!didFirstScroll.current) {
-      didFirstScroll.current = true
-      if (!autoRegister) return
+    if (msgs.length > prevLen.current) {
+      requestAnimationFrame(() => { el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }) })
     }
-    requestAnimationFrame(() => { el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }) })
+    prevLen.current = msgs.length
   }, [msgs, flow, done])
 
   // ---- one-by-one bot reveal -------------------------------------------------
