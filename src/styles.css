@@ -735,6 +735,23 @@ html, body, #root {
   color: #444746;
   cursor: pointer;
 }
+.ai-ov-chevron .msym { transition: transform .28s cubic-bezier(.2,0,0,1); }
+.ai-ov-chevron.open .msym { transform: rotate(180deg); }
+/* Google-style smooth collapse: animate the grid row from 0fr to 1fr (height)
+   while the inner clips overflow and fades in. */
+.ai-ov-collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows .28s cubic-bezier(.2,0,0,1);
+}
+.ai-ov-collapse.open { grid-template-rows: 1fr; }
+.ai-ov-collapse-inner {
+  overflow: hidden;
+  min-height: 0;
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+.ai-ov-collapse.open .ai-ov-collapse-inner { opacity: 1; }
 .ai-ov-body {
   display: block;
   width: 100%;
@@ -742,6 +759,9 @@ html, body, #root {
   font-size: 14px;
   color: #1f1f1f;
   line-height: 1.55;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ai-ov-collapse, .ai-ov-collapse-inner, .ai-ov-chevron .msym { transition: none; }
 }
 .bx-list {
   border-top: 1px solid #f1f3f4;

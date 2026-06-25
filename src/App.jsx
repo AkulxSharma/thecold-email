@@ -1974,15 +1974,18 @@ function ViewBest() {
           <div className="ai-ov-head">
             <span className="ai-ov-spark"><I.Spark size={20} /></span>
             <span className="ai-ov-title">AI Overview</span>
-            <span className="ai-ov-chevron" onClick={() => setAiOpen(o => !o)} title={aiOpen ? 'Collapse' : 'Expand'}>
-              <I.M name={aiOpen ? 'expand_less' : 'expand_more'} size={22} />
+            <span className={`ai-ov-chevron${aiOpen ? ' open' : ''}`} onClick={() => setAiOpen(o => !o)} title={aiOpen ? 'Collapse' : 'Expand'}>
+              <I.M name="expand_more" size={22} />
             </span>
           </div>
-          {aiOpen && (
-            <p className="ai-ov-body">
-              These are example cold emails, the best of thecold.email, proven by who actually replied. Akul will replace them with the real winning entries.
-            </p>
-          )}
+          {/* Body stays mounted; the grid-rows trick animates height + opacity. */}
+          <div className={`ai-ov-collapse${aiOpen ? ' open' : ''}`}>
+            <div className="ai-ov-collapse-inner">
+              <p className="ai-ov-body">
+                These are example cold emails, the best of thecold.email, proven by who actually replied. Akul will replace them with the real winning entries.
+              </p>
+            </div>
+          </div>
         </div>
         <div className="bx-list">
           {BEST_EMAILS.map((em, i) => (
