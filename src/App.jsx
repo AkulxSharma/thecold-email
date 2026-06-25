@@ -638,7 +638,9 @@ function ViewOverview({ onEnter, goto }) {
         const entered = sr.bottom - top            // px the top has risen past the fold
         const p = Math.max(0, Math.min(1, entered / dist))
         el.style.opacity = String(p)
-        el.style.transform = `translateY(${(1 - p) * 28}px)`
+        // translate + a subtle size-scale so every revealed section (incl. .home-film)
+        // gets the same gentle "grow in" entrance, not just a vertical slide.
+        el.style.transform = `translateY(${(1 - p) * 28}px) scale(${0.96 + p * 0.04})`
       })
     }
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(update) }

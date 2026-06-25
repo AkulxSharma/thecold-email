@@ -1852,7 +1852,8 @@ html, body, #root {
    (the .walhero hero is excluded — it has its own scroll animation). */
 .home > section:not(.walhero), .home > footer {
   opacity: 0;
-  transform: translateY(28px);
+  transform: translateY(28px) scale(.96);
+  transform-origin: center top;
   will-change: opacity, transform;
 }
 @media (prefers-reduced-motion: reduce) {
