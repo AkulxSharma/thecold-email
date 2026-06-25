@@ -2891,7 +2891,7 @@ function ViewTracksHome({ goto, onEnter }) {
             </div>
           </div>
           <div className="gdocs-templates">
-            <div className="gdocs-tpl" onClick={onEnter}>
+            <div className="gdocs-tpl gdocs-tpl-static">
               <div className="gdocs-tpl-thumb gdocs-tpl-blank">
                 <svg width="46" height="46" viewBox="0 0 24 24"><path fill="#4285F4" d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z"/></svg>
               </div>

@@ -2662,6 +2662,10 @@ html, body, #root {
 .gdocs-kebab { display: inline-flex; cursor: pointer; }
 .gdocs-templates { display: flex; gap: 28px; flex-wrap: wrap; }
 .gdocs-tpl { width: 150px; cursor: pointer; }
+/* Blank-document template is non-interactive: it links nowhere */
+.gdocs-tpl-static { cursor: default; }
+.gdocs-tpl-static:hover .gdocs-tpl-thumb { border-color: #dadce0; box-shadow: none; }
+.gdocs-tpl-static:hover .gdocs-tpl-name { color: #3c4043; }
 .gdocs-tpl-thumb { width: 150px; height: 195px; background: #fff; border: 1px solid #dadce0; border-radius: 2px; overflow: hidden; display: flex; align-items: center; justify-content: center; transition: border-color .15s, box-shadow .15s; }
 .gdocs-tpl:hover .gdocs-tpl-thumb { border-color: #4285f4; box-shadow: 0 1px 3px rgba(60,64,67,.3); }
 .gdocs-tpl-blank { align-items: center; justify-content: center; }
