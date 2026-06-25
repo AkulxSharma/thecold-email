@@ -232,8 +232,8 @@ function Sidebar({ onCompose, goto, pathname, open }) {
       <NavItem icon={<I.M name="auto_awesome" />}  label="Best Emails"                    active={isActive('best')}     onClick={() => goto('best')} />
       <NavItem icon={<I.M name="article" />}       label="Manifesto"                      active={isActive('about')}    onClick={() => goto('about')} />
 
-      <div className={`section-head section-head-btn${isActive('tracks-home') ? ' active' : ''}`} onClick={() => goto('tracks-home')}>
-        <span className="section-caret-btn" title="Collapse" onClick={e => { e.stopPropagation(); toggleCollapse('tracks') }}>{caret('tracks')}</span> TRACKS
+      <div className="section-head section-head-btn" onClick={() => toggleCollapse('tracks')}>
+        <span className="section-caret-btn" title="Collapse">{caret('tracks')}</span> TRACKS
       </div>
       {!collapsed.has('tracks') && (<>
         <NavItem icon={<I.Plane size={20} />}  label="The Unreachable"    active={isActive('track-unreachable')} onClick={() => goto('track-unreachable')} />
