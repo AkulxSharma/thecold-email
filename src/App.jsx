@@ -380,12 +380,35 @@ function jeminiAnswer(qRaw) {
 }
 
 const JEMINI_CHIPS = ['What are the tracks?', 'How do I enter?', "What's the rule?", 'Prizes?', 'Deadlines?']
+// Follow-up prompts surfaced after each reply so there's always a next thing to tap.
+const JEMINI_FOLLOWUPS = [
+  'How is it judged?',
+  'When are winners announced?',
+  'What counts as a real reply?',
+  "What's the grand prize?",
+  'Tell me about The Unreachable',
+  'Can I enter more than one track?',
+  'When does registration close?',
+]
+// Rotate a small set of context-relevant follow-ups so the chip row keeps changing.
+function followupChips(msgs) {
+  if (msgs.length === 0) return JEMINI_CHIPS
+  const turns = msgs.filter(m => m.role === 'you').length
+  const start = (turns * 2) % JEMINI_FOLLOWUPS.length
+  const out = []
+  for (let i = 0; i < 4; i++) out.push(JEMINI_FOLLOWUPS[(start + i) % JEMINI_FOLLOWUPS.length])
+  return out
+}
 
 function JeminiPanel({ onClose, open }) {
   const [msgs, setMsgs] = useState([])
   const [input, setInput] = useState('')
   const scrollRef = useRef()
   const started = msgs.length > 0
+  // Replies are synchronous, so the bot is "idle" whenever the last turn is its
+  // reply (or there are no messages yet) — that's when we re-offer the chips.
+  const idle = msgs.length === 0 || msgs[msgs.length - 1].role === 'bot'
+  const chips = followupChips(msgs)
 
   const send = (text) => {
     const t = (text ?? input).trim()
@@ -422,6 +445,11 @@ function JeminiPanel({ onClose, open }) {
         ) : (
           <div className="jp-msgs">
             {msgs.map((m, i) => <div key={i} className={`jp-msg jp-${m.role}`}>{m.text}</div>)}
+            {idle && (
+              <div className="jp-chips jp-chips-followup">
+                {chips.map(c => <span key={c} className="jp-chip" onClick={() => send(c)}>{c}</span>)}
+              </div>
+            )}
           </div>
         )}
       </div>
