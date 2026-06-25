@@ -80,6 +80,16 @@
 
   /* ---- Inbox list ---- */
   .bx-row { padding: 0 12px !important; gap: 8px !important; }
+  /* Let the subject ellipsize instead of hard-cutting mid-word: the base
+     .bx-subj is flex-shrink:0, so on a narrow row a long subject overflowed
+     the snippet's clip box with no ellipsis. Allow it to shrink + truncate. */
+  .bx-subj {
+    flex-shrink: 1 !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
   /* Shrink the fixed 160px sender column. */
   .bx-sender { flex: 0 0 110px !important; }
   /* Hide secondary stat columns to save width. */
