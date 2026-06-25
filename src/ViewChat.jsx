@@ -310,9 +310,12 @@ export default function ViewChat({ onRegistered, autoRegister = false }) {
         </div>
         <div className="gchat-hd-r">
           <button className="gchat-ic" title="Call"><M name="videocam" size={20} /></button>
-          <button className="gchat-ic" title="Files"><M name="folder_open" size={20} /></button>
-          <button className="gchat-ic" title="History"><M name="hourglass_empty" size={20} /></button>
-          <button className="gchat-ic" title="Pin"><M name="push_pin" size={20} /></button>
+          <span className="gchat-hd-div" />
+          <div className="gchat-hd-grp">
+            <button className="gchat-ic" title="Files"><M name="folder_open" size={20} /></button>
+            <button className="gchat-ic" title="History"><M name="hourglass_empty" size={20} /></button>
+            <button className="gchat-ic" title="Pin"><M name="push_pin" size={20} /></button>
+          </div>
         </div>
       </div>
 
