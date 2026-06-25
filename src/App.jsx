@@ -253,7 +253,9 @@ function Sidebar({ onCompose, goto, pathname, open }) {
 }
 
 // ---------------- ENTRY FORM (Compose) ----------------
-const TRACK_OPTIONS = ['The Best Cold Email (overall)', 'The Unreachable', 'Best Subject Line', 'The Two-Liner', 'The Ask']
+// "The Best Cold Email (overall)" is the auto-enrolled grand prize — every entry
+// is considered for it, so it is intentionally NOT a selectable track here.
+const TRACK_OPTIONS = ['The Unreachable', 'Best Subject Line', 'The Two-Liner', 'The Ask']
 // Route guard: the submission page is only reachable once registered on this
 // device. Unregistered visitors (incl. new devices) are sent to registration.
 function RequireRegistration({ children }) {
