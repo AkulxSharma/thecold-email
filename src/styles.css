@@ -1044,7 +1044,42 @@ html, body, #root {
   flex-direction: column;
   overflow: hidden;
   min-width: 0;
+  position: relative; /* anchors the pull-to-refresh spinner (.ptr-indicator) */
 }
+
+/* =====================================================================
+   PULL-TO-REFRESH  (.ptr-*) — mobile swipe-down-to-refresh spinner.
+   Parked just above the view (top:-44px) and slid down via translateY by
+   usePullToRefresh; .main's overflow:hidden clips it until it's pulled in.
+   ===================================================================== */
+.ptr-indicator {
+  position: absolute;
+  top: -44px;
+  left: 50%;
+  z-index: 60;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(60,64,67,.3), 0 4px 8px rgba(60,64,67,.15);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+.ptr-spinner { display: flex; transform-origin: center; }
+.ptr-indicator.refreshing .ptr-spinner { animation: ptr-spin .8s linear infinite; }
+.ptr-track { fill: none; stroke: #e8eaed; stroke-width: 3; }
+.ptr-arc {
+  fill: none;
+  stroke: #1a73e8;
+  stroke-width: 3;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: center;
+}
+@keyframes ptr-spin { to { transform: rotate(360deg); } }
 
 /* Every view is a flex column that scrolls on its own */
 .view-panel {

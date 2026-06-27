@@ -7,6 +7,7 @@ import ViewChat from './ViewChat.jsx'
 import { insertSubmission, isEmailRegistered } from './supabase.js'
 import { getRegistration, isRegisteredLocal, setRegistration } from './registration.js'
 import { loadReadState, saveReadState, loadStarredState, saveStarredState } from './bestState.js'
+import { usePullToRefresh } from './usePullToRefresh.jsx'
 
 const GMAIL_LOGO = '/logo.png'
 
@@ -3297,6 +3298,13 @@ export default function App() {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
+  // Mobile pull-to-refresh (Gmail-style). No live server inbox to re-fetch, so
+  // the gesture runs a brief sync beat then settles — the refresh affordance
+  // users expect on touch, without faking data that doesn't exist.
+  const { mainRef, indicator: ptrIndicator } = usePullToRefresh(
+    () => new Promise(res => setTimeout(res, 600))
+  )
+
   const showToast = (m) => {
     setToast(m)
     clearTimeout(toastTimer.current)
@@ -3368,7 +3376,8 @@ export default function App() {
           pathname={pathname}
           open={sidebarOpen}
         />
-        <div className="main">
+        <div className="main" ref={mainRef}>
+          {ptrIndicator}
           <Routes>
             <Route path="/"               element={<ViewOverview onEnter={onEnter} goto={goto} />} />
             <Route path="/home"           element={<ViewOverview onEnter={onEnter} goto={goto} />} />
