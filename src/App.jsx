@@ -3298,11 +3298,12 @@ export default function App() {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  // Mobile pull-to-refresh (Gmail-style). No live server inbox to re-fetch, so
-  // the gesture runs a brief sync beat then settles — the refresh affordance
-  // users expect on touch, without faking data that doesn't exist.
+  // Mobile pull-to-refresh (Gmail-style). Actually reloads the page — the
+  // spinner runs while we hold a beat so the gesture reads, then the browser
+  // hard-reloads. The returned promise never resolves on purpose; navigation
+  // tears the page down before it would.
   const { mainRef, indicator: ptrIndicator } = usePullToRefresh(
-    () => new Promise(res => setTimeout(res, 600))
+    () => new Promise(() => setTimeout(() => window.location.reload(), 400))
   )
 
   const showToast = (m) => {
