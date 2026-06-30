@@ -279,7 +279,22 @@ function ComposeWindow({ onClose, onSend, page }) {
   // Validation/error messages shown in a banner at the TOP of the dialog.
   const [errors, setErrors] = useState([])
   const fileRef = useRef()
-  const addFiles = (list) => setFiles(f => [...f, ...Array.from(list)])
+  // Only images and PDFs are accepted. The OS file picker's `accept` is just a
+  // hint (and drag/paste bypasses it), so validate here and surface any rejected
+  // files in the top error banner instead of silently dropping them.
+  const isAllowedFile = (f) => f.type.startsWith('image/') || f.type === 'application/pdf' || /\.pdf$/i.test(f.name)
+  const addFiles = (list) => {
+    const arr = Array.from(list)
+    const ok = arr.filter(isAllowedFile)
+    const bad = arr.filter(f => !isAllowedFile(f))
+    if (bad.length) setErrors([`Unsupported file type: ${bad.map(f => f.name).join(', ')}. Attach images (PNG, JPG…) or a PDF only.`])
+    else setErrors([])
+    if (ok.length) setFiles(f => [...f, ...ok])
+  }
+  // Discarding wipes the in-progress entry — confirm to prevent misclicks.
+  const handleDiscard = () => {
+    if (window.confirm('Discard this submission? Anything you’ve entered won’t be saved.')) onClose()
+  }
 
   // Mirror submitEntry's synchronous field checks so errors surface at the top
   // of the dialog (next to the fields) instead of as a far-away bottom toast.
@@ -388,7 +403,7 @@ function ComposeWindow({ onClose, onSend, page }) {
           <span className="cw-act-ic"><I.M name="add_to_drive" size={20} /></span>
           <span className="cw-act-ic"><I.M name="image" size={20} /></span>
         </div>
-        <span className="cw-trash" title="Discard" onClick={onClose}><I.M name="delete" size={20} /></span>
+        <span className="cw-trash" title="Discard" onClick={handleDiscard}><I.M name="delete" size={20} /></span>
       </div>
     </div>
   )
@@ -1919,6 +1934,8 @@ function ViewBest() {
   const [readState, setReadState] = useState(loadReadState)       // { [i]: true } — read rows
   const [starredState, setStarredState] = useState(loadStarredState) // { [i]: true } — starred rows
   const [starredOnly, setStarredOnly] = useState(false)           // Starred filter toggle
+  const [openSec, setOpenSec] = useState({ unread: true, rest: true }) // Gmail-style section collapse (All tab)
+  const toggleSec = (k) => setOpenSec(p => ({ ...p, [k]: !p[k] }))
 
   // Persist read / starred maps whenever they change.
   useEffect(() => { saveReadState(readState) }, [readState])
@@ -2073,37 +2090,64 @@ function ViewBest() {
           ><I.M name="star" size={18} /> Starred</button>
         </div>
         <div className="bx-list">
-          {BEST_EMAILS
-            .map((em, i) => ({ em, i }))
-            .filter(({ i }) => (starredOnly ? starredState[i] : true))
-            .map(({ em, i }) => {
+          {(() => {
+            const row = ({ em, i }) => {
               const isRead = !!readState[i]
               const isStarred = !!starredState[i]
               return (
-            <div className={`bx-row ${isRead ? 'read' : 'unread'}`} key={i} onClick={() => openEmail(i)}>
-              <span className="bx-check" onClick={e => e.stopPropagation()}><I.M name="check_box_outline_blank" size={18} /></span>
-              <span
-                className={`bx-star-btn${isStarred ? ' starred' : ''}`}
-                onClick={e => { e.stopPropagation(); toggleStar(i) }}
-                title={isStarred ? 'Starred' : 'Star'}
-              ><I.M name={isStarred ? 'star' : 'star_border'} size={18} /></span>
-              <span className="bx-sender">{em.from}</span>
-              <span className="bx-snippet">
-                {em.tag && <span className="bx-tag">{em.tag}</span>}
-                <span className="bx-subj">{em.subject.replace(/^\[PLACEHOLDER\]\s*/, '')}</span>
-                <span className="bx-dash"> - {snippet(em.body)}</span>
-              </span>
-              <span className="bx-date">{em.date}</span>
-            </div>
+                <div className={`bx-row ${isRead ? 'read' : 'unread'}`} key={i} onClick={() => openEmail(i)}>
+                  <span className="bx-check" onClick={e => e.stopPropagation()}><I.M name="check_box_outline_blank" size={18} /></span>
+                  <span
+                    className={`bx-star-btn${isStarred ? ' starred' : ''}`}
+                    onClick={e => { e.stopPropagation(); toggleStar(i) }}
+                    title={isStarred ? 'Starred' : 'Star'}
+                  ><I.M name={isStarred ? 'star' : 'star_border'} size={18} /></span>
+                  <span className="bx-sender">{em.from}</span>
+                  <span className="bx-snippet">
+                    {em.tag && <span className="bx-tag">{em.tag}</span>}
+                    <span className="bx-subj">{em.subject.replace(/^\[PLACEHOLDER\]\s*/, '')}</span>
+                    <span className="bx-dash"> - {snippet(em.body)}</span>
+                  </span>
+                  <span className="bx-date">{em.date}</span>
+                </div>
               )
-            })}
-          {starredOnly && BEST_EMAILS.every((_, i) => !starredState[i]) && (
-            <div className="bx-empty">
-              <I.M name="star" size={40} />
-              <p>No starred emails yet</p>
-              <span>Click the star on any email to save it here.</span>
-            </div>
-          )}
+            }
+            const all = BEST_EMAILS.map((em, i) => ({ em, i }))
+
+            // Starred tab — flat list (or empty state).
+            if (starredOnly) {
+              const starred = all.filter(({ i }) => starredState[i])
+              return starred.length
+                ? starred.map(row)
+                : (
+                  <div className="bx-empty">
+                    <I.M name="star" size={40} />
+                    <p>No starred emails yet</p>
+                    <span>Click the star on any email to save it here.</span>
+                  </div>
+                )
+            }
+
+            // All tab — Gmail-style grouping: Unread first, then Everything else.
+            const unread = all.filter(({ i }) => !readState[i])
+            const rest = all.filter(({ i }) => readState[i])
+            const Section = (key, label, items) => items.length > 0 && (
+              <div className="bx-section" key={key}>
+                <button className="bx-section-hd" onClick={() => toggleSec(key)}>
+                  <I.M name={openSec[key] ? 'expand_more' : 'chevron_right'} size={20} />
+                  <span className="bx-section-label">{label}</span>
+                  <span className="bx-section-count">{items.length}</span>
+                </button>
+                {openSec[key] && items.map(row)}
+              </div>
+            )
+            return (
+              <>
+                {Section('unread', 'Unread', unread)}
+                {Section('rest', 'Everything else', rest)}
+              </>
+            )
+          })()}
         </div>
       </div>
     </div>
