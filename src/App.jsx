@@ -561,10 +561,6 @@ function WalletHero({ onEnter, goto }) {
   // Phones are tall: the vh-proportional start offset pushes the deck far below
   // the text. Start the deck much closer to the headline on small screens.
   const mobile = typeof window !== 'undefined' && window.innerWidth <= 768
-  const deckStartFactor = mobile ? 0.05 : 0.16
-  // Extra downward offset at the START only (rises away to 0) so the deck clears
-  // the subtext on desktop; the END stays vertically centered.
-  const deckStartPush = mobile ? 0 : 96
 
   // floating pill nav removed per request
   const pill = null
@@ -613,13 +609,21 @@ function WalletHero({ onEnter, goto }) {
 
         <div className="walhero-deck">
           {cards.map((topic, i) => {
-            const startOff = vh * deckStartFactor + deckStartPush + i * 14
+            // START (pre-scroll): a visible Google-Wallet staircase below the
+            // headline — every card peeks its label strip, green (i0) frontmost
+            // at the bottom, the rest ascending. Scroll then rises them into the
+            // centered fan.
+            const startStagger = mobile ? 40 : 46
+            const startBase    = vh * (mobile ? 0.08 : 0.19)
+            const startOff = startBase + i * startStagger
             const fanOff   = (i - 1.5) * 78
             const offY  = _lerp(startOff, fanOff, rise)
             const scale = _lerp(0.9, 1.0, rise)
-            const rot   = _lerp((i - 1.5) * 5, 0, rise)
+            const rot   = 0   // flat horizontal stack (Google-Wallet style)
+            // Depth fade: lower cards blend toward white (Google-Wallet style).
+            const tint = `color-mix(in srgb, ${WAL_COLORS[i]} ${100 - (i / 3) * 22}%, #fff)`
             const style = {
-              '--wc': WAL_COLORS[i],
+              '--wc': tint,
               zIndex: 10 - i,
               transform: `translate(-50%, calc(-50% + ${offY}px)) scale(${scale}) rotate(${rot}deg)`,
             }
