@@ -2099,8 +2099,11 @@ html, body, #root {
 .home-prize-btn:hover { transform: translateY(-1px); background: #f1f6ff; }
 .home-prize-btn .msym { font-size: 16px; }
 
-/* Launch film — NotebookLM-style: centered title + wide centered media card */
-.home-film { padding: 28px 24px 64px; }
+/* Launch film — NotebookLM-style: centered title + wide centered media card.
+   Negative margin pulls the film up into the tail of the hero's sticky region so
+   it sits CLOSE beneath the settled cards (no big white gap) and its mirrored
+   fade-in actually plays on screen while the hero scroll progress finishes. */
+.home .home-film { padding: 28px 24px 64px; margin: -140px auto 0; position: relative; z-index: 2; }
 /* thin centered rule between the hero deck and the launch-film section */
 .home-film::before {
   content: "";
@@ -2473,7 +2476,7 @@ html, body, #root {
   max-width: none !important;
   width: 100%;
   margin: 0 !important;
-  height: 124vh;           /* track: pins for the card-rise, brief hold, then the next section scrolls up close behind (less trailing dead space) */
+  height: 150vh;           /* track: pins for the card-rise, brief hold, then the next section scrolls up close behind (less trailing dead space) */
   position: relative;
 }
 .walhero-stage {

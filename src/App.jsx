@@ -604,7 +604,7 @@ function WalletHero({ onEnter, goto }) {
 
   // ----- animated states -----
   const hHide = _ease(_seg(p, 0.04, 0.34))   // headline rises + fades out first
-  const rise  = _ease(_seg(p, 0.12, 0.70))   // cards rise into the stacked deck, then HOLD (0.70→1.0) before the next section scrolls up
+  const rise  = _ease(_seg(p, 0.12, 0.82))   // cards rise into the stacked deck, then hold
 
   const headStyle = {
     opacity: 1 - hHide,
@@ -679,7 +679,9 @@ function ViewOverview({ onEnter, goto }) {
   // entered the viewport, so you actually SEE it fade + rise in as you scroll
   // (a one-shot transition finishes off-screen and is never seen).
   useEffect(() => {
-    const els = [...document.querySelectorAll('.home > section:not(.walhero), .home > footer')]
+    // .home-film is excluded here — it gets its own scroll-linked motion that
+    // MIRRORS the hero headline exactly (see the .home-film effect below).
+    const els = [...document.querySelectorAll('.home > section:not(.walhero):not(.home-film), .home > footer')]
     if (!els.length) return
     const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduced) { els.forEach(el => { el.style.opacity = '1'; el.style.transform = 'none' }); return }
@@ -700,6 +702,46 @@ function ViewOverview({ onEnter, goto }) {
         // gets the same gentle "grow in" entrance, not just a vertical slide.
         el.style.transform = `translateY(${(1 - p) * 28}px) scale(${0.96 + p * 0.04})`
       })
+    }
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update) }
+    update()
+    target.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    return () => {
+      target.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [])
+
+  // .home-film mirrors the hero headline EXACTLY. The headline rises up + fades
+  // OUT over the hero scroll progress p via hHide = _ease(_seg(p, 0.04, 0.34)),
+  // transform translateY(-hHide*160px). The film is the symmetric bookend: it
+  // rises up + fades IN over the SAME progress p (computed from the SAME .walhero
+  // geometry), using the SAME _ease and the SAME 160px distance, just reversed —
+  // opacity = filmIn, translateY((1 - filmIn) * 160px) → 160px..0.
+  useEffect(() => {
+    const film = document.querySelector('.home-film')
+    if (!film) return
+    const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduced) { film.style.opacity = '1'; film.style.transform = 'none'; return }
+    const hero = document.querySelector('.walhero')
+    const scroller = document.querySelector('.view-panel')
+    const target = scroller || window
+    let raf = 0
+    const update = () => {
+      raf = 0
+      if (!hero) return
+      const h = (scroller ? scroller.clientHeight : window.innerHeight) || 800
+      const top = hero.offsetTop
+      const scrollTop = scroller ? scroller.scrollTop : window.scrollY
+      const travel = hero.offsetHeight - h
+      const p = _clamp01(travel > 0 ? (scrollTop - top) / travel : 0)
+      // mirror of the headline's 0.30-wide ease window, placed near the end so
+      // the film fades in as the cards finish settling (rise completes at 0.82).
+      const filmIn = _ease(_seg(p, 0.66, 0.96))
+      film.style.opacity = String(filmIn)
+      film.style.transform = `translateY(${(1 - filmIn) * 160}px)`
     }
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(update) }
     update()
