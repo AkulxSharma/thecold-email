@@ -628,8 +628,8 @@ function WalletHero({ onEnter, goto }) {
             // headline — every card peeks its label strip, green (i0) frontmost
             // at the bottom, the rest ascending. Scroll then rises them into the
             // centered fan.
-            const startStagger = mobile ? 52 : 60
-            const startBase    = vh * (mobile ? 0.14 : 0.215)
+            const startStagger = mobile ? 60 : 74
+            const startBase    = vh * (mobile ? 0.14 : 0.20)
             const startOff = startBase + i * startStagger
             const fanOff   = (i - 1.5) * 78
             const offY  = _lerp(startOff, fanOff, rise)
@@ -1563,6 +1563,14 @@ function gcalAddUrl() {
   return `https://calendar.google.com/calendar/render?${params.toString()}`
 }
 
+// Compact time label for tiny events — "09:00" -> "9am", "09:45" -> "9:45am".
+function fmtMiniTime(t) {
+  const [H, M] = String(t).split(':').map(Number)
+  const ap = H < 12 ? 'am' : 'pm'
+  const h = H % 12 || 12
+  return M ? `${h}:${String(M).padStart(2, '0')}${ap}` : `${h}${ap}`
+}
+
 function ViewCalendar() {
   const [monDate, setMonDate] = useState(weekStart(DEFAULT_WEEK))
   const [sel, setSel] = useState(null)  // selected event → detail popup
@@ -1807,8 +1815,16 @@ function ViewCalendar() {
                         title={`${ev.start}–${ev.end} ${ev.title}`}
                         onClick={(e) => setSel({ ev, x: e.clientX, y: e.clientY })}
                       >
-                        <div className="gcalw-event-title">{ev.title}</div>
-                        <div className="gcalw-event-time">{ev.start}–{ev.end}</div>
+                        {heightPx < 34 ? (
+                          // Too short for two lines — Google collapses to a single
+                          // "Title, 9:45am" line with ellipsis (no mid-word clipping).
+                          <div className="gcalw-event-line">{ev.title}, {fmtMiniTime(ev.start)}</div>
+                        ) : (
+                          <>
+                            <div className="gcalw-event-title">{ev.title}</div>
+                            <div className="gcalw-event-time">{ev.start}–{ev.end}</div>
+                          </>
+                        )}
                       </div>
                     )
                   })}

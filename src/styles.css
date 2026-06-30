@@ -1943,10 +1943,23 @@ html, body, #root {
   font-size: 12px;
   font-weight: 500;
   color: #fff;
-  white-space: normal;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   line-height: 1.3;
+  font-family: var(--font-body);
+  letter-spacing: .1px;
+  text-shadow: 0 1px 1px rgba(0,0,0,.18);
+}
+/* Single-line label for events too short for two lines: "Title, 9:45am". */
+.gcalw-event-line {
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
   font-family: var(--font-body);
   letter-spacing: .1px;
   text-shadow: 0 1px 1px rgba(0,0,0,.18);
@@ -2549,11 +2562,11 @@ html, body, #root {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 620px;
-  max-width: 90vw;
-  height: 96px;
+  width: 680px;
+  max-width: 92vw;
+  height: 112px;
   border: 0;
-  border-radius: 28px;
+  border-radius: 30px;
   background: var(--wc, #4285F4);
   color: #fff;
   display: flex;
@@ -2570,16 +2583,16 @@ html, body, #root {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 52px;
-  height: 52px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background: rgba(0,0,0,.16);
   color: #fff;
   flex-shrink: 0;
 }
-.wcard-icon .msym { font-size: 28px; }
+.wcard-icon .msym { font-size: 30px; }
 .wcard-name {
-  font: 600 26px 'Google Sans','Roboto',Arial,sans-serif;
+  font: 600 29px 'Google Sans','Roboto',Arial,sans-serif;
   letter-spacing: -0.01em;
   color: #fff;
 }
