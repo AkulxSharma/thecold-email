@@ -604,7 +604,7 @@ function WalletHero({ onEnter, goto }) {
 
   // ----- animated states -----
   const hHide = _ease(_seg(p, 0.04, 0.34))   // headline rises + fades out first
-  const rise  = _ease(_seg(p, 0.12, 0.82))   // cards rise into the stacked deck, then hold
+  const rise  = _ease(_seg(p, 0.12, 0.70))   // cards rise into the stacked deck, then HOLD (0.70→1.0) before the next section scrolls up
 
   const headStyle = {
     opacity: 1 - hHide,
