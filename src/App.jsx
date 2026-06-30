@@ -2792,6 +2792,18 @@ function TrackMarkedDoc({ data, title, topic, preview = false }) {
             <span className="gdoc-prize-icon"><I.M name="emoji_events" size={22} /></span>
             <p className="gdoc-p gdoc-prize-text"><strong className="mkd-hl mkd-hl-y">$500</strong> for the winning entry. Every qualifying entry is also automatically considered for the Best Cold Email ($1,000 grand prize).</p>
           </div>
+
+          {/* The Gate / Remember — universal qualifying requirement shared by every
+              track (real reply, no impersonation/lying/pre-existing relationship/
+              mass-blasting). Same TRACK_REMEMBER copy used by the other track views,
+              rendered here with the existing .gdoc-callout-* styling. */}
+          <div className="gdoc-callout" ref={setAnchor('remember')}>
+            <div className="gdoc-callout-title">Remember</div>
+            <p className="gdoc-callout-lead">{TRACK_REMEMBER.lead}</p>
+            <p className="gdoc-callout-bold">{TRACK_REMEMBER.bold}</p>
+            <p className="gdoc-callout-body">{TRACK_REMEMBER.body}</p>
+            <span className="gdoc-callout-tag">{TRACK_REMEMBER.tag}</span>
+          </div>
       </div>
   )
 
