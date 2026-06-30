@@ -2666,17 +2666,24 @@ html, body, #root {
 .gpay-act:hover .gpay-act-ic { background: #d2e3fc; }
 
 /* prize cards — horizontal scroll row, centered; scrolls if it overflows */
-.gpay-cards { display: flex; flex: none; gap: 16px; overflow-x: auto; overflow-y: hidden; padding: 4px 22px 18px; align-items: flex-start; min-height: 202px; max-width: 100%; box-sizing: border-box; cursor: grab; scrollbar-width: none; }
+.gpay-cards { display: flex; flex: none; gap: 16px; overflow-x: auto; overflow-y: hidden; padding: 4px 22px 18px; align-items: flex-start; min-height: 230px; max-width: 100%; box-sizing: border-box; cursor: grab; scrollbar-width: none; }
 .gpay-cards::-webkit-scrollbar { display: none; }  /* hide horizontal scrollbar (drag to scroll instead) */
 .gpay-cards.dragging { cursor: grabbing; user-select: none; }
 .gpay-cards.dragging .gpay-card { pointer-events: none; }
 /* auto-margin spacers center the row when it fits, but collapse to 0 (no start-clip) when it overflows */
 .gpay-cards::before, .gpay-cards::after { content: ''; margin: auto; }
-.gpay-card { flex: none; width: 300px; height: 180px; min-height: 180px; border-radius: 16px; padding: 18px; color: #fff; box-shadow: 0 2px 8px rgba(60,64,67,.24); display: flex; flex-direction: column; box-sizing: border-box; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; }
+/* Fixed height + flex column locks every card to the same size regardless of
+   copy length: the description sits in a fixed 2-line slot and the amount is
+   pinned to the bottom (margin-top:auto), so a longer line never grows a card. */
+.gpay-card { flex: none; width: 300px; height: 208px; min-height: 208px; border-radius: 16px; padding: 18px; color: #fff; box-shadow: 0 2px 8px rgba(60,64,67,.24); display: flex; flex-direction: column; box-sizing: border-box; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; }
 .gpay-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(60,64,67,.32); }
 .gpay-card-grand { box-shadow: 0 4px 16px rgba(0,0,0,.32); }
 .gpay-card-top { display: flex; align-items: flex-start; justify-content: space-between; }
 .gpay-card-name { font: 600 16px 'Google Sans','Roboto',Arial,sans-serif; }
+/* secondary descriptive line — subtle on the gradient, fixed 2-line slot */
+.gpay-card-desc { margin-top: 8px; font: 400 13px 'Roboto',Arial,sans-serif; line-height: 1.35;
+  color: rgba(255,255,255,.92); height: 35px; overflow: hidden;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 .gpay-card-ico { display: inline-flex; align-items: center; justify-content: center; color: #fff; opacity: .95; }
 .gpay-card-ico svg { stroke: #fff; }
 .gpay-card-ico.fill .msym { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }

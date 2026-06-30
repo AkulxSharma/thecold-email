@@ -3220,11 +3220,15 @@ function ViewRule({ onEnter }) {
 function ViewPrizes({ onEnter, goto }) {
   const passes = [
     { name: 'The Best Cold Email', sub: 'Grand prize · best overall', amount: '$1,000', grand: true,
-      c1: '#202124', c2: '#3c4043' },
-    { name: 'The Unreachable',  sub: 'Track 1', amount: '$500', topic: 'unreachable', c1: '#1e8e3e', c2: '#34a853' },
-    { name: 'Best Subject Line', sub: 'Track 2', amount: '$500', topic: 'subject',  c1: '#f9ab00', c2: '#fbbc04' },
-    { name: 'The Two-Liner',    sub: 'Track 3', amount: '$500', topic: 'twoliner', c1: '#d93025', c2: '#ea4335' },
-    { name: 'The Ask',          sub: 'Track 4', amount: '$500', topic: 'ask',      c1: '#1a73e8', c2: '#4285f4' },
+      desc: 'The single best cold email across every track.', c1: '#202124', c2: '#3c4043' },
+    { name: 'The Unreachable',  sub: 'Track 1', amount: '$500', topic: 'unreachable',
+      desc: 'A real reply from someone who almost never replies.', c1: '#1e8e3e', c2: '#34a853' },
+    { name: 'Best Subject Line', sub: 'Track 2', amount: '$500', topic: 'subject',
+      desc: 'A reply earned by the subject line alone.', c1: '#f9ab00', c2: '#fbbc04' },
+    { name: 'The Two-Liner',    sub: 'Track 3', amount: '$500', topic: 'twoliner',
+      desc: 'A reply in two sentences or fewer.', c1: '#d93025', c2: '#ea4335' },
+    { name: 'The Ask',          sub: 'Track 4', amount: '$500', topic: 'ask',
+      desc: 'A major “yes” from someone who could open a door.', c1: '#1a73e8', c2: '#4285f4' },
   ]
   // drag-to-scroll the card row with the mouse (grab + drag, like a real Wallet carousel)
   const rowRef = useRef(null)
@@ -3277,6 +3281,7 @@ function ViewPrizes({ onEnter, goto }) {
               <span className="gpay-card-name">{p.name}</span>
               <span className={`gpay-card-ico${p.grand ? ' fill' : ''}`}>{p.grand ? <I.M name="star" size={26} /> : TRACK_ICONS[p.topic]}</span>
             </div>
+            <div className="gpay-card-desc">{p.desc}</div>
             <div className="gpay-card-amt">{p.amount}</div>
             <div className="gpay-card-sub">{p.sub}</div>
           </div>
