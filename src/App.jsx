@@ -1017,7 +1017,7 @@ function ViewEnter({ onEnter, onRegistered }) {
         <aside className="gclass-side">
           <div className="gclass-card gclass-due">
             <h4>Due soon</h4>
-            <p className="gclass-duedate"><I.M name="event" size={16} /> Registration closes Jul 6</p>
+            <p className="gclass-duedate"><I.M name="event" size={16} /> Registration closes Jun 30</p>
             <p className="gclass-duedate"><I.M name="event" size={16} /> Submit reply by Jul 7</p>
           </div>
         </aside>
@@ -1235,7 +1235,7 @@ function ViewEnter({ onEnter, onRegistered }) {
 
           <div className="gmd-band" />
           <div className="gmd-due">
-            <I.M name="schedule" size={16} /> Registration closes Jul 6 · Submit reply by Jul 7
+            <I.M name="schedule" size={16} /> Registration closes Jun 30 · Submit reply by Jul 7
           </div>
         </div>
 
@@ -1487,7 +1487,12 @@ async function fetchIpTz() {
 
 // Default week: Mon Jun 22 2026
 const DEFAULT_WEEK = new Date(2026, 5, 22)
-const TODAY_YMD = '2026-06-18'
+// Real current date as YYYY-MM-DD in LOCAL time (avoid toISOString UTC shift).
+const TODAY_YMD = (() => {
+  const d = new Date()
+  const p = n => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`
+})()
 
 // "09:00" → "9:00 AM"
 function fmt12(hhmm) {
@@ -1573,7 +1578,7 @@ function ViewCalendar() {
   const atMax = monDate.getTime() >= maxWeekTs
   const goPrev  = () => setMonDate(d => atMin ? d : addDays(d, -7))
   const goNext  = () => setMonDate(d => atMax ? d : addDays(d,  7))
-  const goToday = () => setMonDate(weekStart(new Date(2026, 5, 18)))
+  const goToday = () => setMonDate(weekStart(new Date()))
 
   // Partition events into all-day and timed, filtered to visible week
   const monTs  = monDate.getTime()

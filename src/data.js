@@ -527,11 +527,23 @@ export const EVENTS = [
   // ---- Timed — deadline week ----
   { date: '2026-06-30', start: '17:00', end: '17:30', title: 'Registrations close',  color: 'amber' },
   { date: '2026-07-01', start: '12:00', end: '13:00', title: 'Mid-event Q&A',        color: 'purple' },
+  { date: '2026-07-02', start: '09:30', end: '10:00', title: 'Daily tip: open with their world', color: 'teal' },
+  { date: '2026-07-02', start: '15:00', end: '16:00', title: 'Subject-line teardown #2',         color: 'purple' },
   { date: '2026-07-03', start: '10:00', end: '11:00', title: 'Send your boldest ask', color: 'amber' },
+  { date: '2026-07-04', start: '11:00', end: '12:00', title: 'Judge office hours',               color: 'green' },
+  { date: '2026-07-04', start: '16:00', end: '16:30', title: '3 days left to submit',            color: 'orange' },
+  { date: '2026-07-05', start: '10:00', end: '10:30', title: 'Daily tip: one clear ask only',    color: 'teal' },
+  { date: '2026-07-05', start: '14:00', end: '15:00', title: 'Polish your reply thread',         color: 'blue' },
+  { date: '2026-07-06', start: '09:00', end: '09:30', title: 'Final-day countdown: 1 day left',  color: 'red' },
+  { date: '2026-07-06', start: '13:00', end: '14:00', title: 'Last-call office hours',           color: 'green' },
 
   // ---- Timed — final week ----
   { date: '2026-07-08', start: '11:00', end: '12:00', title: 'Judging begins',               color: 'green' },
+  { date: '2026-07-08', start: '13:00', end: '17:00', title: 'Judging room (closed session)', color: 'graphite' },
+  { date: '2026-07-09', start: '10:00', end: '16:00', title: 'Judging room (day 2)',          color: 'graphite' },
   { date: '2026-07-10', start: '17:00', end: '18:00', title: 'Winners announced (live)',      color: 'green' },
+  { date: '2026-07-11', start: '11:00', end: '12:00', title: 'Winners recap: what worked',    color: 'blue' },
+  { date: '2026-07-13', start: '15:00', end: '16:00', title: 'Teardown: the winning emails',  color: 'purple' },
 ]
 
 // ENTER / "The Procedure" — Step 1 registration form (Google Forms surface)

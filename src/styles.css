@@ -1826,14 +1826,18 @@ html, body, #root {
   font-size: 11px;
   font-weight: 500;
   border-radius: 4px;
-  padding: 2px 6px;
+  padding: 2px 8px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.45;
   cursor: pointer;
   font-family: var(--font-body);
+  letter-spacing: .1px;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.06);
+  transition: filter .15s;
 }
+.gcalw-allday-pill:hover { filter: brightness(1.05); }
 .gcalw-allday-more {
   font-size: 11px;
   color: #5f6368;
@@ -1903,10 +1907,10 @@ html, body, #root {
 .gcalw-event-block {
   position: absolute;
   border-radius: 4px;
-  padding: 2px 6px;
+  padding: 2px 7px;
   overflow: hidden;
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+  box-shadow: 0 1px 2px rgba(0,0,0,.18), inset 0 0 0 1px rgba(0,0,0,.06);
   transition: box-shadow .15s, filter .15s;
   min-height: 18px;
   box-sizing: border-box;
@@ -1926,13 +1930,15 @@ html, body, #root {
   line-height: 1.3;
   font-family: var(--font-body);
   letter-spacing: .1px;
+  text-shadow: 0 1px 1px rgba(0,0,0,.18);
 }
 .gcalw-event-time {
   font-size: 11px;
   font-weight: 400;
-  color: rgba(255,255,255,.9);
+  color: rgba(255,255,255,.95);
   font-family: var(--font-body);
   line-height: 1.3;
+  text-shadow: 0 1px 1px rgba(0,0,0,.18);
 }
 
 /* Board wraps header + all-day + timed grid so they pan horizontally as one unit */
