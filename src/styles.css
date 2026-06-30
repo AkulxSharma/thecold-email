@@ -2566,16 +2566,16 @@ html, body, #root {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 360px;
-  height: 120px;
+  width: 340px;
+  height: 84px;
   border: 0;
-  border-radius: 24px;
+  border-radius: 20px;
   background: var(--wc, #4285F4);
   color: #fff;
   display: flex;
   align-items: center;
-  gap: 20px;
-  padding: 0 28px;
+  gap: 16px;
+  padding: 0 24px;
   cursor: pointer;
   box-shadow: 0 18px 40px rgba(32,33,36,.22);
   will-change: transform, opacity;
@@ -2585,16 +2585,16 @@ html, body, #root {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 58px;
-  height: 58px;
-  border-radius: 15px;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
   background: rgba(255,255,255,.22);
   color: #fff;
   flex-shrink: 0;
 }
-.wcard-icon .msym { font-size: 32px; }
+.wcard-icon .msym { font-size: 26px; }
 .wcard-name {
-  font: 600 22px 'Google Sans','Roboto',Arial,sans-serif;
+  font: 600 19px 'Google Sans','Roboto',Arial,sans-serif;
   color: #fff;
 }
 
@@ -2662,10 +2662,7 @@ html, body, #root {
 @media (max-width: 768px) {
   .walhero-title { font-size: 34px; }
   .walhero-sub { font-size: 16px; }
-  .wcard { width: 300px; height: 104px; border-radius: 22px; gap: 16px; padding: 0 22px; }
-  .wcard-icon { width: 50px; height: 50px; border-radius: 14px; }
-  .wcard-icon .msym { font-size: 28px; }
-  .wcard-name { font-size: 20px; }
+  .wcard { width: 280px; height: 74px; }
   .walhero-pill { gap: 0; padding: 4px; }
   .walhero-pill button { padding: 7px 10px; font-size: 13px; }
   .walhero-enter-pill { right: 14px; bottom: 14px; }
