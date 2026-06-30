@@ -614,7 +614,7 @@ function WalletHero({ onEnter, goto }) {
             // at the bottom, the rest ascending. Scroll then rises them into the
             // centered fan.
             const startStagger = mobile ? 52 : 60
-            const startBase    = vh * (mobile ? 0.10 : 0.162)
+            const startBase    = vh * (mobile ? 0.14 : 0.215)
             const startOff = startBase + i * startStagger
             const fanOff   = (i - 1.5) * 78
             const offY  = _lerp(startOff, fanOff, rise)
