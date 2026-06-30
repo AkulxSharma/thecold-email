@@ -25,7 +25,7 @@
 }
 
 .story-eyebrow {
-  font-family: 'Roboto', system-ui, sans-serif;
+  font-family: var(--font-body);
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.18em;
@@ -38,7 +38,7 @@
 }
 
 .story-wordmark {
-  font-family: 'Google Sans', 'Product Sans', 'Roboto', sans-serif;
+  font-family: var(--font-display);
   font-size: clamp(40px, 7vw, 64px);
   line-height: 1.04;
   font-weight: 400;
@@ -50,7 +50,7 @@
 .story-wordmark .story-accent { color: #1a73e8; }
 
 .story-tagline {
-  font-family: 'Google Sans', 'Product Sans', 'Roboto', sans-serif;
+  font-family: var(--font-display);
   font-size: 22px;
   font-weight: 400;
   color: #5f6368;
@@ -63,7 +63,7 @@
 }
 
 .story-kicker {
-  font-family: 'Roboto', system-ui, sans-serif;
+  font-family: var(--font-body);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.16em;
@@ -73,7 +73,7 @@
 }
 
 .story-h2 {
-  font-family: 'Google Sans', 'Product Sans', 'Roboto', sans-serif;
+  font-family: var(--font-display);
   font-size: clamp(28px, 4.4vw, 38px);
   line-height: 1.12;
   font-weight: 400;
@@ -83,7 +83,7 @@
 }
 
 .story-p {
-  font-family: 'Roboto', system-ui, sans-serif;
+  font-family: var(--font-body);
   font-size: 19px;
   line-height: 1.72;
   color: #3c4043;
@@ -105,7 +105,7 @@
 }
 
 .story-quote {
-  font-family: 'Google Sans', 'Product Sans', 'Roboto', sans-serif;
+  font-family: var(--font-display);
   font-size: clamp(26px, 4vw, 34px);
   line-height: 1.28;
   font-weight: 400;
@@ -144,7 +144,7 @@
 
 .story-step-num {
   counter-increment: story-step;
-  font-family: 'Google Sans', 'Product Sans', 'Roboto', sans-serif;
+  font-family: var(--font-display);
   font-size: 30px;
   font-weight: 400;
   color: #c5c9cd;
@@ -156,7 +156,7 @@
 .story-step-body { flex: 1; }
 
 .story-step-title {
-  font-family: 'Google Sans', 'Product Sans', 'Roboto', sans-serif;
+  font-family: var(--font-display);
   font-size: 21px;
   font-weight: 500;
   color: #202124;
@@ -164,7 +164,7 @@
 }
 
 .story-step-text {
-  font-family: 'Roboto', system-ui, sans-serif;
+  font-family: var(--font-body);
   font-size: 17px;
   line-height: 1.6;
   color: #5f6368;
@@ -188,7 +188,7 @@
 }
 
 .story-timeline-label {
-  font-family: 'Roboto', system-ui, sans-serif;
+  font-family: var(--font-body);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -201,7 +201,7 @@
 }
 
 .story-timeline-dates {
-  font-family: 'Google Sans', 'Product Sans', 'Roboto', sans-serif;
+  font-family: var(--font-display);
   font-size: 24px;
   font-weight: 400;
   color: #202124;
@@ -209,7 +209,7 @@
 }
 
 .story-timeline-note {
-  font-family: 'Roboto', system-ui, sans-serif;
+  font-family: var(--font-body);
   font-size: 15px;
   line-height: 1.5;
   color: #5f6368;
@@ -245,7 +245,7 @@
 .story-track-body { flex: 1; }
 
 .story-track-name {
-  font-family: 'Google Sans', 'Product Sans', 'Roboto', sans-serif;
+  font-family: var(--font-display);
   font-size: 20px;
   font-weight: 500;
   color: #202124;
@@ -253,7 +253,7 @@
 }
 
 .story-track-desc {
-  font-family: 'Roboto', system-ui, sans-serif;
+  font-family: var(--font-body);
   font-size: 17px;
   line-height: 1.6;
   color: #5f6368;
@@ -283,7 +283,7 @@
 }
 
 .story-prize-amount {
-  font-family: 'Google Sans', 'Product Sans', 'Roboto', sans-serif;
+  font-family: var(--font-display);
   font-size: 42px;
   font-weight: 400;
   letter-spacing: -0.02em;
@@ -294,7 +294,7 @@
 .story-prize-grand .story-prize-amount { color: #fff; }
 
 .story-prize-label {
-  font-family: 'Roboto', system-ui, sans-serif;
+  font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.55;
   color: #5f6368;
@@ -314,7 +314,7 @@
 }
 
 .story-signoff {
-  font-family: 'Roboto', system-ui, sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
