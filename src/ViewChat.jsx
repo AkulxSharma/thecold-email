@@ -1,9 +1,9 @@
 import './chat.css'
 import { useState, useRef, useEffect } from 'react'
 import { M } from './icons'
-import { ENTER_FORM, chatMeme } from './data.js'
+import { ENTER_FORM, chatMeme, isCountry } from './data.js'
 import { insertRegistration, isEmailRegistered } from './supabase.js'
-import { setRegistration } from './registration.js'
+import { setRegistration, getRegistration } from './registration.js'
 import EmojiPicker from './EmojiPicker.jsx'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -46,6 +46,8 @@ function notifyMake(payload) {
 // Build the bot's prompt text for one registration field. Every field is
 // mandatory, so no "optional / skip" hint is shown.
 function askText(qq) {
+  // Background is open-ended: the presets are just examples, custom answers welcome.
+  if (qq.name === 'background') return `${qq.q} (e.g. ${qq.options.join(', ')} — or type your own, comma-separated)`
   if (qq.options) return `${qq.q} (${qq.type === 'checkbox' ? 'pick any, comma-separated' : 'options'}: ${qq.options.join(', ')})`
   return qq.q
 }
@@ -55,12 +57,26 @@ function askText(qq) {
 function answerError(qq, text) {
   const t = text.trim()
   if (!t || t.toLowerCase() === 'skip') return 'This field is mandatory — please type a real answer (you can’t skip it).'
-  // Age is asked as an exact number, not a band.
+  // Full name must be the user's real full name — at least two separate words.
+  if (qq.name === 'full_name') {
+    const words = t.split(/\s+/).filter(w => /[A-Za-z]/.test(w))
+    return words.length >= 2
+      ? null : 'Please enter your full name — first and last (at least two words).'
+  }
+  // Country must match a real country name (or a common alias like USA/UK/UAE).
+  if (qq.name === 'country') {
+    return isCountry(t)
+      ? null : 'Please enter a real country name (e.g. United States, India, United Kingdom).'
+  }
+  // Age is asked as an exact number, not a band — realistic ages only.
   if (qq.name === 'age') {
     const n = Number(t)
-    return Number.isInteger(n) && n >= 13 && n <= 120
-      ? null : 'Please enter your age as a number between 13 and 120.'
+    return Number.isInteger(n) && n >= 13 && n <= 100
+      ? null : 'Please enter a realistic age as a number between 13 and 100.'
   }
+  // Background is open-ended — accept any custom answer (the options are just
+  // suggestions), so titles like "CEO" or "Designer" are valid.
+  if (qq.name === 'background') return null
   // Social accepts a bare handle OR any profile link — format check only.
   if (qq.name === 'social') {
     return normalizeSocial(t)
@@ -91,7 +107,10 @@ function canonical(qq, text) {
   const t = text.trim()
   if (qq.name === 'social') return normalizeSocial(t) || t
   if (qq.type === 'dropdown' || qq.type === 'radio') return qq.options.find(o => o.toLowerCase() === t.toLowerCase())
-  if (qq.type === 'checkbox') return t.split(',').map(s => s.trim()).filter(Boolean).map(x => qq.options.find(o => o.toLowerCase() === x.toLowerCase()))
+  // Checkbox (incl. open-ended "background"): match preset casing where it
+  // matches, otherwise keep the user's own custom value.
+  if (qq.type === 'checkbox') return t.split(',').map(s => s.trim()).filter(Boolean)
+    .map(x => (qq.options || []).find(o => o.toLowerCase() === x.toLowerCase()) || x)
   return t
 }
 
@@ -232,6 +251,22 @@ export default function ViewChat({ onRegistered, autoRegister = false }) {
     beginRegister()
   }, [autoRegister])
 
+  // Already-registered device (e.g. page reload after registering): don't make
+  // them register again. Recognize the saved registration, skip the flow, and
+  // go straight to the "continue to your submission" state. Only when NOT
+  // auto-started by the submit gate (autoRegister means they're unregistered).
+  const didBoot = useRef(false)
+  useEffect(() => {
+    if (didBoot.current || autoRegister) return
+    const existing = getRegistration()
+    if (!existing || !existing.email) return
+    didBoot.current = true
+    answers.current = { email: existing.email, full_name: existing.full_name }
+    setDone(true)
+    botSay(`Welcome back — ${existing.email} is already registered. ✅`,
+      'No need to do it again. Tap below to head straight to your submission.')
+  }, [autoRegister])
+
   const showTracks = () => {
     meSay('Show me the tracks')
     botSay('Four tracks — pick whichever fits your email:',
@@ -274,7 +309,13 @@ export default function ViewChat({ onRegistered, autoRegister = false }) {
     if (!text) return
     setDraft('')
 
-    if (flow == null) { meSay(text); return }
+    // Not in the registration flow yet: the user typed instead of tapping a
+    // smart-reply chip. Echo it, then nudge them to pick one of the options.
+    if (flow == null) {
+      meSay(text)
+      if (!done) botSay('Tap one of the options below to get started 👇  —  “How do I register?”, “Show me the tracks”, or “Got it!”.')
+      return
+    }
 
     const qq = QUESTIONS[flow]
     const err = answerError(qq, text)
@@ -407,7 +448,7 @@ export default function ViewChat({ onRegistered, autoRegister = false }) {
         {msgs.map((m, i) => m.side === 'out' ? (
           <div className="gchat-row gchat-row-out" key={i}>
             <div className="gchat-meta gchat-meta-r">Now</div>
-            <div className="gchat-bubble gchat-bubble-out">{m.text}{i === msgs.length - 1 && <Receipt />}</div>
+            <div className="gchat-bubble gchat-bubble-out"><Rich text={m.text} />{i === msgs.length - 1 && <Receipt />}</div>
           </div>
         ) : (
           <div className="gchat-row gchat-row-in" key={i}>
@@ -496,15 +537,23 @@ export default function ViewChat({ onRegistered, autoRegister = false }) {
   )
 }
 
-// Minimal **bold** renderer + newline support for bot messages.
+// Inline renderer for Google-Chat-style marks, applied to both bot and user
+// bubbles so the composer formatting bar is actually functional:
+//   **bold** / *bold* · _italic_ · ~strike~ · `code`
+function renderInline(line, keyPrefix) {
+  const re = /(\*\*[^*\n]+\*\*|\*[^*\n]+\*|_[^_\n]+_|~[^~\n]+~|`[^`\n]+`)/g
+  return line.split(re).map((part, pi) => {
+    const k = `${keyPrefix}-${pi}`
+    if (/^\*\*[\s\S]+\*\*$/.test(part)) return <b key={k}>{part.slice(2, -2)}</b>
+    if (/^\*[\s\S]+\*$/.test(part))     return <b key={k}>{part.slice(1, -1)}</b>
+    if (/^_[\s\S]+_$/.test(part))       return <i key={k}>{part.slice(1, -1)}</i>
+    if (/^~[\s\S]+~$/.test(part))       return <s key={k}>{part.slice(1, -1)}</s>
+    if (/^`[\s\S]+`$/.test(part))       return <code key={k}>{part.slice(1, -1)}</code>
+    return <span key={k}>{part}</span>
+  })
+}
 function Rich({ text }) {
-  return text.split('\n').map((line, li) => (
-    <div key={li}>
-      {line.split(/(\*\*[^*]+\*\*)/g).map((part, pi) =>
-        part.startsWith('**') && part.endsWith('**')
-          ? <b key={pi}>{part.slice(2, -2)}</b>
-          : <span key={pi}>{part}</span>
-      )}
-    </div>
+  return (text || '').split('\n').map((line, li) => (
+    <div key={li}>{renderInline(line, String(li))}</div>
   ))
 }
