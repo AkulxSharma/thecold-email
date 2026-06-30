@@ -631,12 +631,13 @@ function WalletHero({ onEnter, goto }) {
             const startStagger = mobile ? 52 : 60
             const startBase    = vh * (mobile ? 0.14 : 0.215)
             const startOff = startBase + i * startStagger
-            const fanOff   = (i - 1.5) * 78
+            // Wider fan so the cards separate out with real spacing as you scroll.
+            const fanOff   = (i - 1.5) * 104
             const offY  = _lerp(startOff, fanOff, rise)
             const scale = _lerp(0.9, 1.0, rise)
             const rot   = 0   // flat horizontal stack (Google-Wallet style)
-            // Depth fade: lower cards blend toward white (Google-Wallet style).
-            const tint = `color-mix(in srgb, ${WAL_COLORS[i]} ${100 - (i / 3) * 22}%, #fff)`
+            // Slight depth fade only — keep the colors vivid (was washing out).
+            const tint = `color-mix(in srgb, ${WAL_COLORS[i]} ${100 - (i / 3) * 8}%, #fff)`
             const style = {
               '--wc': tint,
               zIndex: 10 - i,
