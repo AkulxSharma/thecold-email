@@ -37,7 +37,7 @@ export async function insertRegistration(answers) {
     full_name: answers.full_name || null,
     email: normEmail(answers.email) || null,
     country: answers.country || null,
-    age_band: answers.age_band || null,
+    age: answers.age || null,
     company: answers.company || null,
     position: answers.position || null,
     social: answers.social || null,

@@ -766,8 +766,9 @@ function ViewOverview({ onEnter, goto }) {
             <span className="home-footer-wordmark">thecold.email</span>
           </div>
           <div className="home-footer-socials">
-            <a href="#" className="home-footer-link">X</a>
+            <a href="https://x.com/thecoldemails" className="home-footer-link" target="_blank" rel="noopener noreferrer">X</a>
             <a href="https://instagram.com/thecold.email" className="home-footer-link" target="_blank" rel="noopener noreferrer">Instagram</a>
+            {/* TODO: real LinkedIn company URL pending */}
             <a href="#" className="home-footer-link">LinkedIn</a>
             <a href="https://www.tiktok.com/@thecold.email" className="home-footer-link" target="_blank" rel="noopener noreferrer">TikTok</a>
           </div>

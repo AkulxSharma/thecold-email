@@ -1,4 +1,5 @@
 -- thecold.email — Supabase schema.
+-- NOTE: if registrations.age_band already exists in prod, run: alter table public.registrations rename column age_band to age;
 -- Run this in the Supabase SQL editor after creating the project.
 -- Two tables: registrations (Procedure chat) + submissions (compose window).
 -- RLS is ON with INSERT-only public policies, so the anon key can write entries
@@ -10,7 +11,7 @@ create table if not exists public.registrations (
   full_name     text,
   email         text,
   country       text,
-  age_band      text,
+  age           text,
   company       text,
   position      text,
   social        text,

@@ -268,7 +268,7 @@ export const RULES_PAGE = {
     'A real person replied',
     'The recipient didn’t already know you',
     'The email was sent during the competition',
-    "You BCC'd our competition inbox",
+    'You BCC’d our competition inbox',
     'You can provide proof',
     'The interaction was genuine',
   ],
