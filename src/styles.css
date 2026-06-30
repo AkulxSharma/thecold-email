@@ -2473,7 +2473,7 @@ html, body, #root {
   max-width: none !important;
   width: 100%;
   margin: 0 !important;
-  height: 200vh;           /* track: pins for the card-rise, then unpins + scrolls away */
+  height: 150vh;           /* track: pins for the card-rise, brief hold, then the next section scrolls up close behind (less trailing dead space) */
   position: relative;
 }
 .walhero-stage {
