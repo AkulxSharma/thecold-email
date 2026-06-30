@@ -628,8 +628,8 @@ function WalletHero({ onEnter, goto }) {
             // headline — every card peeks its label strip, green (i0) frontmost
             // at the bottom, the rest ascending. Scroll then rises them into the
             // centered fan.
-            const startStagger = mobile ? 52 : 60
-            const startBase    = vh * (mobile ? 0.14 : 0.215)
+            const startStagger = mobile ? 60 : 66
+            const startBase    = vh * (mobile ? 0.18 : 0.21)
             const startOff = startBase + i * startStagger
             // Wider fan so the cards separate out with real spacing as you scroll.
             const fanOff   = (i - 1.5) * 104
