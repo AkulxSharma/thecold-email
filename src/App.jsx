@@ -531,7 +531,7 @@ const TRACK_TEASER_COPY = {
 }
 
 // ---- wallet.google-style pinned scroll hero ----
-const WAL_COLORS = ['#34A853', '#FBBC04', '#EA4335', '#4285F4'] // green, amber, red, blue (top→bottom)
+const WAL_COLORS = ['#34A853', '#F9AB00', '#EA4335', '#4285F4'] // green, amber, red, blue (top→bottom) — matched to Google Wallet hero
 const _clamp01 = v => (v < 0 ? 0 : v > 1 ? 1 : v)
 const _lerp = (a, b, t) => a + (b - a) * t
 const _seg = (p, a, b) => _clamp01((p - a) / (b - a))
@@ -635,10 +635,10 @@ function WalletHero({ onEnter, goto }) {
             const offY  = _lerp(startOff, fanOff, rise)
             const scale = _lerp(0.9, 1.0, rise)
             const rot   = 0   // flat horizontal stack (Google-Wallet style)
-            // Depth fade: lower cards blend toward white (Google-Wallet style).
-            const tint = `color-mix(in srgb, ${WAL_COLORS[i]} ${100 - (i / 3) * 22}%, #fff)`
+            // Solid, vivid card colors — the real Wallet hero keeps full
+            // saturation on every card (no white blend).
             const style = {
-              '--wc': tint,
+              '--wc': WAL_COLORS[i],
               zIndex: 10 - i,
               transform: `translate(-50%, calc(-50% + ${offY}px)) scale(${scale}) rotate(${rot}deg)`,
             }

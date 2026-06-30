@@ -2472,8 +2472,7 @@ html, body, #root {
   display: flex;
   align-items: center;
   justify-content: center;
-  background:
-    radial-gradient(120% 80% at 50% 0%, #f4f8ff 0%, #ffffff 55%, #ffffff 100%);
+  background: #f8f9fa;   /* flat light-gray — matches the Google Wallet hero */
 }
 
 /* floating pill nav */
@@ -2506,10 +2505,10 @@ html, body, #root {
 /* headline group (STATE A) — absolutely centered so it can rise out */
 .walhero-headline {
   position: absolute;
-  top: 38%;
+  top: 26%;   /* sits near the top like the Wallet hero, cards peek up from below */
   left: 50%;
   transform: translate(-50%, -50%);
-  width: min(820px, 88%);
+  width: min(900px, 90%);
   text-align: center;
   z-index: 30;
   will-change: transform, opacity;
@@ -2550,35 +2549,38 @@ html, body, #root {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 340px;
-  height: 84px;
+  width: 620px;
+  max-width: 90vw;
+  height: 96px;
   border: 0;
-  border-radius: 20px;
+  border-radius: 28px;
   background: var(--wc, #4285F4);
   color: #fff;
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 0 24px;
+  gap: 18px;
+  padding: 0 26px;
   cursor: pointer;
-  box-shadow: 0 18px 40px rgba(32,33,36,.22);
+  box-shadow: 0 16px 36px rgba(32,33,36,.18);
   will-change: transform, opacity;
   text-align: left;
 }
+/* circular badge, a darker shade of the card color (Google Wallet style) */
 .wcard-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 46px;
-  height: 46px;
-  border-radius: 12px;
-  background: rgba(255,255,255,.22);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(0,0,0,.16);
   color: #fff;
   flex-shrink: 0;
 }
-.wcard-icon .msym { font-size: 26px; }
+.wcard-icon .msym { font-size: 28px; }
 .wcard-name {
-  font: 600 19px 'Google Sans','Roboto',Arial,sans-serif;
+  font: 600 26px 'Google Sans','Roboto',Arial,sans-serif;
+  letter-spacing: -0.01em;
   color: #fff;
 }
 
@@ -2635,8 +2637,8 @@ html, body, #root {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  width: min(360px, 90%);
-  margin-top: 64px;
+  width: min(620px, 90%);
+  margin-top: 56px;
 }
 .walhero-static .wcard {
   position: static;
@@ -2646,7 +2648,9 @@ html, body, #root {
 @media (max-width: 768px) {
   .walhero-title { font-size: 34px; }
   .walhero-sub { font-size: 16px; }
-  .wcard { width: 280px; height: 74px; }
+  .wcard { width: 90vw; height: 80px; border-radius: 22px; }
+  .wcard-name { font-size: 21px; }
+  .wcard-icon { width: 44px; height: 44px; }
   .walhero-pill { gap: 0; padding: 4px; }
   .walhero-pill button { padding: 7px 10px; font-size: 13px; }
   .walhero-enter-pill { right: 14px; bottom: 14px; }
