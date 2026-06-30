@@ -807,6 +807,25 @@ html, body, #root {
 .bx-list {
   border-top: 1px solid #f1f3f4;
 }
+/* Gmail-style grouped sections (Unread / Everything else) on the All tab */
+.bx-section { border-bottom: 1px solid #f1f3f4; }
+.bx-section:last-child { border-bottom: none; }
+.bx-section-hd {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  padding: 8px 16px;
+  background: #f2f6fc;
+  border: none;
+  cursor: pointer;
+  color: #1f1f1f;
+  font: 500 13px 'Google Sans','Roboto',Arial,sans-serif;
+}
+.bx-section-hd:hover { background: #e9eef6; }
+.bx-section-hd .msym { color: #444746; }
+.bx-section-label { letter-spacing: .2px; }
+.bx-section-count { color: #5f6368; font-weight: 400; }
 /* Empty state for the Starred filter */
 .bx-empty {
   display: flex;
