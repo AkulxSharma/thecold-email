@@ -2567,31 +2567,56 @@ html, body, #root {
   position: absolute;
   top: 0;
   left: 50%;
-  width: 372px;
-  height: 140px;                 /* behind-cards: tall enough to always cover the one under */
+  width: 336px;
+  height: 116px;                 /* behind-cards: tall enough to always cover the one under */
   border: 0;
-  border-radius: 26px;
+  border-radius: 30px;
   background: var(--wc, #4285F4);
   color: #fff;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  padding: 22px 26px;
+  padding: 0 24px;
   cursor: pointer;
   box-shadow: 0 -2px 0 rgba(255,255,255,.10) inset, 0 16px 34px rgba(32,33,36,.20);
   will-change: transform;
   text-align: left;
   overflow: hidden;
 }
+/* behind cards: square the bottom corners (always covered by the next card) so
+   their rounded bottoms never peek out at the sides above the card below */
+.wcard:not(.wcard--front) {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
 /* the front (blue) card is expanded — shows the detail body + barcode */
 .wcard--front {
-  height: 300px;
+  height: 262px;
+  padding-bottom: 22px;
   box-shadow: 0 -2px 0 rgba(255,255,255,.10) inset, 0 26px 60px rgba(32,33,36,.30);
 }
+/* wallet.google boarding-pass decoration: soft overlapping translucent arcs */
+.wcard--front::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 60% 34%, rgba(255,255,255,.16) 0 96px, transparent 97px),
+    radial-gradient(circle at 26% 60%, rgba(255,255,255,.13) 0 132px, transparent 133px),
+    radial-gradient(circle at 92% 74%, rgba(255,255,255,.12) 0 120px, transparent 121px),
+    radial-gradient(circle at 78% 6%,  rgba(255,255,255,.10) 0 70px,  transparent 71px);
+}
+.wcard--front .wcard-head,
+.wcard--front .wcard-body { position: relative; z-index: 1; }
 .wcard-head {
   display: flex;
   align-items: center;
   gap: 16px;
+  min-height: var(--peek, 80px);   /* head fills + centers within the visible peek band */
+  flex-shrink: 0;
+  margin-top: var(--headnudge, 0px);  /* nudged down at load, centered once settled */
 }
 .wcard-icon {
   display: inline-flex;
@@ -2726,10 +2751,10 @@ html, body, #root {
 @media (max-width: 768px) {
   .walhero-title { font-size: 34px; }
   .walhero-sub { font-size: 16px; }
-  .wcard { width: 320px; height: 120px; padding: 18px 22px; }
-  .wcard--front { height: 250px; }
-  .wcard-name { font-size: 19px; }
-  .wcard-leg-big { font-size: 28px; }
+  .wcard { width: 290px; height: 100px; padding: 12px 20px; }
+  .wcard--front { height: 222px; }
+  .wcard-name { font-size: 16px; }
+  .wcard-leg-big { font-size: 22px; }
   .walhero-pill { gap: 0; padding: 4px; }
   .walhero-pill button { padding: 7px 10px; font-size: 13px; }
   .walhero-enter-pill { right: 14px; bottom: 14px; }
