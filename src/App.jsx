@@ -603,14 +603,30 @@ function WalletHero({ onEnter, goto }) {
   }
 
   // ----- animated states -----
-  const hHide = _ease(_seg(p, 0.04, 0.34))   // headline rises + fades out first
-  const rise  = _ease(_seg(p, 0.12, 0.82))   // cards rise into the stacked deck, then hold
+  const hHide = _ease(_seg(p, 0.02, 0.30))   // headline rises + fades out first
+  const sep   = _ease(_seg(p, 0.10, 0.85))   // the tight wallet stack separates a bit
 
   const headStyle = {
     opacity: 1 - hHide,
     transform: `translate(-50%, calc(-50% - ${hHide * 160}px))`,
     pointerEvents: hHide > 0.5 ? 'none' : 'auto',
   }
+
+  // Google-Wallet stack geometry. Every card's TOP edge is stacked by `strip`
+  // below the previous one; the front card (blue, i=3) is expanded and shows a
+  // detail body, so nothing covers it. Pre-scroll = tight (strip S0); on scroll
+  // the peek grows to S1 — cards separate a bit but still overlap (S1 < card height).
+  const FRONT_H  = mobile ? 250 : 290
+  const S0 = mobile ? 82 : 96           // tight peek (pre-scroll — matches the reference)
+  const S1 = mobile ? 108 : 128         // separated peek (still < ~138 card height → still overlaps)
+  const strip = _lerp(S0, S1, sep)
+  // Pre-scroll the stack sits LOW — only the top 2 tiles (green, amber) show + a
+  // barely-visible sliver of the 3rd (red); the expanded blue card is below the
+  // fold. Anchor green so red's strip lands right at the bottom edge. On scroll it
+  // rises up to the top area as it separates.
+  const stackTop  = _lerp(vh - (2 * S0 + 44), vh * 0.08, sep)
+  const textScale = _lerp(1, 1.16, sep) // tile text grows as the tiles separate
+  const deckStyle = { '--ts': textScale }
 
   return (
     <section className="walhero" ref={outerRef}>
@@ -622,32 +638,40 @@ function WalletHero({ onEnter, goto }) {
           <p className="walhero-sub">One email. The right words. A reply you weren’t supposed to get.</p>
         </div>
 
-        <div className="walhero-deck">
+        <div className="walhero-deck" style={deckStyle}>
           {cards.map((topic, i) => {
-            // START (pre-scroll): a visible Google-Wallet staircase below the
-            // headline — every card peeks its label strip, green (i0) frontmost
-            // at the bottom, the rest ascending. Scroll then rises them into the
-            // centered fan.
-            const startStagger = mobile ? 52 : 60
-            const startBase    = vh * (mobile ? 0.14 : 0.215)
-            const startOff = startBase + i * startStagger
-            // Wider fan so the cards separate out with real spacing as you scroll.
-            const fanOff   = (i - 1.5) * 104
-            const offY  = _lerp(startOff, fanOff, rise)
-            const scale = _lerp(0.9, 1.0, rise)
-            const rot   = 0   // flat horizontal stack (Google-Wallet style)
-            // Slight depth fade only — keep the colors vivid (was washing out).
-            const tint = `color-mix(in srgb, ${WAL_COLORS[i]} ${100 - (i / 3) * 8}%, #fff)`
+            const front = i === 3
+            const topY = stackTop + i * strip              // this card's top edge, from stage top
             const style = {
-              '--wc': tint,
-              zIndex: 10 - i,
-              transform: `translate(-50%, calc(-50% + ${offY}px)) scale(${scale}) rotate(${rot}deg)`,
+              '--wc': WAL_COLORS[i],
+              zIndex: 10 + i,                              // blue (front) on top, green behind
+              transform: `translate(-50%, ${topY}px)`,
             }
             return (
-              <button className="wcard" key={topic} style={style}
+              <button className={`wcard${front ? ' wcard--front' : ''}`} key={topic} style={style}
                 onClick={() => goto(`track-${topic}`)}>
-                <span className="wcard-icon">{TRACK_ICONS[topic]}</span>
-                <span className="wcard-name">{TOPIC_NAMES[topic]}</span>
+                <span className="wcard-head">
+                  <span className="wcard-icon">{TRACK_ICONS[topic]}</span>
+                  <span className="wcard-name">{TOPIC_NAMES[topic]}</span>
+                </span>
+                {front && (
+                  <span className="wcard-body">
+                    <span className="wcard-legs">
+                      <span className="wcard-leg">
+                        <span className="wcard-leg-label">From</span>
+                        <span className="wcard-leg-big">YOU</span>
+                        <span className="wcard-leg-sub">one cold email</span>
+                      </span>
+                      <span className="wcard-leg wcard-leg-r">
+                        <span className="wcard-leg-label">To</span>
+                        <span className="wcard-leg-big">ANYONE</span>
+                        <span className="wcard-leg-sub">the reply</span>
+                      </span>
+                    </span>
+                    <span className="wcard-barcode" aria-hidden="true" />
+                    <span className="wcard-barnum">the cold email · get the reply</span>
+                  </span>
+                )}
               </button>
             )
           })}

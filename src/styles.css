@@ -2522,10 +2522,10 @@ html, body, #root {
 /* headline group (STATE A) — absolutely centered so it can rise out */
 .walhero-headline {
   position: absolute;
-  top: 38%;
+  top: 15%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: min(820px, 88%);
+  width: min(680px, 86%);
   text-align: center;
   z-index: 30;
   will-change: transform, opacity;
@@ -2535,17 +2535,17 @@ html, body, #root {
    sub — Google Sans Text 400, 20px/28px, normal spacing, #5f6368.
    Size scaled responsively (caps near wallet's 78px) so our longer headline fits. */
 .walhero-title {
-  font: 700 clamp(40px, 6.4vw, 76px)/1.1 'Google Sans','Roboto',Arial,sans-serif;
+  font: 700 clamp(30px, 4.2vw, 54px)/1.12 'Google Sans','Roboto',Arial,sans-serif;
   letter-spacing: -0.02em;
   color: #3c4043;
-  margin: 0 0 18px;
+  margin: 0 0 14px;
 }
 .walhero-sub {
-  font: 400 20px/1.4 'Google Sans Text','Google Sans','Roboto',Arial,sans-serif;
+  font: 400 18px/1.4 'Google Sans Text','Google Sans','Roboto',Arial,sans-serif;
   letter-spacing: normal;
   color: #5f6368;
-  max-width: 620px;
-  margin: 0 auto 28px;
+  max-width: 560px;
+  margin: 0 auto;
 }
 
 /* deck wrapper (holds 4 cards + logo), centered */
@@ -2554,6 +2554,7 @@ html, body, #root {
   inset: 0;
   z-index: 20;
   will-change: transform, opacity;
+  transform-origin: top center;
   pointer-events: none;
   /* No downward push: the symmetric fan then rests vertically centered in the
      viewport at the end of the scroll animation. */
@@ -2561,41 +2562,100 @@ html, body, #root {
 }
 .walhero-deck .wcard { pointer-events: auto; }
 
-/* a single colored wallet card */
+/* a single colored wallet card (Google-Wallet expanded-stack look) */
 .wcard {
   position: absolute;
-  top: 50%;
+  top: 0;
   left: 50%;
-  width: 340px;
-  height: 84px;
+  width: 372px;
+  height: 140px;                 /* behind-cards: tall enough to always cover the one under */
   border: 0;
-  border-radius: 20px;
+  border-radius: 26px;
   background: var(--wc, #4285F4);
   color: #fff;
   display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 22px 26px;
+  cursor: pointer;
+  box-shadow: 0 -2px 0 rgba(255,255,255,.10) inset, 0 16px 34px rgba(32,33,36,.20);
+  will-change: transform;
+  text-align: left;
+  overflow: hidden;
+}
+/* the front (blue) card is expanded — shows the detail body + barcode */
+.wcard--front {
+  height: 300px;
+  box-shadow: 0 -2px 0 rgba(255,255,255,.10) inset, 0 26px 60px rgba(32,33,36,.30);
+}
+.wcard-head {
+  display: flex;
   align-items: center;
   gap: 16px;
-  padding: 0 24px;
-  cursor: pointer;
-  box-shadow: 0 18px 40px rgba(32,33,36,.22);
-  will-change: transform, opacity;
-  text-align: left;
 }
 .wcard-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 46px;
-  height: 46px;
-  border-radius: 12px;
-  background: rgba(255,255,255,.22);
+  width: calc(50px * var(--ts, 1));
+  height: calc(50px * var(--ts, 1));
+  border-radius: 50%;            /* circular badge like the reference */
+  background: rgba(0,0,0,.16);
   color: #fff;
   flex-shrink: 0;
 }
-.wcard-icon .msym { font-size: 26px; }
+.wcard-icon .msym { font-size: calc(27px * var(--ts, 1)); }
 .wcard-name {
-  font: 600 19px 'Google Sans','Roboto',Arial,sans-serif;
+  font: 600 calc(22px * var(--ts, 1)) 'Google Sans','Roboto',Arial,sans-serif;
   color: #fff;
+  letter-spacing: -0.01em;
+}
+/* expanded body of the front card */
+.wcard-body {
+  display: flex;
+  flex-direction: column;
+  margin-top: auto;
+  gap: 16px;
+}
+.wcard-legs {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0 4px;
+}
+.wcard-leg { display: flex; flex-direction: column; gap: 2px; }
+.wcard-leg-r { text-align: right; align-items: flex-end; }
+.wcard-leg-label {
+  font: 500 calc(13px * var(--ts, 1)) 'Google Sans Text','Roboto',Arial,sans-serif;
+  color: rgba(255,255,255,.82);
+}
+.wcard-leg-big {
+  font: 700 calc(34px * var(--ts, 1)) 'Google Sans','Roboto',Arial,sans-serif;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+.wcard-leg-sub {
+  font: 400 calc(13px * var(--ts, 1)) 'Google Sans Text','Roboto',Arial,sans-serif;
+  color: rgba(255,255,255,.82);
+}
+/* CSS barcode strip */
+.wcard-barcode {
+  height: 40px;
+  border-radius: 4px;
+  background: repeating-linear-gradient(90deg,
+    #fff 0 2px, transparent 2px 4px,
+    #fff 4px 7px, transparent 7px 9px,
+    #fff 9px 10px, transparent 10px 13px,
+    #fff 13px 16px, transparent 16px 17px);
+  opacity: .95;
+}
+.wcard-barnum {
+  font: 500 12px 'Roboto Mono','Roboto',monospace;
+  letter-spacing: .12em;
+  color: rgba(255,255,255,.9);
+  text-align: center;
+  margin-top: -4px;
 }
 
 /* brand mark that the compressed stack settles into (STATE D) */
@@ -2657,12 +2717,19 @@ html, body, #root {
 .walhero-static .wcard {
   position: static;
   width: 100%;
+  height: auto;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
 }
 
 @media (max-width: 768px) {
   .walhero-title { font-size: 34px; }
   .walhero-sub { font-size: 16px; }
-  .wcard { width: 280px; height: 74px; }
+  .wcard { width: 320px; height: 120px; padding: 18px 22px; }
+  .wcard--front { height: 250px; }
+  .wcard-name { font-size: 19px; }
+  .wcard-leg-big { font-size: 28px; }
   .walhero-pill { gap: 0; padding: 4px; }
   .walhero-pill button { padding: 7px 10px; font-size: 13px; }
   .walhero-enter-pill { right: 14px; bottom: 14px; }
