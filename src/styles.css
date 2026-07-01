@@ -3,8 +3,8 @@
   --blue:#0b57d0; --line:#e0e0e0; --text:#1f1f1f; --text-soft:#444746; --sidebar-active:#d3e3fd;
 
   /* ---- Google-authentic font families ---- */
-  --font-display: 'Google Sans','Product Sans','Roboto',Arial,sans-serif;
-  --font-body: 'Roboto',Arial,sans-serif;
+  --font-display: 'Google Sans','Roboto',Arial,sans-serif;
+  --font-body: 'Google Sans Text','Google Sans','Roboto',Arial,sans-serif;
 
   /* ---- Material type scale (family / size / weight / line-height / letter-spacing) ---- */
   --display-font: var(--font-display); --display-size: 34px; --display-weight: 400; --display-line: 1.2;  --display-spacing: -0.5px;
@@ -2535,7 +2535,7 @@ html, body, #root {
    sub — Google Sans Text 400, 20px/28px, normal spacing, #5f6368.
    Size scaled responsively (caps near wallet's 78px) so our longer headline fits. */
 .walhero-title {
-  font: 700 clamp(30px, 4.2vw, 54px)/1.12 'Google Sans','Roboto',Arial,sans-serif;
+  font: 700 clamp(30px, 4.2vw, 54px)/1.12 'Google Sans Text','Google Sans','Roboto',Arial,sans-serif;
   letter-spacing: -0.02em;
   color: #3c4043;
   margin: 0 0 14px;
@@ -2631,7 +2631,7 @@ html, body, #root {
 }
 .wcard-icon .msym { font-size: calc(27px * var(--ts, 1)); }
 .wcard-name {
-  font: 600 calc(22px * var(--ts, 1)) 'Google Sans','Roboto',Arial,sans-serif;
+  font: 400 calc(18px * var(--ts, 1)) 'Google Sans Text','Google Sans','Roboto',Arial,sans-serif;
   color: #fff;
   letter-spacing: -0.01em;
 }
@@ -2640,33 +2640,35 @@ html, body, #root {
   display: flex;
   flex-direction: column;
   margin-top: auto;
-  gap: 16px;
+  gap: 20px;
 }
 .wcard-legs {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: flex-start;
   padding: 0 4px;
 }
-.wcard-leg { display: flex; flex-direction: column; gap: 2px; }
-.wcard-leg-r { text-align: right; align-items: flex-end; }
+.wcard-leg { display: flex; flex-direction: column; gap: 3px; }
+.wcard-leg-r { text-align: left; align-items: flex-start; }
 .wcard-leg-label {
-  font: 500 calc(13px * var(--ts, 1)) 'Google Sans Text','Roboto',Arial,sans-serif;
+  font: 400 calc(11px * var(--ts, 1)) 'Google Sans Text','Roboto',Arial,sans-serif;
   color: rgba(255,255,255,.82);
 }
 .wcard-leg-big {
-  font: 700 calc(34px * var(--ts, 1)) 'Google Sans','Roboto',Arial,sans-serif;
+  font: 400 calc(26px * var(--ts, 1)) 'Google Sans Text','Google Sans','Roboto',Arial,sans-serif;
   line-height: 1;
   letter-spacing: -0.01em;
   color: #fff;
 }
 .wcard-leg-sub {
-  font: 400 calc(13px * var(--ts, 1)) 'Google Sans Text','Roboto',Arial,sans-serif;
+  font: 400 calc(12px * var(--ts, 1)) 'Google Sans Text','Roboto',Arial,sans-serif;
   color: rgba(255,255,255,.82);
 }
 /* CSS barcode strip */
 .wcard-barcode {
-  height: 40px;
+  width: 56%;
+  margin: 0 auto;
+  height: 44px;
   border-radius: 4px;
   background: repeating-linear-gradient(90deg,
     #fff 0 2px, transparent 2px 4px,
@@ -2676,11 +2678,11 @@ html, body, #root {
   opacity: .95;
 }
 .wcard-barnum {
-  font: 500 12px 'Roboto Mono','Roboto',monospace;
+  font: 400 12px 'Google Sans Text','Google Sans','Roboto',Arial,sans-serif;
   letter-spacing: .12em;
   color: rgba(255,255,255,.9);
   text-align: center;
-  margin-top: -4px;
+  margin-top: 6px;
 }
 
 /* brand mark that the compressed stack settles into (STATE D) */
