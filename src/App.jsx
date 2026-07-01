@@ -586,7 +586,7 @@ function WalletHero({ onEnter, goto }) {
       <section className="walhero walhero-static">
         {pill}
         <div className="walhero-headline">
-          <h1 className="walhero-title">The world replies to those who know how to write.</h1>
+          <h1 className="walhero-title"><span>It’s not the cold email.</span><span>It’s the reply you get.</span></h1>
           <p className="walhero-sub">One email. The right words. A reply you weren’t supposed to get.</p>
         </div>
         <div className="walhero-static-cards">
@@ -647,7 +647,7 @@ function WalletHero({ onEnter, goto }) {
         {pill}
 
         <div className="walhero-headline" style={headStyle}>
-          <h1 className="walhero-title">The world replies to those who know how to write.</h1>
+          <h1 className="walhero-title"><span>It’s not the cold email.</span><span>It’s the reply you get.</span></h1>
           <p className="walhero-sub">One email. The right words. A reply you weren’t supposed to get.</p>
         </div>
 
