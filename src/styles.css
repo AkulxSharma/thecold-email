@@ -2103,7 +2103,7 @@ html, body, #root {
    Negative margin pulls the film up into the tail of the hero's sticky region so
    it sits CLOSE beneath the settled cards (no big white gap) and its mirrored
    fade-in actually plays on screen while the hero scroll progress finishes. */
-.home .home-film { padding: 28px 24px 64px; margin: -140px auto 0; position: relative; z-index: 2; }
+.home .home-film { padding: 28px 24px 64px; margin: -260px auto 0; position: relative; z-index: 2; }
 /* thin centered rule between the hero deck and the launch-film section */
 .home-film::before {
   content: "";
@@ -2476,7 +2476,7 @@ html, body, #root {
   max-width: none !important;
   width: 100%;
   margin: 0 !important;
-  height: 150vh;           /* track: pins for the card-rise, brief hold, then the next section scrolls up close behind (less trailing dead space) */
+  height: 175vh;           /* tight track: minimal empty scroll between the 2-stage rise phases and the text fade */
   position: relative;
 }
 .walhero-stage {
@@ -2522,7 +2522,7 @@ html, body, #root {
 /* headline group (STATE A) — absolutely centered so it can rise out */
 .walhero-headline {
   position: absolute;
-  top: 15%;
+  top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: min(680px, 86%);

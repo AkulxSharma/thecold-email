@@ -603,8 +603,15 @@ function WalletHero({ onEnter, goto }) {
   }
 
   // ----- animated states -----
-  const hHide = _ease(_seg(p, 0.02, 0.30))   // headline rises + fades out first
-  const sep   = _ease(_seg(p, 0.10, 0.85))   // the tight wallet stack separates a bit
+  // Two-stage choreography across the pinned scroll track (progress p, 0→1),
+  // with holds kept to the MINIMUM so there's little empty scroll between phases:
+  //   rise1  [0.06–0.28]  cards rise from the fold and SETTLE in the MIDDLE
+  //   (hold) [0.28–0.36]  brief pause — stack stays centered
+  //   rise2  [0.36–0.62]  stack rises MORE, settles HIGH (room below for the text)
+  //   (hold) [0.62–0.82]  short pause, then text fades in as the hero scrolls up
+  const hHide = _ease(_seg(p, 0.02, 0.22))   // headline rises + fades out during rise1
+  const rise1 = _ease(_seg(p, 0.06, 0.28))
+  const rise2 = _ease(_seg(p, 0.36, 0.62))
 
   const headStyle = {
     opacity: 1 - hHide,
@@ -612,21 +619,27 @@ function WalletHero({ onEnter, goto }) {
     pointerEvents: hHide > 0.5 ? 'none' : 'auto',
   }
 
-  // Google-Wallet stack geometry. Every card's TOP edge is stacked by `strip`
-  // below the previous one; the front card (blue, i=3) is expanded and shows a
-  // detail body, so nothing covers it. Pre-scroll = tight (strip S0); on scroll
-  // the peek grows to S1 — cards separate a bit but still overlap (S1 < card height).
-  const FRONT_H  = mobile ? 250 : 290
-  const S0 = mobile ? 82 : 96           // tight peek (pre-scroll — matches the reference)
-  const S1 = mobile ? 108 : 128         // separated peek (still < ~138 card height → still overlaps)
-  const strip = _lerp(S0, S1, sep)
+  // Google-Wallet stack geometry — a TIGHT stack that looks exactly like the
+  // reference (constant peek, no fanning/text-growth). Every card's TOP edge is
+  // `strip` below the previous one; the front card (blue, i=3) is expanded and
+  // shows the detail body + barcode, so nothing covers it.
+  const S0 = mobile ? 70 : 80            // settled peek strip (the spacing the stack settles to)
+  const S0_LOAD = mobile ? 54 : 62       // pre-scroll peek strip — TIGHTER (less gap below each label)
+  // The peek grows from the tight load value to the settled S0 over the first rise,
+  // so the labels sit close before scroll and reach the current spacing once settled.
+  const strip = _lerp(S0_LOAD, S0, rise1)
+  const FRONT_H = mobile ? 222 : 262     // expanded front-card height (matches CSS .wcard--front)
+  const STACK_H = 3 * S0 + FRONT_H       // full visual height of the settled stack (green top → blue bottom)
   // Pre-scroll the stack sits LOW — only the top 2 tiles (green, amber) show + a
   // barely-visible sliver of the 3rd (red); the expanded blue card is below the
-  // fold. Anchor green so red's strip lands right at the bottom edge. On scroll it
-  // rises up to the top area as it separates.
-  const stackTop  = _lerp(vh - (2 * S0 + 44), vh * 0.08, sep)
-  const textScale = _lerp(1, 1.16, sep) // tile text grows as the tiles separate
-  const deckStyle = { '--ts': textScale }
+  // fold. On scroll the whole stack rises and SETTLES centered in the viewport
+  // with all 4 cards fully visible; the rest of the track is empty settle-scroll.
+  const loadTop   = vh - (2 * S0_LOAD + 40)  // pre-scroll: only top 2 tiles + red sliver show
+  const middleTop = (vh - STACK_H) / 2      // stage 1 settle: whole stack centered
+  const topTop    = -(1.5 * S0)             // stage 2 settle: risen high — top tiles clear the
+                                            // fold (green gone, amber cut), room below for the text
+  // rise1 carries loadTop→middleTop (then holds); rise2 carries middleTop→topTop.
+  const stackTop = _lerp(_lerp(loadTop, middleTop, rise1), topTop, rise2)
 
   return (
     <section className="walhero" ref={outerRef}>
@@ -638,12 +651,14 @@ function WalletHero({ onEnter, goto }) {
           <p className="walhero-sub">One email. The right words. A reply you weren’t supposed to get.</p>
         </div>
 
-        <div className="walhero-deck" style={deckStyle}>
+        <div className="walhero-deck">
           {cards.map((topic, i) => {
             const front = i === 3
             const topY = stackTop + i * strip              // this card's top edge, from stage top
             const style = {
               '--wc': WAL_COLORS[i],
+              '--peek': `${strip}px`,                      // head centers within the visible peek band
+              '--headnudge': `${_lerp(10, 0, rise1)}px`,   // nudged down at load, centered once settled
               zIndex: 10 + i,                              // blue (front) on top, green behind
               transform: `translate(-50%, ${topY}px)`,
             }
@@ -761,9 +776,11 @@ function ViewOverview({ onEnter, goto }) {
       const scrollTop = scroller ? scroller.scrollTop : window.scrollY
       const travel = hero.offsetHeight - h
       const p = _clamp01(travel > 0 ? (scrollTop - top) / travel : 0)
-      // mirror of the headline's 0.30-wide ease window, placed near the end so
-      // the film fades in as the cards finish settling (rise completes at 0.82).
-      const filmIn = _ease(_seg(p, 0.66, 0.96))
+      // the film fades + slides in AFTER the second rise settles (rise2 done at
+      // 0.62). Window pushed late so the opacity animates WHILE the text is on
+      // screen (not already opaque below the fold) — a true fade+slide, mirroring
+      // the header's fade-out. Then the whole hero releases and scrolls up (p→1).
+      const filmIn = _ease(_seg(p, 0.82, 1.0))
       film.style.opacity = String(filmIn)
       film.style.transform = `translateY(${(1 - filmIn) * 160}px)`
     }
