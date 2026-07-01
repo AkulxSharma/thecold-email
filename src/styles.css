@@ -2476,7 +2476,7 @@ html, body, #root {
   max-width: none !important;
   width: 100%;
   margin: 0 !important;
-  height: 175vh;           /* tight track: minimal empty scroll between the 2-stage rise phases and the text fade */
+  height: 250vh;           /* longer track: slows the scroll-linked rise so the animation reads slower */
   position: relative;
 }
 .walhero-stage {
@@ -2525,7 +2525,7 @@ html, body, #root {
   top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: min(680px, 86%);
+  width: min(920px, 92%);
   text-align: center;
   z-index: 30;
   will-change: transform, opacity;
@@ -2535,16 +2535,17 @@ html, body, #root {
    sub — Google Sans Text 400, 20px/28px, normal spacing, #5f6368.
    Size scaled responsively (caps near wallet's 78px) so our longer headline fits. */
 .walhero-title {
-  font: 700 clamp(30px, 4.2vw, 54px)/1.12 'Google Sans Text','Google Sans','Roboto',Arial,sans-serif;
+  font: 700 clamp(40px, 6vw, 74px)/1.1 'Google Sans Text','Google Sans','Roboto',Arial,sans-serif;
   letter-spacing: -0.02em;
   color: #3c4043;
   margin: 0 0 14px;
 }
+.walhero-title span { display: block; }   /* each sentence on its own line */
 .walhero-sub {
-  font: 400 18px/1.4 'Google Sans Text','Google Sans','Roboto',Arial,sans-serif;
+  font: 400 20px/1.4 'Google Sans Text','Google Sans','Roboto',Arial,sans-serif;
   letter-spacing: normal;
   color: #5f6368;
-  max-width: 560px;
+  max-width: 640px;
   margin: 0 auto;
 }
 
