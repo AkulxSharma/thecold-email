@@ -278,9 +278,7 @@ export const RULES_PAGE = {
     'Paid responses/Purchased introductions',
   ],
   bccWhy: [
-    'Creates an independent timestamp',
     'Prevents fake screenshots',
-    'Verifies the email was actually sent',
     'Keeps judging fair',
     'Protects the integrity of the competition',
   ],

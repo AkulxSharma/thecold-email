@@ -3298,14 +3298,14 @@ function ViewRule({ onEnter }) {
       <ul className="rule-x keep-list">{R.doesntCount.map(c => <li key={c}><span className="gdoc-mark gdoc-mark-dash">–</span>{c}</li>)}</ul>
       <p className="keep-support">If a human didn’t personally respond, it doesn’t count.</p>
     </>) },
-    { id: 'bcc', color: 'blue', title: 'Every competition email must BCC us.', render: () => (<>
+    { id: 'bcc', color: 'blue', title: 'Mandatory BCC', render: () => (<>
       <div className="keep-bcc">
         <span className="keep-bcc-email">{R.bccEmail}</span>
         <button className="rule-bcc-copy" onClick={copyBcc}>
           <I.M name={copied ? 'check' : 'content_copy'} size={16} /> {copied ? 'Copied!' : 'Copy'}
         </button>
       </div>
-      <div className="keep-mini-head">Why we require it</div>
+      <div className="keep-mini-head">Why?</div>
       <ul className="rule-bullets keep-bullets">{R.bccWhy.map(b => <li key={b}>{b}</li>)}</ul>
       <p className="keep-support">Failure to BCC may make an entry ineligible.</p>
     </>) },
