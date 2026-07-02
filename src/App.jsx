@@ -3332,7 +3332,7 @@ function ViewRule({ onEnter }) {
     </>) },
     { id: 'spirit', color: 'dark', title: 'Win by writing.', render: () => (<>
       <p className="keep-text">The rules cannot cover every loophole. If an entry technically follows the rules but clearly violates the spirit of fair competition, organizers may disqualify it. The purpose of this competition is simple: earn a genuine response from someone who had no reason to give you one.</p>
-      <p className="keep-quote">“Write a remarkable cold email. Don’t game the system.”</p>
+      <p className="keep-quote">Write a remarkable cold email. Don’t game the system.</p>
     </>) },
     { id: 'final', color: 'pink', title: 'Write something worth replying to.', render: () => (<>
       <p className="keep-text">Not the funniest. Not the longest. Not the craziest.</p>
