@@ -2245,10 +2245,6 @@ function ViewBest() {
               <button className="bx-tb-btn" title="Refresh" onClick={refreshList}><I.M name="refresh" size={20} className={spinning ? 'bx-spin' : ''} /></button>
               <button className="bx-tb-btn" title="More"><I.M name="more_vert" size={20} /></button>
             </div>
-            <div className="bx-tb-grp">
-              <button className="bx-tb-btn bx-tb-split" title="Reading pane"><I.M name="view_column" size={20} /><I.M name="arrow_drop_down" size={18} /></button>
-              <button className="bx-tb-btn bx-tb-split" title="Input tools"><I.M name="keyboard" size={20} /><I.M name="arrow_drop_down" size={18} /></button>
-            </div>
           </div>
         )}
         <div className="bx-list">
