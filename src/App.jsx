@@ -2033,7 +2033,7 @@ function ViewBest() {
   const [collapsedMsgs, setCollapsedMsgs] = useState(() => new Set()) // indices collapsed to first line
   const [readState, setReadState] = useState(loadReadState)       // { [i]: true } — read rows
   const [starredState, setStarredState] = useState(loadStarredState) // { [i]: true } — starred rows
-  const [openSec, setOpenSec] = useState({ unread: true, read: true, starred: true }) // section collapse: Unread / Read / Starred
+  const [openSec, setOpenSec] = useState({ starred: true, unread: true, rest: true }) // section collapse: Starred / Unread / Everything else
   const toggleSec = (k) => setOpenSec(p => ({ ...p, [k]: !p[k] }))
 
   // Persist read / starred maps whenever they change.
@@ -2203,10 +2203,11 @@ function ViewBest() {
             }
             const all = BEST_EMAILS.map((em, i) => ({ em, i }))
 
-            // Gmail-style grouping: Unread, Read, Starred (starred shown regardless of read state).
-            const unread = all.filter(({ i }) => !readState[i])
-            const read = all.filter(({ i }) => readState[i])
+            // Gmail-style grouping: Starred (top) / Unread (middle) / Everything else (bottom).
+            // Mutually exclusive — starred pulls out first, so no email appears twice.
             const starred = all.filter(({ i }) => starredState[i])
+            const unread = all.filter(({ i }) => !starredState[i] && !readState[i])
+            const rest = all.filter(({ i }) => !starredState[i] && readState[i])
             const Section = (key, label, items) => items.length > 0 && (
               <div className="bx-section" key={key}>
                 <button className="bx-section-hd" onClick={() => toggleSec(key)}>
@@ -2219,9 +2220,9 @@ function ViewBest() {
             )
             return (
               <>
-                {Section('unread', 'Unread', unread)}
-                {Section('read', 'Read', read)}
                 {Section('starred', 'Starred', starred)}
+                {Section('unread', 'Unread', unread)}
+                {Section('rest', 'Everything else', rest)}
               </>
             )
           })()}
