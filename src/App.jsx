@@ -2178,6 +2178,17 @@ function ViewBest() {
             </div>
           </div>
         </div>
+        <div className="bx-toolbar">
+          <div className="bx-tb-grp">
+            <button className="bx-tb-btn bx-tb-split" title="Select"><I.M name="check_box_outline_blank" size={20} /><I.M name="arrow_drop_down" size={20} /></button>
+            <button className="bx-tb-btn" title="Refresh"><I.M name="refresh" size={20} /></button>
+            <button className="bx-tb-btn" title="More"><I.M name="more_vert" size={20} /></button>
+          </div>
+          <div className="bx-tb-grp">
+            <button className="bx-tb-btn bx-tb-split" title="Reading pane"><I.M name="view_column" size={20} /><I.M name="arrow_drop_down" size={18} /></button>
+            <button className="bx-tb-btn bx-tb-split" title="Input tools"><I.M name="keyboard" size={20} /><I.M name="arrow_drop_down" size={18} /></button>
+          </div>
+        </div>
         <div className="bx-list">
           {(() => {
             const row = ({ em, i }) => {
