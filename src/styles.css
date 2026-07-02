@@ -816,13 +816,13 @@ html, body, #root {
   gap: 4px;
   width: 100%;
   padding: 8px 16px;
-  background: #f2f6fc;
+  background: #fff;
   border: none;
   cursor: pointer;
   color: #1f1f1f;
   font: 500 13px 'Google Sans Text','Roboto',Arial,sans-serif;
 }
-.bx-section-hd:hover { background: #e9eef6; }
+.bx-section-hd:hover { background: #f6f8fc; }
 .bx-section-hd .msym { color: #444746; }
 .bx-section-label { letter-spacing: .2px; }
 .bx-section-count { color: #5f6368; font-weight: 400; }
