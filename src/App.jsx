@@ -2599,7 +2599,7 @@ function HandArrow({ className, style }) {
 function ViewTrackDoc({ data, title, topic }) {
   // The unreachable track is a raw brainstorm essay with a live Google-Docs
   // comment rail on the right and no reviewer annotations (team's new format).
-  if (topic === 'unreachable') return <TrackDocEssay title={title} />
+  if (topic === 'unreachable') return <TrackDocEssay title={title} data={data} />
   return <TrackMarkedDoc data={data} title={title} topic={topic} />
 }
 
@@ -2624,48 +2624,50 @@ const UR_COMMENTS = [
 
 const urLink = (href, key) => <a key={key} href={href} target="_blank" rel="noopener noreferrer">{href}</a>
 
-function TrackDocEssay({ title }) {
+function TrackDocEssay({ title, data }) {
   return (
     <DocFrame title={title} canvasClass="ur-canvas" pageClass="ur-page">
       <div className="ur-layout">
         <article className="ur-doc">
-          <p>This will be the greatest age ever to create and have problems. In a world of scarcity, we treasured tools and labour. In a world of abundance, we will treasure humanness and “taste”.</p>
-          <p>Act of creation is the only purpose.</p>
-          <p>We were born to be inventors, pioneers, explorers. Globalization changed the world for good. Social media fully changed the world.</p>
-          <p>The world will belong to the autodidacts. Even the best people who go to school are usually self-taught. Founder of DJI.</p>
-          <p>The new founders, empirically are younger than ever:</p>
+          <h1 className="ur-h1">{title}</h1>
+
+          <h2 className="ur-h2">The Goal</h2>
+          <p><RT>{data.goal}</RT></p>
+          {data.goalExtra && <p><RT>{data.goalExtra}</RT></p>}
+
+          <h2 className="ur-h2">How It's Won</h2>
+          {data.howWon.map((l, i) => <p key={i}><RT>{l}</RT></p>)}
+
+          <h2 className="ur-h2">What This Track Rewards</h2>
+          {data.rewards.map((l, i) => <p key={i}><RT>{l}</RT></p>)}
+
+          <h2 className="ur-h2">What Judges Look For</h2>
+          <ul className="ur-ul">
+            {data.judges.map((l, i) => <li key={i}><RT>{l}</RT></li>)}
+          </ul>
+
+          <h2 className="ur-h2">Strong Entries</h2>
+          <ul className="ur-ul">
+            {data.strong.map((l, i) => <li key={i}><RT>{l}</RT></li>)}
+          </ul>
+
+          <h2 className="ur-h2">Common Mistakes</h2>
+          <ul className="ur-ul">
+            {data.mistakes.map((l, i) => <li key={i}><RT>{l}</RT></li>)}
+          </ul>
+
+          <h2 className="ur-h2">Scoring</h2>
           <ol className="ur-ol">
-            <li>Riley Walz {urLink('https://walzr.com/')}</li>
-            <li>Gabriel at OpenAI {urLink('https://www.linkedin.com/in/gabriel-petersson-ai/')}</li>
-            <li>The lowering of the average age of YC founders.</li>
+            {data.scoring.map((s, i) => <li key={i}>{s.label} — {s.pts}</li>)}
           </ol>
-          <p>Who’s going to lose: (keep this short)</p>
-          <ol className="ur-ol">
-            <li>“Shallow thinkers”
-              <ol className="ur-ol ur-ol-a">
-                <li>The amount of times I have seen someone get into YC knowing that company isn’t going to work out</li>
-                <li>Instant Gratification: not putting in reps</li>
-                <li>The people raising without an idea</li>
-                <li>Even if you get away with money, you are left eluded inside. The human brain is wired on average to derive happiness by doing hard things. We sense lies. We sense manipulation. We don’t like lethargy.</li>
-              </ol>
-            </li>
-          </ol>
-          <p>Who’s going to win (economically) – every one is going to have Phineas and ferb projects:</p>
-          <ol className="ur-ol">
-            <li>Curious: Ask questions to AI and Internet
-              <ol className="ur-ol ur-ol-a">
-                <li>“Keep Thinking”</li>
-                <li>Who asks the best questions</li>
-              </ol>
-            </li>
-            <li>Initiative: cold emails + irl + flying to places
-              <ol className="ur-ol ur-ol-a">
-                <li>Agency</li>
-                <li>Less social anxiety</li>
-                <li>If you knew you were 100 failures away from meeting your future wife / your dream job — how fast would you want to fail?</li>
-              </ol>
-            </li>
-          </ol>
+
+          <h2 className="ur-h2">Prize</h2>
+          <p><strong>$500</strong> for the winning entry. Every qualifying entry is also automatically considered for the Best Cold Email ($1,000 grand prize).</p>
+
+          <h2 className="ur-h2">Remember</h2>
+          <p>{TRACK_REMEMBER.lead}</p>
+          <p><strong>{TRACK_REMEMBER.bold}</strong></p>
+          <p>{TRACK_REMEMBER.body}</p>
         </article>
         <aside className="ur-comments">
           {UR_COMMENTS.map((c, i) => (
