@@ -815,7 +815,7 @@ html, body, #root {
   border: none; background: transparent; border-radius: 20px;
   cursor: pointer; color: #5f6368;
 }
-.bx-tb-btn:hover { background: #f1f3f4; }
+.bx-tb-btn:hover { background: transparent; }
 .bx-tb-split .msym + .msym { margin-left: -4px; }
 .bx-list {
   border-top: 1px solid #f1f3f4;
