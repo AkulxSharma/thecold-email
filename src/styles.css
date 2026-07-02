@@ -867,6 +867,7 @@ html, body, #root {
 .bx-star-btn:hover { color: #5f6368; }
 .bx-star-btn.starred { color: #f4b400; }
 .bx-star-btn.starred:hover { color: #f4b400; }
+.bx-star-btn.starred .msym { font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20; }
 .bx-stat {
   display: flex;
   align-items: center;
@@ -954,6 +955,7 @@ html, body, #root {
 .gm-ic { display: inline-flex; align-items: center; justify-content: center; color: #5f6368; padding: 8px; border-radius: 50%; cursor: pointer; user-select: none; -webkit-user-select: none; }
 .gm-ic:hover { background: rgba(60,64,67,.08); }
 .gm-ic.starred { color: #f4b400; }
+.gm-ic.starred .msym { font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20; }
 
 .gm-msg { display: flex; gap: 16px; padding: 18px 0; border-top: 1px solid #f1f3f4; }
 .gm-msg-top-toggle { cursor: pointer; }
