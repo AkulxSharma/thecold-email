@@ -899,7 +899,7 @@ html, body, #root {
 .bx-row.selected { background: #c2dbff; }
 .bx-row.selected:hover { background: #c2dbff; }
 .bx-check { color: #5f6368; display: flex; align-items: center; flex-shrink: 0; cursor: pointer; }
-.bx-check.checked { color: #1a73e8; }
+.bx-check.checked { color: #3c4043; }
 .bx-star-btn { color: #bdc1c6; display: flex; align-items: center; flex-shrink: 0; cursor: pointer; }
 .bx-star-btn:hover { color: #5f6368; }
 .bx-star-btn.starred { color: #f4b400; }
