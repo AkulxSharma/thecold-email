@@ -3289,9 +3289,9 @@ function ViewRule({ onEnter }) {
       <p className="keep-support">Break any of these and your entry is disqualified.</p>
     </>) },
     { id: 'counts', color: 'green', title: 'What counts?', render: () => (<>
-      <p className="keep-text">Your entry qualifies only if all of the following are true.</p>
+      <p className="keep-text">Your entry qualifies only if:</p>
       <ul className="rule-check keep-list">{R.whatCounts.map(c => <li key={c}><span className="gdoc-mark gdoc-mark-dot">•</span>{c}</li>)}</ul>
-      <p className="keep-support">A reply can be short. A reply can be negative. A reply can simply be “No.” What matters is that a real person responded.</p>
+      <p className="keep-support">A reply can be short. A reply can be negative. What matters is the person actually responded meaningfully.</p>
     </>) },
     { id: 'doesnt', color: 'coral', title: 'What doesn’t count?', render: () => (<>
       <p className="keep-text">Not every response qualifies. These do not count as valid replies.</p>

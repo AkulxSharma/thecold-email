@@ -266,10 +266,8 @@ export const RULES_PAGE = {
   chips: ['No Impersonation', 'No Lying', 'No Mass-Blasting'],
   whatCounts: [
     'A real person replied',
-    'The recipient didn’t already know you',
     'The email was sent during the competition',
-    'You BCC’d our competition inbox',
-    'You can provide proof',
+    'You can provide proof in the form of the entire unedited email thread.',
     'The interaction was genuine',
   ],
   doesntCount: [
