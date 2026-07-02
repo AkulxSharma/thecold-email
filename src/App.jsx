@@ -3321,6 +3321,10 @@ function ViewRule({ onEnter }) {
       <ul className="keep-proof">{R.proof.map(p => <li key={p.label}><I.M name={p.icon} size={18} /> {p.label}</li>)}</ul>
       <p className="keep-support">Judges may request additional verification if needed. Failure to provide proof may result in disqualification.</p>
     </>) },
+    { id: 'final', color: 'pink', title: 'Write something worth replying to.', render: () => (<>
+      <p className="keep-text">Not the funniest. Not the longest. Not the craziest.</p>
+      <p className="keep-text">Just the kind of email that makes someone who has never heard of you stop what they’re doing and hit Reply.</p>
+    </>) },
     { id: 'fairplay', color: 'purple', title: 'Fair play', render: () => (<>
       <p className="keep-text">The goal is to earn trust from someone who doesn’t know you, not leverage an existing relationship.</p>
       <p className="keep-support">If the recipient would reasonably recognize you, it doesn’t count.</p>
@@ -3333,10 +3337,6 @@ function ViewRule({ onEnter }) {
     { id: 'spirit', color: 'dark', title: 'Win by writing.', render: () => (<>
       <p className="keep-text">The rules cannot cover every loophole. If an entry technically follows the rules but clearly violates the spirit of fair competition, organizers may disqualify it. The purpose of this competition is simple: earn a genuine response from someone who had no reason to give you one.</p>
       <p className="keep-quote">Write a remarkable cold email. Don’t game the system.</p>
-    </>) },
-    { id: 'final', color: 'pink', title: 'Write something worth replying to.', render: () => (<>
-      <p className="keep-text">Not the funniest. Not the longest. Not the craziest.</p>
-      <p className="keep-text">Just the kind of email that makes someone who has never heard of you stop what they’re doing and hit Reply.</p>
     </>) },
   ]
 
