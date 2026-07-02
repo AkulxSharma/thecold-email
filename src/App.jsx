@@ -2227,15 +2227,15 @@ function ViewBest() {
           <div className="bx-toolbar">
             <div className="bx-tb-grp">
               <button className="bx-tb-btn bx-tb-split bx-tb-checked" title="Deselect all" onClick={clearSelected}><I.M name={selected.size >= BEST_EMAILS.length ? 'check_box' : 'indeterminate_check_box'} size={20} /><I.M name="arrow_drop_down" size={20} /></button>
-              <button className="bx-tb-btn" title="Archive"><I.M name="archive" size={20} /></button>
-              <button className="bx-tb-btn" title="Report spam"><I.M name="report" size={20} /></button>
-              <button className="bx-tb-btn" title="Delete"><I.M name="delete" size={20} /></button>
+              <button className="bx-tb-btn" title="Archive" disabled><I.M name="archive" size={20} /></button>
+              <button className="bx-tb-btn" title="Report spam" disabled><I.M name="report" size={20} /></button>
+              <button className="bx-tb-btn" title="Delete" disabled><I.M name="delete" size={20} /></button>
               <span className="bx-tb-bar" />
               {allSelRead
                 ? <button className="bx-tb-btn" title="Mark as unread" onClick={markSelUnread}><I.M name="mark_email_unread" size={20} /></button>
                 : <button className="bx-tb-btn" title="Mark as read" onClick={markSelRead}><I.M name="drafts" size={20} /></button>}
-              <button className="bx-tb-btn" title="Move to"><I.M name="drive_file_move" size={20} /></button>
-              <button className="bx-tb-btn" title="More"><I.M name="more_vert" size={20} /></button>
+              <button className="bx-tb-btn" title="Move to" disabled><I.M name="drive_file_move" size={20} /></button>
+              <button className="bx-tb-btn" title="More" disabled><I.M name="more_vert" size={20} /></button>
             </div>
           </div>
         ) : (
