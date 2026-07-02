@@ -2597,7 +2597,96 @@ function HandArrow({ className, style }) {
 // Every track page renders in the marked-up Google Doc style; TrackMarkedDoc
 // pulls each track's own content from TRACK_PAGES[topic] (passed in as `data`).
 function ViewTrackDoc({ data, title, topic }) {
+  // The unreachable track is a raw brainstorm essay with a live Google-Docs
+  // comment rail on the right and no reviewer annotations (team's new format).
+  if (topic === 'unreachable') return <TrackDocEssay title={title} />
   return <TrackMarkedDoc data={data} title={title} topic={topic} />
+}
+
+// Live comment thread shown in the right rail of the unreachable essay.
+const UR_COMMENTS = [
+  { name: 'Hardeep Gambhir', time: '22:11 15 Jun', av: 'HG', color: '#d93025',
+    paras: ['Are we talking about all the movements that came from the internet with the intent to better the world or at least have a net positive?'] },
+  { name: 'Nicklaus Tran', time: '22:47 15 Jun', av: 'NT', color: '#1a73e8',
+    paras: [
+      "probably can hammer hard on more. eric schmidt and jeff dean imo aren't relevant to the cultural zeitgeist unless you have a personal story with them",
+      'can hammer hard with lower trust in institutions though. outlandish or realistic claim of how many colleges will shut down',
+    ] },
+  { name: 'Hardeep Gambhir', time: '01:48 16 Jun', av: 'HG', color: '#d93025',
+    paras: ['Can you expand on the dwindling trust in institutions? What have you noticed about that?'] },
+  { name: 'Nicklaus Tran', time: '02:23 16 Jun', av: 'NT', color: '#1a73e8',
+    links: [
+      'https://x.com/PeterDiamandis/status/2062882655692009961',
+      'https://x.com/marcportermagee/status/2061494732937646246?s=20',
+      'https://www.randalolson.com/2026',
+    ] },
+]
+
+const urLink = (href, key) => <a key={key} href={href} target="_blank" rel="noopener noreferrer">{href}</a>
+
+function TrackDocEssay({ title }) {
+  return (
+    <DocFrame title={title} canvasClass="ur-canvas" pageClass="ur-page">
+      <div className="ur-layout">
+        <article className="ur-doc">
+          <p>This will be the greatest age ever to create and have problems. In a world of scarcity, we treasured tools and labour. In a world of abundance, we will treasure humanness and “taste”.</p>
+          <p>Act of creation is the only purpose.</p>
+          <p>We were born to be inventors, pioneers, explorers. Globalization changed the world for good. Social media fully changed the world.</p>
+          <p>The world will belong to the autodidacts. Even the best people who go to school are usually self-taught. Founder of DJI.</p>
+          <p>The new founders, empirically are younger than ever:</p>
+          <ol className="ur-ol">
+            <li>Riley Walz {urLink('https://walzr.com/')}</li>
+            <li>Gabriel at OpenAI {urLink('https://www.linkedin.com/in/gabriel-petersson-ai/')}</li>
+            <li>The lowering of the average age of YC founders.</li>
+          </ol>
+          <p>Who’s going to lose: (keep this short)</p>
+          <ol className="ur-ol">
+            <li>“Shallow thinkers”
+              <ol className="ur-ol ur-ol-a">
+                <li>The amount of times I have seen someone get into YC knowing that company isn’t going to work out</li>
+                <li>Instant Gratification: not putting in reps</li>
+                <li>The people raising without an idea</li>
+                <li>Even if you get away with money, you are left eluded inside. The human brain is wired on average to derive happiness by doing hard things. We sense lies. We sense manipulation. We don’t like lethargy.</li>
+              </ol>
+            </li>
+          </ol>
+          <p>Who’s going to win (economically) – every one is going to have Phineas and ferb projects:</p>
+          <ol className="ur-ol">
+            <li>Curious: Ask questions to AI and Internet
+              <ol className="ur-ol ur-ol-a">
+                <li>“Keep Thinking”</li>
+                <li>Who asks the best questions</li>
+              </ol>
+            </li>
+            <li>Initiative: cold emails + irl + flying to places
+              <ol className="ur-ol ur-ol-a">
+                <li>Agency</li>
+                <li>Less social anxiety</li>
+                <li>If you knew you were 100 failures away from meeting your future wife / your dream job — how fast would you want to fail?</li>
+              </ol>
+            </li>
+          </ol>
+        </article>
+        <aside className="ur-comments">
+          {UR_COMMENTS.map((c, i) => (
+            <div className="ur-cmt" key={i}>
+              <div className="ur-cmt-head">
+                <span className="ur-cmt-av" style={{ background: c.color }}>{c.av}</span>
+                <div className="ur-cmt-meta">
+                  <span className="ur-cmt-name">{c.name}</span>
+                  <span className="ur-cmt-time">{c.time}</span>
+                </div>
+              </div>
+              <div className="ur-cmt-body">
+                {c.paras && c.paras.map((p, j) => <p key={j}>{p}</p>)}
+                {c.links && <div className="ur-cmt-links">{c.links.map((l, j) => urLink(l, j))}</div>}
+              </div>
+            </div>
+          ))}
+        </aside>
+      </div>
+    </DocFrame>
+  )
 }
 
 // ===================== SHARED GOOGLE DOCS FRAME =====================
