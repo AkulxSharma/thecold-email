@@ -617,7 +617,7 @@ export function isCountry(raw) {
 }
 
 // Best Email Ever — PLACEHOLDER examples (Akul will replace with real entries)
-export const BEST_EMAILS = [
+const BEST_EMAIL_SAMPLE =
   {
     from: 'Richard Zheng',
     fromEmail: 'richardzphotoz@gmail.com',
@@ -649,5 +649,7 @@ Richard`,
     replyEmail: 'mcuban@gmail.com',
     replyDate: 'May 9, 2024',
     reply: `What is the utility of it`,
-  },
-]
+  }
+
+// Temporary: duplicate the sample email into 10 rows to preview how a full list looks.
+export const BEST_EMAILS = Array.from({ length: 10 }, () => ({ ...BEST_EMAIL_SAMPLE }))
