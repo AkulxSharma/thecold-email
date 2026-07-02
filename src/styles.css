@@ -839,7 +839,7 @@ html, body, #root {
   border-radius: 4px;
   cursor: pointer;
   color: #1f1f1f;
-  font: 500 .875rem/24px 'Google Sans Text','Roboto',Arial,sans-serif;
+  font: 500 14px/24px 'Google Sans Text','Roboto',Arial,sans-serif;
   letter-spacing: normal;
   font-feature-settings: 'liga' 0;
   font-variant-ligatures: no-contextual;
