@@ -20,7 +20,7 @@
 .gchat-card-top { display: flex; align-items: center; gap: 14px; }
 .gchat-card-av { width: 64px; height: 64px; border-radius: 50%; flex-shrink: 0; overflow: hidden; }
 .gchat-card-av img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.gchat-card-name { font: 400 20px 'Google Sans','Product Sans','Roboto',sans-serif; color: #1f1f1f; line-height: 1.2; }
+.gchat-card-name { font: 400 20px 'Google Sans Text','Product Sans','Roboto',sans-serif; color: #1f1f1f; line-height: 1.2; }
 .gchat-card-email { font: 400 13px 'Roboto',sans-serif; color: #5f6368; margin-top: 2px;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .gchat-card-quote { font: italic 400 13px 'Roboto',sans-serif; color: #444746; line-height: 1.4; margin: 22px 2px 4px; }
@@ -35,7 +35,7 @@
 .gchat-card-ico:hover { background: rgba(60,64,67,.06); }
 .gchat-card-detail { display: flex; align-items: center; gap: 6px; width: 100%;
   border: 0; background: transparent; color: #0b57d0; cursor: pointer;
-  font: 500 14px 'Google Sans','Roboto',sans-serif; padding: 10px 2px; }
+  font: 500 14px 'Google Sans Text','Roboto',sans-serif; padding: 10px 2px; }
 .gchat-card-detail:hover { color: #0842a0; }
 .gchat-hd-r { display: flex; align-items: center; gap: 2px; }
 .gchat-ic { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px;
@@ -64,7 +64,7 @@
 .gchat-intro-av { width: 64px; height: 64px; border-radius: 50%; margin-bottom: 12px;
   background: #8133c9; color: #fff; font: 600 24px 'Roboto', sans-serif;
   display: flex; align-items: center; justify-content: center; }
-.gchat-intro-name { font: 400 22px 'Google Sans','Product Sans','Roboto',sans-serif; color: #1f1f1f; }
+.gchat-intro-name { font: 400 22px 'Google Sans Text','Product Sans','Roboto',sans-serif; color: #1f1f1f; }
 .gchat-intro-email { font: 400 13px 'Roboto', sans-serif; color: #5f6368; margin-top: 4px; }
 .gchat-intro-sub { font: 400 13px 'Roboto', sans-serif; color: #5f6368; margin-top: 2px; }
 
