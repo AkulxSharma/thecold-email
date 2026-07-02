@@ -2033,6 +2033,7 @@ function ViewBest() {
   const [collapsedMsgs, setCollapsedMsgs] = useState(() => new Set()) // indices collapsed to first line
   const [readState, setReadState] = useState(loadReadState)       // { [i]: true } — read rows
   const [starredState, setStarredState] = useState(loadStarredState) // { [i]: true } — starred rows
+  const [selected, setSelected] = useState(() => new Set()) // indices ticked via checkbox
   const [openSec, setOpenSec] = useState({ starred: true, unread: true, rest: true }) // section collapse: Starred / Unread / Everything else
   const toggleSec = (k) => setOpenSec(p => ({ ...p, [k]: !p[k] }))
 
@@ -2051,6 +2052,14 @@ function ViewBest() {
     if (n[i]) delete n[i]; else n[i] = true
     return n
   })
+  // Toggle checkbox selection on a row.
+  const toggleSelect = (i) => setSelected(prev => {
+    const n = new Set(prev)
+    n.has(i) ? n.delete(i) : n.add(i)
+    return n
+  })
+  const clearSelected = () => setSelected(new Set())
+  const anySelected = selected.size > 0
 
   // -------- Open thread (reading pane) --------
   if (open != null) {
@@ -2178,25 +2187,41 @@ function ViewBest() {
             </div>
           </div>
         </div>
-        <div className="bx-toolbar">
-          <div className="bx-tb-grp">
-            <button className="bx-tb-btn bx-tb-split" title="Select"><I.M name="check_box_outline_blank" size={20} /><I.M name="arrow_drop_down" size={20} /></button>
-            <button className="bx-tb-btn" title="Refresh"><I.M name="refresh" size={20} /></button>
-            <button className="bx-tb-btn" title="More"><I.M name="more_vert" size={20} /></button>
+        {anySelected ? (
+          <div className="bx-toolbar">
+            <div className="bx-tb-grp">
+              <button className="bx-tb-btn bx-tb-split" title="Deselect all" onClick={clearSelected}><I.M name="indeterminate_check_box" size={20} /><I.M name="arrow_drop_down" size={20} /></button>
+              <button className="bx-tb-btn" title="Archive"><I.M name="archive" size={20} /></button>
+              <button className="bx-tb-btn" title="Report spam"><I.M name="report" size={20} /></button>
+              <button className="bx-tb-btn" title="Delete"><I.M name="delete" size={20} /></button>
+              <span className="bx-tb-bar" />
+              <button className="bx-tb-btn" title="Mark as read"><I.M name="drafts" size={20} /></button>
+              <button className="bx-tb-btn" title="Move to"><I.M name="drive_file_move" size={20} /></button>
+              <button className="bx-tb-btn" title="More"><I.M name="more_vert" size={20} /></button>
+            </div>
           </div>
-          <div className="bx-tb-grp">
-            <button className="bx-tb-btn bx-tb-split" title="Reading pane"><I.M name="view_column" size={20} /><I.M name="arrow_drop_down" size={18} /></button>
-            <button className="bx-tb-btn bx-tb-split" title="Input tools"><I.M name="keyboard" size={20} /><I.M name="arrow_drop_down" size={18} /></button>
+        ) : (
+          <div className="bx-toolbar">
+            <div className="bx-tb-grp">
+              <button className="bx-tb-btn bx-tb-split" title="Select"><I.M name="check_box_outline_blank" size={20} /><I.M name="arrow_drop_down" size={20} /></button>
+              <button className="bx-tb-btn" title="Refresh"><I.M name="refresh" size={20} /></button>
+              <button className="bx-tb-btn" title="More"><I.M name="more_vert" size={20} /></button>
+            </div>
+            <div className="bx-tb-grp">
+              <button className="bx-tb-btn bx-tb-split" title="Reading pane"><I.M name="view_column" size={20} /><I.M name="arrow_drop_down" size={18} /></button>
+              <button className="bx-tb-btn bx-tb-split" title="Input tools"><I.M name="keyboard" size={20} /><I.M name="arrow_drop_down" size={18} /></button>
+            </div>
           </div>
-        </div>
+        )}
         <div className="bx-list">
           {(() => {
             const row = ({ em, i }) => {
               const isRead = !!readState[i]
               const isStarred = !!starredState[i]
+              const isSelected = selected.has(i)
               return (
-                <div className={`bx-row ${isRead ? 'read' : 'unread'}`} key={i} onClick={() => openEmail(i)}>
-                  <span className="bx-check" onClick={e => e.stopPropagation()}><I.M name="check_box_outline_blank" size={18} /></span>
+                <div className={`bx-row ${isRead ? 'read' : 'unread'}${isSelected ? ' selected' : ''}`} key={i} onClick={() => openEmail(i)}>
+                  <span className={`bx-check${isSelected ? ' checked' : ''}`} onClick={e => { e.stopPropagation(); toggleSelect(i) }} title={isSelected ? 'Deselect' : 'Select'}><I.M name={isSelected ? 'check_box' : 'check_box_outline_blank'} size={18} /></span>
                   <span
                     className={`bx-star-btn${isStarred ? ' starred' : ''}`}
                     onClick={e => { e.stopPropagation(); toggleStar(i) }}

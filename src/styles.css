@@ -817,6 +817,7 @@ html, body, #root {
 }
 .bx-tb-btn:hover { background: transparent; }
 .bx-tb-split .msym + .msym { margin-left: -4px; }
+.bx-tb-bar { width: 1px; height: 24px; background: #dadce0; margin: 0 8px; flex-shrink: 0; }
 .bx-list {
 }
 /* Gmail-style grouped sections (Unread / Everything else) on the All tab */
@@ -893,7 +894,10 @@ html, body, #root {
 .bx-row.read .bx-sender,
 .bx-row.read .bx-subj,
 .bx-row.read .bx-date { font-weight: 400; color: #5f6368; }
-.bx-check { color: #5f6368; display: flex; align-items: center; flex-shrink: 0; }
+.bx-row.selected { background: #c2dbff; }
+.bx-row.selected:hover { background: #c2dbff; }
+.bx-check { color: #5f6368; display: flex; align-items: center; flex-shrink: 0; cursor: pointer; }
+.bx-check.checked { color: #1a73e8; }
 .bx-star-btn { color: #bdc1c6; display: flex; align-items: center; flex-shrink: 0; cursor: pointer; }
 .bx-star-btn:hover { color: #5f6368; }
 .bx-star-btn.starred { color: #f4b400; }
