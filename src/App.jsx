@@ -3294,7 +3294,7 @@ function ViewRule({ onEnter }) {
       <p className="keep-support">A reply can be short. A reply can be negative. What matters is the person actually responded meaningfully.</p>
     </>) },
     { id: 'doesnt', color: 'coral', title: 'What doesn’t count?', render: () => (<>
-      <p className="keep-text">Not every response qualifies. These do not count as valid replies.</p>
+      <p className="keep-text">These do not count as valid replies.</p>
       <ul className="rule-x keep-list">{R.doesntCount.map(c => <li key={c}><span className="gdoc-mark gdoc-mark-dash">–</span>{c}</li>)}</ul>
       <p className="keep-support">If a human didn’t personally respond, it doesn’t count.</p>
     </>) },

@@ -272,14 +272,10 @@ export const RULES_PAGE = {
   ],
   doesntCount: [
     'Out of office replies',
-    'Auto-responders',
+    'Auto-responders/AI generated Auto-responses',
     'Newsletter confirmations',
-    'Delivery notifications',
     'Bounce messages',
-    'AI-generated autoresponses',
-    'Existing contacts',
-    'Purchased introductions',
-    'Paid responses',
+    'Paid responses/Purchased introductions',
   ],
   bccWhy: [
     'Creates an independent timestamp',
