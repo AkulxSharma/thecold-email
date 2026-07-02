@@ -2052,15 +2052,31 @@ function ViewBest() {
     if (n[i]) delete n[i]; else n[i] = true
     return n
   })
+  // selSnap freezes each selected row's read/starred state at selection time, so marking
+  // read/unread doesn't yank it between sections until the user actually deselects it.
+  const [selSnap, setSelSnap] = useState({})
+  const snapOf = (i) => ({ read: !!readState[i], starred: !!starredState[i] })
   // Toggle checkbox selection on a row.
-  const toggleSelect = (i) => setSelected(prev => {
-    const n = new Set(prev)
-    n.has(i) ? n.delete(i) : n.add(i)
-    return n
-  })
-  const clearSelected = () => setSelected(new Set())
-  const selectAll = () => setSelected(new Set(BEST_EMAILS.map((_, i) => i)))
+  const toggleSelect = (i) => {
+    setSelected(prev => { const n = new Set(prev); n.has(i) ? n.delete(i) : n.add(i); return n })
+    setSelSnap(prev => { const n = { ...prev }; if (n[i]) delete n[i]; else n[i] = snapOf(i); return n })
+  }
+  const clearSelected = () => { setSelected(new Set()); setSelSnap({}) }
+  const selectAll = () => {
+    setSelected(new Set(BEST_EMAILS.map((_, i) => i)))
+    setSelSnap(() => { const n = {}; BEST_EMAILS.forEach((_, i) => { n[i] = snapOf(i) }); return n })
+  }
   const anySelected = selected.size > 0
+  // Section placement uses the frozen snapshot while selected; live state once deselected.
+  const secState = (i) => (selected.has(i) && selSnap[i]) ? selSnap[i] : snapOf(i)
+  // Clicking anywhere outside the Best panel clears the selection.
+  const panelRef = useRef(null)
+  useEffect(() => {
+    if (!anySelected) return
+    const onDown = (e) => { if (panelRef.current && !panelRef.current.contains(e.target)) clearSelected() }
+    document.addEventListener('mousedown', onDown)
+    return () => document.removeEventListener('mousedown', onDown)
+  }, [anySelected])
   // Gmail rule: if every selected row is already read, the button marks them unread; otherwise it marks read.
   const allSelRead = anySelected && [...selected].every(i => readState[i])
   // Undo toast (Gmail snackbar, bottom-left). Holds the message + the readState snapshot to restore.
@@ -2186,7 +2202,7 @@ function ViewBest() {
 
   // -------- Inbox list --------
   return (
-    <div className="view-panel">
+    <div className="view-panel" ref={panelRef}>
       <div className="view-body view-body-best">
         <div className="ai-overview">
           <div className="ai-ov-head">
@@ -2261,9 +2277,9 @@ function ViewBest() {
 
             // Gmail-style grouping: Starred (top) / Unread (middle) / Everything else (bottom).
             // Mutually exclusive — starred pulls out first, so no email appears twice.
-            const starred = all.filter(({ i }) => starredState[i])
-            const unread = all.filter(({ i }) => !starredState[i] && !readState[i])
-            const rest = all.filter(({ i }) => !starredState[i] && readState[i])
+            const starred = all.filter(({ i }) => secState(i).starred)
+            const unread = all.filter(({ i }) => !secState(i).starred && !secState(i).read)
+            const rest = all.filter(({ i }) => !secState(i).starred && secState(i).read)
             const Section = (key, label, items) => items.length > 0 && (
               <div className="bx-section" key={key}>
                 <div className="bx-section-hd">
