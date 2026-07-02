@@ -2210,11 +2210,17 @@ function ViewBest() {
             const rest = all.filter(({ i }) => !starredState[i] && readState[i])
             const Section = (key, label, items) => items.length > 0 && (
               <div className="bx-section" key={key}>
-                <button className="bx-section-hd" onClick={() => toggleSec(key)}>
-                  <I.M name={openSec[key] ? 'expand_more' : 'chevron_right'} size={20} />
-                  <span className="bx-section-label">{label}</span>
-                  <span className="bx-section-count">{items.length}</span>
-                </button>
+                <div className="bx-section-hd">
+                  <button className="bx-section-toggle" onClick={() => toggleSec(key)}>
+                    <I.M name={openSec[key] ? 'expand_more' : 'chevron_right'} size={20} />
+                    <span className="bx-section-label">{label}</span>
+                    <span className="bx-section-count">{items.length}</span>
+                  </button>
+                  <div className="bx-section-right">
+                    <span className="bx-section-pager">1–{items.length} of {items.length}</span>
+                    <button className="bx-section-menu" title="More" onClick={e => e.stopPropagation()}><I.M name="more_vert" size={18} /></button>
+                  </div>
+                </div>
                 {openSec[key] && items.map(row)}
               </div>
             )

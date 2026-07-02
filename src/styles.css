@@ -813,18 +813,36 @@ html, body, #root {
 .bx-section-hd {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding: 2px 10px 2px 8px;
+}
+.bx-section-toggle {
+  display: inline-flex;
+  align-items: center;
   gap: 4px;
-  width: 100%;
-  padding: 8px 16px;
-  background: #fff;
+  margin: 2px 0;
+  padding: 6px 10px;
+  background: transparent;
   border: none;
+  border-radius: 16px;
   cursor: pointer;
   color: #1f1f1f;
-  font: 500 13px 'Google Sans Text','Roboto',Arial,sans-serif;
+  font: 500 .875rem/24px 'Google Sans Text','Roboto',Arial,sans-serif;
+  letter-spacing: normal;
+  font-feature-settings: 'liga' 0;
+  font-variant-ligatures: no-contextual;
 }
-.bx-section-hd:hover { background: #f6f8fc; }
-.bx-section-hd .msym { color: #444746; }
-.bx-section-label { letter-spacing: .2px; }
+.bx-section-toggle:hover { background: #f1f3f4; }
+.bx-section-toggle .msym { color: #444746; }
+.bx-section-right { display: flex; align-items: center; gap: 4px; }
+.bx-section-pager { font: 400 12px 'Google Sans Text','Roboto',Arial,sans-serif; color: #5f6368; }
+.bx-section-menu {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 50%;
+  background: transparent; border: none; cursor: pointer; color: #5f6368;
+}
+.bx-section-menu:hover { background: #f1f3f4; }
+.bx-section-label { letter-spacing: normal; }
 .bx-section-count { color: #5f6368; font-weight: 400; }
 /* Empty state for the Starred filter */
 .bx-empty {
