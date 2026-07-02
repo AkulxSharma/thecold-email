@@ -2096,7 +2096,7 @@ html, body, #root {
 .home-tagline {
   font-family: var(--font-display);
   font-size: 44px;
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: -1px;
   line-height: 1.1;
   color: #202124;
@@ -2117,7 +2117,7 @@ html, body, #root {
   height: 60px;
   padding: 0 44px;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
 }
 .home-prize-callout {
   flex: 0 0 220px;
@@ -2130,7 +2130,7 @@ html, body, #root {
 }
 .home-prize-label {
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: 1px;
   text-transform: uppercase;
   opacity: .9;
@@ -2153,7 +2153,7 @@ html, body, #root {
   padding: 9px 18px;
   font-family: var(--font-display);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 700;
   cursor: pointer;
   transition: background .15s, transform .15s;
 }
@@ -2175,7 +2175,7 @@ html, body, #root {
 }
 .home-film-title {
   font-family: var(--font-display);
-  font-size: 42px; font-weight: 400; color: #202124;
+  font-size: 42px; font-weight: 700; color: #202124;
   text-align: center; letter-spacing: -.5px;
   margin: 0 0 48px;
 }
@@ -2204,7 +2204,7 @@ html, body, #root {
 .home-film-badge {
   position: absolute; left: 20px; bottom: 18px;
   font-family: var(--font-body);
-  font-size: 13px; font-weight: 500; color: #fff;
+  font-size: 13px; font-weight: 400; color: #fff;
   background: rgba(255,255,255,.14);
   border: 1px solid rgba(255,255,255,.32);
   padding: 6px 14px; border-radius: 999px;
@@ -2257,7 +2257,7 @@ html, body, #root {
 }
 .home-section-kicker {
   text-align: center;
-  font-size: 12px; font-weight: 600; letter-spacing: 1.5px;
+  font-size: 12px; font-weight: 700; letter-spacing: 1.5px;
   text-transform: uppercase; color: #0b57d0; margin-bottom: 18px;
   font-family: var(--font-body);
 }
@@ -2273,7 +2273,7 @@ html, body, #root {
   background: #f1f3f4; border-radius: 28px;
   padding: 12px 22px;
   font-family: var(--font-body);
-  font-size: 16px; color: #202124; font-weight: 500;
+  font-size: 16px; color: #202124; font-weight: 400;
 }
 .home-flow-num {
   width: 26px; height: 26px; border-radius: 50%;
@@ -2286,7 +2286,7 @@ html, body, #root {
 .home-tracks { padding: 64px 24px; border-top: 1px solid #eef0f3; }
 .home-tracks-title {
   font-family: var(--font-display);
-  font-size: 38px; font-weight: 400; color: #202124;
+  font-size: 38px; font-weight: 700; color: #202124;
   text-align: center; letter-spacing: -.5px; margin: 0 0 56px;
 }
 .home-track-cols {
@@ -2316,7 +2316,7 @@ html, body, #root {
 .home-track-col-icon svg { width: 30px; height: 30px; }
 .home-track-col-name {
   font-family: var(--font-display);
-  font-size: 22px; font-weight: 400; color: #202124; margin: 0 0 16px;
+  font-size: 22px; font-weight: 700; color: #202124; margin: 0 0 16px;
   transition: color .15s;
 }
 .home-track-col-body {
@@ -2383,7 +2383,7 @@ html, body, #root {
 .home-footer-logo { width: 26px; height: 26px; object-fit: contain; }
 .home-footer-wordmark {
   font-family: var(--font-display);
-  font-size: 18px; font-weight: 500; color: #202124;
+  font-size: 18px; font-weight: 700; color: #202124;
 }
 .home-footer-socials { display: flex; gap: 22px; }
 .home-footer-link {
