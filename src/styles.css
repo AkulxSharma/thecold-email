@@ -818,6 +818,8 @@ html, body, #root {
 .bx-tb-btn:hover { background: transparent; }
 .bx-tb-split .msym + .msym { margin-left: -4px; }
 .bx-tb-bar { width: 1px; height: 24px; background: #dadce0; margin: 0 8px; flex-shrink: 0; }
+.bx-spin { animation: bx-spin 0.6s linear; transform-origin: center; }
+@keyframes bx-spin { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
 .bx-list {
 }
 /* Gmail-style grouped sections (Unread / Everything else) on the All tab */

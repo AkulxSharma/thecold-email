@@ -2059,7 +2059,11 @@ function ViewBest() {
     return n
   })
   const clearSelected = () => setSelected(new Set())
+  const selectAll = () => setSelected(new Set(BEST_EMAILS.map((_, i) => i)))
   const anySelected = selected.size > 0
+  // Refresh: spin the icon (mailbox is static, so it just re-settles the list).
+  const [spinning, setSpinning] = useState(false)
+  const refreshList = () => { setSpinning(true); setTimeout(() => setSpinning(false), 600) }
 
   // -------- Open thread (reading pane) --------
   if (open != null) {
@@ -2203,8 +2207,8 @@ function ViewBest() {
         ) : (
           <div className="bx-toolbar">
             <div className="bx-tb-grp">
-              <button className="bx-tb-btn bx-tb-split" title="Select"><I.M name="check_box_outline_blank" size={20} /><I.M name="arrow_drop_down" size={20} /></button>
-              <button className="bx-tb-btn" title="Refresh"><I.M name="refresh" size={20} /></button>
+              <button className="bx-tb-btn bx-tb-split" title="Select all" onClick={selectAll}><I.M name="check_box_outline_blank" size={20} /><I.M name="arrow_drop_down" size={20} /></button>
+              <button className="bx-tb-btn" title="Refresh" onClick={refreshList}><I.M name="refresh" size={20} className={spinning ? 'bx-spin' : ''} /></button>
               <button className="bx-tb-btn" title="More"><I.M name="more_vert" size={20} /></button>
             </div>
             <div className="bx-tb-grp">
