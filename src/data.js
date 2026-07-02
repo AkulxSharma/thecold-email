@@ -263,7 +263,7 @@ export function chatMeme() {
 
 // The Rule page (v2.0 spec) — list content; headings/copy live inline in ViewRule.
 export const RULES_PAGE = {
-  chips: ['No Impersonation', 'No Lying', 'No Existing Relationship', 'No Mass-Blasting', 'BCC Required'],
+  chips: ['No Impersonation', 'No Lying', 'No Mass-Blasting'],
   whatCounts: [
     'A real person replied',
     'The recipient didn’t already know you',
@@ -326,7 +326,7 @@ export const RULES_PAGE = {
 }
 
 export const TOPIC_NAMES = {
-  rule: 'The Rule',
+  rule: 'The Rules',
   unreachable: 'The Unreachable',
   subject: 'Best Subject Line',
   twoliner: 'The Two-Liner',

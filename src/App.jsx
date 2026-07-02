@@ -247,7 +247,7 @@ function Sidebar({ onCompose, goto, pathname, open }) {
         <span className="section-caret-btn" title="Collapse">{caret('event')}</span> THE EVENT
       </div>
       {!collapsed.has('event') && (<>
-        <NavItem icon={<I.M name="rule" />}        label="The Rule"   active={isActive('rule')}    onClick={() => goto('rule')} />
+        <NavItem icon={<I.M name="rule" />}        label="The Rules"  active={isActive('rule')}    onClick={() => goto('rule')} />
         <NavItem icon={<I.M name="emoji_events" />} label="Prizes"     active={isActive('prizes')}  onClick={() => goto('prizes')} />
       </>)}
     </div>
@@ -3282,9 +3282,9 @@ function ViewRule({ onEnter }) {
 
   // Each note: id, color, title, and a render() reused in both the card and the expanded modal.
   const NOTES = [
-    { id: 'rule', color: 'yellow', title: 'The Rule', render: () => (<>
-      <p className="keep-lead">A cold email counts only if someone who doesn’t already know you genuinely wrote back.</p>
-      <p className="keep-text">Every competition email must be sent during the event and BCC our official competition inbox for verification.</p>
+    { id: 'rule', color: 'yellow', title: 'The basics', render: () => (<>
+      <p className="keep-lead">A cold email counts only if someone who doesn’t know you wrote back.</p>
+      <p className="keep-text">Every competition email must be sent during the event and BCC our official e-mail ID for verification.</p>
       {checklist('rulechips', R.chips)}
       <p className="keep-support">Break any of these and your entry is disqualified.</p>
     </>) },
