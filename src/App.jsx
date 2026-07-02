@@ -3316,7 +3316,7 @@ function ViewRule({ onEnter }) {
       <ul className="rule-x keep-list">{R.notAllowed.map(a => <li key={a}><span className="gdoc-mark gdoc-mark-dash">–</span>{a}</li>)}</ul>
       <p className="keep-support">The competition judges outcomes, not workflows. The only thing that matters is that the outreach is genuine, honest, and earns a real reply.</p>
     </>) },
-    { id: 'proof', color: 'orange', title: 'Proof', render: () => (<>
+    { id: 'proof', color: 'orange', title: 'Submission Requisites', render: () => (<>
       <p className="keep-text">To submit an entry you’ll need evidence.</p>
       <ul className="keep-proof">{R.proof.map(p => <li key={p.label}><I.M name={p.icon} size={18} /> {p.label}</li>)}</ul>
       <p className="keep-support">Judges may request additional verification if needed. Failure to provide proof may result in disqualification.</p>

@@ -300,7 +300,6 @@ export const RULES_PAGE = {
     { icon: 'chat_bubble',   label: 'Reply received' },
     { icon: 'photo_camera',  label: 'Screenshot of the exchange' },
     { icon: 'verified',      label: 'Matching BCC verification' },
-    { icon: 'assignment',    label: 'Submission form' },
   ],
   fairPlayNot: [
     'Family', 'Friends', 'Classmates', 'Colleagues',
