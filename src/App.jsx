@@ -3323,7 +3323,6 @@ function ViewRule({ onEnter }) {
     </>) },
     { id: 'fairplay', color: 'purple', title: 'Fair play', render: () => (<>
       <p className="keep-text">The goal is to earn trust from someone who doesn’t know you, not leverage an existing relationship.</p>
-      {group('fairplay', 'Recipients cannot be', R.fairPlayNot)}
       <p className="keep-support">If the recipient would reasonably recognize you, it doesn’t count.</p>
     </>) },
     { id: 'privacy', color: 'gray', title: 'Privacy', render: () => (<>
