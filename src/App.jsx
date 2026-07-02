@@ -2214,7 +2214,6 @@ function ViewBest() {
                   <button className="bx-section-toggle" onClick={() => toggleSec(key)}>
                     <I.M name={openSec[key] ? 'expand_more' : 'chevron_right'} size={20} />
                     <span className="bx-section-label">{label}</span>
-                    <span className="bx-section-count">{items.length}</span>
                   </button>
                   <div className="bx-section-right">
                     <span className="bx-section-pager">1–{items.length} of {items.length}</span>
