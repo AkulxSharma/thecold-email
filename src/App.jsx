@@ -2287,7 +2287,6 @@ function ViewBest() {
                   </button>
                   <div className="bx-section-right">
                     <span className="bx-section-pager">1–{items.length} of {items.length}</span>
-                    <button className="bx-section-menu" title="More" onClick={e => e.stopPropagation()}><I.M name="more_vert" size={18} /></button>
                   </div>
                 </div>
                 {openSec[key] && items.map(row)}
