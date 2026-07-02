@@ -2033,8 +2033,7 @@ function ViewBest() {
   const [collapsedMsgs, setCollapsedMsgs] = useState(() => new Set()) // indices collapsed to first line
   const [readState, setReadState] = useState(loadReadState)       // { [i]: true } — read rows
   const [starredState, setStarredState] = useState(loadStarredState) // { [i]: true } — starred rows
-  const [starredOnly, setStarredOnly] = useState(false)           // Starred filter toggle
-  const [openSec, setOpenSec] = useState({ unread: true, rest: true }) // Gmail-style section collapse (All tab)
+  const [openSec, setOpenSec] = useState({ unread: true, read: true, starred: true }) // section collapse: Unread / Read / Starred
   const toggleSec = (k) => setOpenSec(p => ({ ...p, [k]: !p[k] }))
 
   // Persist read / starred maps whenever they change.
@@ -2179,16 +2178,6 @@ function ViewBest() {
             </div>
           </div>
         </div>
-        <div className="bx-tabs">
-          <button
-            className={`bx-tab${!starredOnly ? ' active' : ''}`}
-            onClick={() => setStarredOnly(false)}
-          ><I.M name="inbox" size={18} /> All</button>
-          <button
-            className={`bx-tab${starredOnly ? ' active' : ''}`}
-            onClick={() => setStarredOnly(true)}
-          ><I.M name="star" size={18} /> Starred</button>
-        </div>
         <div className="bx-list">
           {(() => {
             const row = ({ em, i }) => {
@@ -2214,23 +2203,10 @@ function ViewBest() {
             }
             const all = BEST_EMAILS.map((em, i) => ({ em, i }))
 
-            // Starred tab — flat list (or empty state).
-            if (starredOnly) {
-              const starred = all.filter(({ i }) => starredState[i])
-              return starred.length
-                ? starred.map(row)
-                : (
-                  <div className="bx-empty">
-                    <I.M name="star" size={40} />
-                    <p>No starred emails yet</p>
-                    <span>Click the star on any email to save it here.</span>
-                  </div>
-                )
-            }
-
-            // All tab — Gmail-style grouping: Unread first, then Everything else.
+            // Gmail-style grouping: Unread, Read, Starred (starred shown regardless of read state).
             const unread = all.filter(({ i }) => !readState[i])
-            const rest = all.filter(({ i }) => readState[i])
+            const read = all.filter(({ i }) => readState[i])
+            const starred = all.filter(({ i }) => starredState[i])
             const Section = (key, label, items) => items.length > 0 && (
               <div className="bx-section" key={key}>
                 <button className="bx-section-hd" onClick={() => toggleSec(key)}>
@@ -2244,7 +2220,8 @@ function ViewBest() {
             return (
               <>
                 {Section('unread', 'Unread', unread)}
-                {Section('rest', 'Everything else', rest)}
+                {Section('read', 'Read', read)}
+                {Section('starred', 'Starred', starred)}
               </>
             )
           })()}
