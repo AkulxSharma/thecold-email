@@ -806,7 +806,7 @@ html, body, #root {
 .bx-tab .msym { font-size: 18px; }
 .bx-toolbar {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 2px 8px; border-bottom: 1px solid #f1f3f4;
+  padding: 2px 8px 2px 21px; border-bottom: 1px solid #f1f3f4;
 }
 .bx-tb-grp { display: flex; align-items: center; gap: 0; }
 .bx-tb-btn {
