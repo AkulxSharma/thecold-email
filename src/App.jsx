@@ -2597,83 +2597,140 @@ function HandArrow({ className, style }) {
 // Every track page renders in the marked-up Google Doc style; TrackMarkedDoc
 // pulls each track's own content from TRACK_PAGES[topic] (passed in as `data`).
 function ViewTrackDoc({ data, title, topic }) {
-  // The unreachable track is a raw brainstorm essay with a live Google-Docs
-  // comment rail on the right and no reviewer annotations (team's new format).
-  if (topic === 'unreachable') return <TrackDocEssay title={title} data={data} />
-  return <TrackMarkedDoc data={data} title={title} topic={topic} />
+  // Every track renders as a raw Google-Docs working doc with a live comment
+  // rail on the right — no reviewer annotations. Each track lays its content
+  // out with a different structure so they don't read as one template.
+  return <TrackDocEssay title={title} data={data} topic={topic} />
 }
 
-// Live comment thread shown in the right rail of the unreachable essay.
-const UR_COMMENTS = [
-  { name: 'Hardeep Gambhir', time: '22:11 15 Jun', av: 'HG', color: '#d93025',
-    paras: ['How are we actually proving someone is “unreachable”? Follower count feels weak — do we need evidence they ignore most outreach?'] },
-  { name: 'Nicklaus Tran', time: '22:47 15 Jun', av: 'NT', color: '#1a73e8',
-    paras: [
-      'the 50/30/20 split feels right but difficulty is subjective. maybe define tiers — a public-company founder vs a niche exec shouldn’t score the same.',
-      'should also cap pure “fame” so people don’t just blast a celebrity and call it hard.',
-    ] },
-  { name: 'Hardeep Gambhir', time: '01:48 16 Jun', av: 'HG', color: '#d93025',
-    paras: ['Should a polite brush-off count at all? Depth of the reply should probably gate the difficulty points, not stack on top of them.'] },
-  { name: 'Nicklaus Tran', time: '02:23 16 Jun', av: 'NT', color: '#1a73e8',
-    paras: ['some real examples of “impossible” replies people have pulled off — good bar to point entrants at:'],
-    links: [
-      'https://x.com/thecoldemails',
-      'https://www.paulgraham.com/cold.html',
-    ] },
+// Reviewer pool — random names/colours reused across the track comment threads.
+const REVIEWERS = [
+  { name: 'Priya Raman',   av: 'PR', color: '#1a73e8' },
+  { name: 'Marcus Bell',   av: 'MB', color: '#d93025' },
+  { name: 'Sofia Alvarez', av: 'SA', color: '#188038' },
+  { name: 'Devon Clarke',  av: 'DC', color: '#e37400' },
+  { name: 'Aisha Noor',    av: 'AN', color: '#9334e6' },
+  { name: 'Leo Fischer',   av: 'LF', color: '#12b5cb' },
 ]
+const rv = (i, time, body) => ({ ...REVIEWERS[i], time, ...body })
+
+// Comment threads per track — random reviewers, content specific to each track.
+const TRACK_COMMENTS = {
+  unreachable: [
+    rv(0, '22:11 15 Jun', { paras: ['How are we actually proving someone is “unreachable”? Follower count feels weak — do we need evidence they ignore most outreach?'] }),
+    rv(1, '22:47 15 Jun', { paras: ['the 50/30/20 split feels right but difficulty is subjective. maybe define tiers.', 'should cap pure “fame” so people don’t just blast a celebrity and call it hard.'] }),
+    rv(2, '01:48 16 Jun', { paras: ['Should a polite brush-off count at all? Depth of the reply should gate the difficulty points, not stack on top.'] }),
+    rv(3, '02:23 16 Jun', { paras: ['some real examples of “impossible” replies to point entrants at:'], links: ['https://x.com/thecoldemails', 'https://www.paulgraham.com/cold.html'] }),
+  ],
+  subject: [
+    rv(3, '10:04 17 Jun', { paras: ['are we judging the subject line in isolation, or the whole open → reply? feels like it should be mostly the line.'] }),
+    rv(4, '11:31 17 Jun', { paras: ['curiosity vs clickbait is the fight here. penalize anything that over-promises and under-delivers in the body.'] }),
+    rv(0, '14:12 17 Jun', { paras: ['worth pinning 2–3 example lines that actually got opened as a north star.'] }),
+  ],
+  twoliner: [
+    rv(5, '09:18 18 Jun', { paras: ['two lines is brutal in the best way. do we count the greeting / sign-off in the two?'] }),
+    rv(1, '09:52 18 Jun', { paras: ['no filler is the whole game.', 'reward a line that does two jobs at once — context + ask.'] }),
+    rv(2, '13:40 18 Jun', { paras: ['define “two-liner” precisely or people cheat with run-ons.'] }),
+  ],
+  ask: [
+    rv(4, '16:05 19 Jun', { paras: ['the ask has to be specific and easy to say yes to. vague “pick your brain” should score low.'] }),
+    rv(3, '16:44 19 Jun', { paras: ['are we rewarding the ask itself, or whether they actually got the yes? both?'] }),
+    rv(0, '18:20 19 Jun', { paras: ['maybe a small table of ask-type → conversion so entrants can calibrate.'] }),
+  ],
+}
 
 const urLink = (href, key) => <a key={key} href={href} target="_blank" rel="noopener noreferrer">{href}</a>
+const liRT = (l, i) => <li key={i}><RT>{l}</RT></li>
 
-function TrackDocEssay({ title, data }) {
+// Per-track body — deliberately different structure per track, identical sizing.
+function TrackBody({ topic, data }) {
+  if (topic === 'subject') return (
+    <>
+      <p><RT>{data.goal}</RT></p>
+      {data.goalExtra && <p><RT>{data.goalExtra}</RT></p>}
+      <p className="ur-sub">Why it wins</p>
+      <ul className="ur-dash">{data.howWon.map(liRT)}</ul>
+      <p className="ur-sub">The bar</p>
+      <p><RT>{data.rewards.join(' ')}</RT></p>
+      <p className="ur-sub">Judges weigh</p>
+      <ul className="ur-ul">{data.judges.map(liRT)}</ul>
+      <p className="ur-sub">Strong entries</p>
+      <ul className="ur-ul">{data.strong.map(liRT)}</ul>
+      <p>Steer clear of:</p>
+      <ul className="ur-ul">{data.mistakes.map(liRT)}</ul>
+      <p className="ur-sub">Scoring</p>
+      {data.scoring.map((s, i) => <p key={i}><strong>{s.pts}</strong> — {s.label}</p>)}
+    </>
+  )
+  if (topic === 'twoliner') return (
+    <>
+      <p><RT>{data.goal}</RT></p>
+      {data.goalExtra && <p><RT>{data.goalExtra}</RT></p>}
+      <p>Rules —</p>
+      <ul className="ur-dash">{data.howWon.map(liRT)}</ul>
+      {data.rewards.map((r, i) => <p key={i}><RT>{r}</RT></p>)}
+      <p>Judges care about —</p>
+      <ul className="ur-dash">{data.judges.map(liRT)}</ul>
+      <p>Good:</p>
+      <ul className="ur-dash">{data.strong.map(liRT)}</ul>
+      <p>Bad:</p>
+      <ul className="ur-dash">{data.mistakes.map(liRT)}</ul>
+      <p>Scoring —</p>
+      {data.scoring.map((s, i) => <p key={i}>{s.label}: {s.pts}</p>)}
+    </>
+  )
+  if (topic === 'ask') return (
+    <>
+      <p><RT>{data.goal}</RT></p>
+      {data.goalExtra && <p><RT>{data.goalExtra}</RT></p>}
+      <ol className="ur-ol">
+        <li><strong>How it’s won.</strong><ul className="ur-ul">{data.howWon.map(liRT)}</ul></li>
+        <li><strong>What it rewards.</strong><ul className="ur-ul">{data.rewards.map(liRT)}</ul></li>
+        <li><strong>What judges look for.</strong><ul className="ur-ul">{data.judges.map(liRT)}</ul></li>
+        <li><strong>Strong entries.</strong><ul className="ur-ul">{data.strong.map(liRT)}</ul></li>
+        <li><strong>Common mistakes.</strong><ul className="ur-ul">{data.mistakes.map(liRT)}</ul></li>
+      </ol>
+      <p className="ur-sub">Scoring</p>
+      <table className="ur-table"><tbody>{data.scoring.map((s, i) => <tr key={i}><td>{s.label}</td><td>{s.pts}</td></tr>)}</tbody></table>
+    </>
+  )
+  // unreachable (default) — raw brainstorm: lead-in lines + numbered lists.
+  return (
+    <>
+      <p><RT>{data.goal}</RT></p>
+      {data.goalExtra && <p><RT>{data.goalExtra}</RT></p>}
+      <p>How it’s won:</p>
+      <ol className="ur-ol">{data.howWon.map(liRT)}</ol>
+      <p>What this track rewards:</p>
+      <ol className="ur-ol">{data.rewards.map(liRT)}</ol>
+      <p>What judges look for:</p>
+      <ol className="ur-ol">{data.judges.map(liRT)}</ol>
+      <p>Strong entries:</p>
+      <ol className="ur-ol">{data.strong.map(liRT)}</ol>
+      <p>Common mistakes:</p>
+      <ol className="ur-ol">{data.mistakes.map(liRT)}</ol>
+      <p>Scoring:</p>
+      <ol className="ur-ol">
+        {data.scoring.map((s, i) => (
+          <li key={i}>{s.label}<ol className="ur-ol ur-ol-a"><li>{s.pts} points</li></ol></li>
+        ))}
+      </ol>
+      <p><strong>$500</strong> for the winning entry. Every qualifying entry is also automatically considered for the Best Cold Email ($1,000 grand prize).</p>
+      <p>Remember: {TRACK_REMEMBER.lead}</p>
+      <p><strong>{TRACK_REMEMBER.bold}</strong></p>
+      <p>{TRACK_REMEMBER.body}</p>
+    </>
+  )
+}
+
+function TrackDocEssay({ title, data, topic }) {
+  const comments = TRACK_COMMENTS[topic] || []
   return (
     <DocFrame title={title} canvasClass="ur-canvas" pageClass="ur-page">
       <div className="ur-layout">
-        <article className="ur-doc">
-          <p><RT>{data.goal}</RT></p>
-          {data.goalExtra && <p><RT>{data.goalExtra}</RT></p>}
-
-          <p>How it’s won:</p>
-          <ol className="ur-ol">
-            {data.howWon.map((l, i) => <li key={i}><RT>{l}</RT></li>)}
-          </ol>
-
-          <p>What this track rewards:</p>
-          <ol className="ur-ol">
-            {data.rewards.map((l, i) => <li key={i}><RT>{l}</RT></li>)}
-          </ol>
-
-          <p>What judges look for:</p>
-          <ol className="ur-ol">
-            {data.judges.map((l, i) => <li key={i}><RT>{l}</RT></li>)}
-          </ol>
-
-          <p>Strong entries:</p>
-          <ol className="ur-ol">
-            {data.strong.map((l, i) => <li key={i}><RT>{l}</RT></li>)}
-          </ol>
-
-          <p>Common mistakes:</p>
-          <ol className="ur-ol">
-            {data.mistakes.map((l, i) => <li key={i}><RT>{l}</RT></li>)}
-          </ol>
-
-          <p>Scoring:</p>
-          <ol className="ur-ol">
-            {data.scoring.map((s, i) => (
-              <li key={i}>{s.label}
-                <ol className="ur-ol ur-ol-a"><li>{s.pts} points</li></ol>
-              </li>
-            ))}
-          </ol>
-
-          <p><strong>$500</strong> for the winning entry. Every qualifying entry is also automatically considered for the Best Cold Email ($1,000 grand prize).</p>
-
-          <p>Remember: {TRACK_REMEMBER.lead}</p>
-          <p><strong>{TRACK_REMEMBER.bold}</strong></p>
-          <p>{TRACK_REMEMBER.body}</p>
-        </article>
+        <article className="ur-doc"><TrackBody topic={topic} data={data} /></article>
         <aside className="ur-comments">
-          {UR_COMMENTS.map((c, i) => (
+          {comments.map((c, i) => (
             <div className="ur-cmt" key={i}>
               <div className="ur-cmt-head">
                 <span className="ur-cmt-av" style={{ background: c.color }}>{c.av}</span>
