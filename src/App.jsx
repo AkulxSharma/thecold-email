@@ -3309,7 +3309,7 @@ function ViewRule({ onEnter }) {
       <ul className="rule-bullets keep-bullets">{R.bccWhy.map(b => <li key={b}>{b}</li>)}</ul>
       <p className="keep-support">Failure to BCC may make an entry ineligible.</p>
     </>) },
-    { id: 'sending', color: 'teal', title: 'Sending rules', render: () => (<>
+    { id: 'sending', color: 'teal', title: 'Content Guidelines', render: () => (<>
       <div className="keep-mini-head keep-yes">Allowed</div>
       <ul className="rule-check keep-list">{R.allowed.map(a => <li key={a}><span className="gdoc-mark gdoc-mark-dot">•</span>{a}</li>)}</ul>
       <div className="keep-mini-head keep-no">Not allowed</div>
