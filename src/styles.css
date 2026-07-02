@@ -3120,13 +3120,15 @@ html, body, #root {
 .gdoc-tb-color-bar { display: block; width: 16px; height: 3px; background: #1a73e8; border-radius: 1px; }
 
 /* --- The page --- */
-.gdoc-page-wrap { padding: 16px 16px 80px; display: flex; justify-content: center; }
+/* Pageless / "endless page" mode: the doc fills the width as one continuous
+   canvas — no floating letter-sized sheet, no shadow, no page card. */
+.gdoc-page-wrap { padding: 0; display: block; background: #fff; }
 .gdoc-page {
-  width: 816px; max-width: 100%;
+  width: 100%; max-width: none;
   background: #fff;
-  box-shadow: 0 1px 3px 1px rgba(60,64,67,.15);
-  border-radius: 2px;
-  padding: 96px 96px 120px;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 48px 96px 96px;
   font-family: 'Arial', 'Roboto', sans-serif;
   font-size: 11pt; line-height: 1.5; color: #202124;
 }
