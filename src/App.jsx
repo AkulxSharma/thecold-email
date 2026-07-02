@@ -2069,11 +2069,13 @@ function ViewBest() {
   const anySelected = selected.size > 0
   // Section placement uses the frozen snapshot while selected; live state once deselected.
   const secState = (i) => (selected.has(i) && selSnap[i]) ? selSnap[i] : snapOf(i)
-  // Clicking anywhere outside the Best panel clears the selection.
-  const panelRef = useRef(null)
+  // Clicking anywhere except the checkboxes, action toolbar, or snackbar clears the selection.
   useEffect(() => {
     if (!anySelected) return
-    const onDown = (e) => { if (panelRef.current && !panelRef.current.contains(e.target)) clearSelected() }
+    const onDown = (e) => {
+      if (e.target.closest && e.target.closest('.bx-check, .bx-toolbar, .bx-snackbar')) return
+      clearSelected()
+    }
     document.addEventListener('mousedown', onDown)
     return () => document.removeEventListener('mousedown', onDown)
   }, [anySelected])
@@ -2202,7 +2204,7 @@ function ViewBest() {
 
   // -------- Inbox list --------
   return (
-    <div className="view-panel" ref={panelRef}>
+    <div className="view-panel">
       <div className="view-body view-body-best">
         <div className="ai-overview">
           <div className="ai-ov-head">
