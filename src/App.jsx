@@ -2606,19 +2606,19 @@ function ViewTrackDoc({ data, title, topic }) {
 // Live comment thread shown in the right rail of the unreachable essay.
 const UR_COMMENTS = [
   { name: 'Hardeep Gambhir', time: '22:11 15 Jun', av: 'HG', color: '#d93025',
-    paras: ['Are we talking about all the movements that came from the internet with the intent to better the world or at least have a net positive?'] },
+    paras: ['How are we actually proving someone is “unreachable”? Follower count feels weak — do we need evidence they ignore most outreach?'] },
   { name: 'Nicklaus Tran', time: '22:47 15 Jun', av: 'NT', color: '#1a73e8',
     paras: [
-      "probably can hammer hard on more. eric schmidt and jeff dean imo aren't relevant to the cultural zeitgeist unless you have a personal story with them",
-      'can hammer hard with lower trust in institutions though. outlandish or realistic claim of how many colleges will shut down',
+      'the 50/30/20 split feels right but difficulty is subjective. maybe define tiers — a public-company founder vs a niche exec shouldn’t score the same.',
+      'should also cap pure “fame” so people don’t just blast a celebrity and call it hard.',
     ] },
   { name: 'Hardeep Gambhir', time: '01:48 16 Jun', av: 'HG', color: '#d93025',
-    paras: ['Can you expand on the dwindling trust in institutions? What have you noticed about that?'] },
+    paras: ['Should a polite brush-off count at all? Depth of the reply should probably gate the difficulty points, not stack on top of them.'] },
   { name: 'Nicklaus Tran', time: '02:23 16 Jun', av: 'NT', color: '#1a73e8',
+    paras: ['some real examples of “impossible” replies people have pulled off — good bar to point entrants at:'],
     links: [
-      'https://x.com/PeterDiamandis/status/2062882655692009961',
-      'https://x.com/marcportermagee/status/2061494732937646246?s=20',
-      'https://www.randalolson.com/2026',
+      'https://x.com/thecoldemails',
+      'https://www.paulgraham.com/cold.html',
     ] },
 ]
 
