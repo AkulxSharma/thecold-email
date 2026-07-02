@@ -2063,8 +2063,18 @@ function ViewBest() {
   const anySelected = selected.size > 0
   // Gmail rule: if every selected row is already read, the button marks them unread; otherwise it marks read.
   const allSelRead = anySelected && [...selected].every(i => readState[i])
-  const markSelRead = () => { setReadState(prev => { const n = { ...prev }; selected.forEach(i => { n[i] = true }); return n }); clearSelected() }
-  const markSelUnread = () => { setReadState(prev => { const n = { ...prev }; selected.forEach(i => { delete n[i] }); return n }); clearSelected() }
+  // Undo toast (Gmail snackbar, bottom-left). Holds the message + the readState snapshot to restore.
+  const [toast, setToast] = useState(null)
+  const toastTimer = useRef(null)
+  const showToast = (msg, prev) => {
+    if (toastTimer.current) clearTimeout(toastTimer.current)
+    setToast({ msg, prev })
+    toastTimer.current = setTimeout(() => setToast(null), 6000)
+  }
+  const dismissToast = () => { if (toastTimer.current) clearTimeout(toastTimer.current); setToast(null) }
+  const undoToast = () => { if (toast) setReadState(toast.prev); dismissToast() }
+  const markSelRead = () => { const prev = readState; setReadState(p => { const n = { ...p }; selected.forEach(i => { n[i] = true }); return n }); showToast('Conversation marked as read.', prev) }
+  const markSelUnread = () => { const prev = readState; setReadState(p => { const n = { ...p }; selected.forEach(i => { delete n[i] }); return n }); showToast('Conversation marked as unread.', prev) }
   // Refresh: spin the icon (mailbox is static, so it just re-settles the list).
   const [spinning, setSpinning] = useState(false)
   const refreshList = () => { setSpinning(true); setTimeout(() => setSpinning(false), 600) }
@@ -2279,6 +2289,13 @@ function ViewBest() {
           })()}
         </div>
       </div>
+      {toast && (
+        <div className="bx-snackbar" role="status">
+          <span className="bx-snack-msg">{toast.msg}</span>
+          <button className="bx-snack-undo" onClick={undoToast}>Undo</button>
+          <button className="bx-snack-x" title="Dismiss" onClick={dismissToast}><I.M name="close" size={20} /></button>
+        </div>
+      )}
     </div>
   )
 }

@@ -900,6 +900,27 @@ html, body, #root {
 .bx-row.selected:hover { background: #c2dbff; }
 .bx-check { color: #5f6368; display: flex; align-items: center; flex-shrink: 0; cursor: pointer; }
 .bx-check.checked { color: #3c4043; }
+/* Gmail undo snackbar, bottom-left */
+.bx-snackbar {
+  position: fixed; left: 24px; bottom: 24px; z-index: 60;
+  display: flex; align-items: center; gap: 8px;
+  background: #fff; color: #202124;
+  padding: 6px 8px 6px 16px; border-radius: 8px;
+  box-shadow: 0 3px 5px -1px rgba(0,0,0,.2), 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12);
+  font-size: 14px; min-width: 288px; max-width: 568px;
+}
+.bx-snack-msg { flex: 1; }
+.bx-snack-undo {
+  border: none; background: transparent; color: #1a73e8;
+  font-size: 14px; font-weight: 500; cursor: pointer; padding: 8px 12px; border-radius: 4px;
+}
+.bx-snack-undo:hover { background: rgba(26,115,232,.08); }
+.bx-snack-x {
+  border: none; background: transparent; color: #5f6368;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+}
+.bx-snack-x:hover { background: rgba(60,64,67,.08); }
 .bx-star-btn { color: #bdc1c6; display: flex; align-items: center; flex-shrink: 0; cursor: pointer; }
 .bx-star-btn:hover { color: #5f6368; }
 .bx-star-btn.starred { color: #f4b400; }
