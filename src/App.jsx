@@ -2629,43 +2629,46 @@ function TrackDocEssay({ title, data }) {
     <DocFrame title={title} canvasClass="ur-canvas" pageClass="ur-page">
       <div className="ur-layout">
         <article className="ur-doc">
-          <h1 className="ur-h1">{title}</h1>
-
-          <h2 className="ur-h2">The Goal</h2>
           <p><RT>{data.goal}</RT></p>
           {data.goalExtra && <p><RT>{data.goalExtra}</RT></p>}
 
-          <h2 className="ur-h2">How It's Won</h2>
-          {data.howWon.map((l, i) => <p key={i}><RT>{l}</RT></p>)}
-
-          <h2 className="ur-h2">What This Track Rewards</h2>
-          {data.rewards.map((l, i) => <p key={i}><RT>{l}</RT></p>)}
-
-          <h2 className="ur-h2">What Judges Look For</h2>
-          <ul className="ur-ul">
-            {data.judges.map((l, i) => <li key={i}><RT>{l}</RT></li>)}
-          </ul>
-
-          <h2 className="ur-h2">Strong Entries</h2>
-          <ul className="ur-ul">
-            {data.strong.map((l, i) => <li key={i}><RT>{l}</RT></li>)}
-          </ul>
-
-          <h2 className="ur-h2">Common Mistakes</h2>
-          <ul className="ur-ul">
-            {data.mistakes.map((l, i) => <li key={i}><RT>{l}</RT></li>)}
-          </ul>
-
-          <h2 className="ur-h2">Scoring</h2>
+          <p>How it’s won:</p>
           <ol className="ur-ol">
-            {data.scoring.map((s, i) => <li key={i}>{s.label} — {s.pts}</li>)}
+            {data.howWon.map((l, i) => <li key={i}><RT>{l}</RT></li>)}
           </ol>
 
-          <h2 className="ur-h2">Prize</h2>
+          <p>What this track rewards:</p>
+          <ol className="ur-ol">
+            {data.rewards.map((l, i) => <li key={i}><RT>{l}</RT></li>)}
+          </ol>
+
+          <p>What judges look for:</p>
+          <ol className="ur-ol">
+            {data.judges.map((l, i) => <li key={i}><RT>{l}</RT></li>)}
+          </ol>
+
+          <p>Strong entries:</p>
+          <ol className="ur-ol">
+            {data.strong.map((l, i) => <li key={i}><RT>{l}</RT></li>)}
+          </ol>
+
+          <p>Common mistakes:</p>
+          <ol className="ur-ol">
+            {data.mistakes.map((l, i) => <li key={i}><RT>{l}</RT></li>)}
+          </ol>
+
+          <p>Scoring:</p>
+          <ol className="ur-ol">
+            {data.scoring.map((s, i) => (
+              <li key={i}>{s.label}
+                <ol className="ur-ol ur-ol-a"><li>{s.pts} points</li></ol>
+              </li>
+            ))}
+          </ol>
+
           <p><strong>$500</strong> for the winning entry. Every qualifying entry is also automatically considered for the Best Cold Email ($1,000 grand prize).</p>
 
-          <h2 className="ur-h2">Remember</h2>
-          <p>{TRACK_REMEMBER.lead}</p>
+          <p>Remember: {TRACK_REMEMBER.lead}</p>
           <p><strong>{TRACK_REMEMBER.bold}</strong></p>
           <p>{TRACK_REMEMBER.body}</p>
         </article>
