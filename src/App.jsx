@@ -2061,6 +2061,10 @@ function ViewBest() {
   const clearSelected = () => setSelected(new Set())
   const selectAll = () => setSelected(new Set(BEST_EMAILS.map((_, i) => i)))
   const anySelected = selected.size > 0
+  // Gmail rule: if every selected row is already read, the button marks them unread; otherwise it marks read.
+  const allSelRead = anySelected && [...selected].every(i => readState[i])
+  const markSelRead = () => { setReadState(prev => { const n = { ...prev }; selected.forEach(i => { n[i] = true }); return n }); clearSelected() }
+  const markSelUnread = () => { setReadState(prev => { const n = { ...prev }; selected.forEach(i => { delete n[i] }); return n }); clearSelected() }
   // Refresh: spin the icon (mailbox is static, so it just re-settles the list).
   const [spinning, setSpinning] = useState(false)
   const refreshList = () => { setSpinning(true); setTimeout(() => setSpinning(false), 600) }
@@ -2199,7 +2203,9 @@ function ViewBest() {
               <button className="bx-tb-btn" title="Report spam"><I.M name="report" size={20} /></button>
               <button className="bx-tb-btn" title="Delete"><I.M name="delete" size={20} /></button>
               <span className="bx-tb-bar" />
-              <button className="bx-tb-btn" title="Mark as read"><I.M name="drafts" size={20} /></button>
+              {allSelRead
+                ? <button className="bx-tb-btn" title="Mark as unread" onClick={markSelUnread}><I.M name="mark_email_unread" size={20} /></button>
+                : <button className="bx-tb-btn" title="Mark as read" onClick={markSelRead}><I.M name="drafts" size={20} /></button>}
               <button className="bx-tb-btn" title="Move to"><I.M name="drive_file_move" size={20} /></button>
               <button className="bx-tb-btn" title="More"><I.M name="more_vert" size={20} /></button>
             </div>
