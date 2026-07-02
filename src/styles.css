@@ -806,7 +806,7 @@ html, body, #root {
 .bx-tab .msym { font-size: 18px; }
 .bx-toolbar {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 2px 8px 2px 21px; border-bottom: 1px solid #f1f3f4;
+  padding: 2px 8px 2px 21px;
 }
 .bx-tb-grp { display: flex; align-items: center; gap: 0; }
 .bx-tb-btn {
@@ -818,7 +818,6 @@ html, body, #root {
 .bx-tb-btn:hover { background: transparent; }
 .bx-tb-split .msym + .msym { margin-left: -4px; }
 .bx-list {
-  border-top: 1px solid #f1f3f4;
 }
 /* Gmail-style grouped sections (Unread / Everything else) on the All tab */
 .bx-section { border-bottom: 1px solid #f1f3f4; }
